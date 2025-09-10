@@ -6,7 +6,7 @@ public final class StringFormatUtility
 	{
 	}
 
-	public static boolean startsWithUppercase(String text)
+	public static boolean startsWithUppercase(final String text)
 	{
 		return !text.isEmpty() && Character.isUpperCase(text.charAt(0));
 	}

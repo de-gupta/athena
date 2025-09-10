@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public final class ConfigurationFileReaderUtility
 {
-	public static Map<String, String> readConfigurationFile(String configFilePath) throws IOException
+	public static Map<String, String> readConfigurationFile(final String configFilePath) throws IOException
 	{
 		Properties properties = new Properties();
 
@@ -26,7 +26,7 @@ public final class ConfigurationFileReaderUtility
 						 .collect(Collectors.toMap(key -> key, properties::getProperty));
 	}
 
-	public static boolean isConfigurationFileReadable(String configFilePath)
+	public static boolean isConfigurationFileReadable(final String configFilePath)
 	{
 		return Optional.ofNullable(configFilePath)
 					   .map(String::trim)

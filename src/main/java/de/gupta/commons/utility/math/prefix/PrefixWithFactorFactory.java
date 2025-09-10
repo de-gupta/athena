@@ -1,6 +1,6 @@
 package de.gupta.commons.utility.math.prefix;
 
-public class PrefixWithFactorFactory
+public final class PrefixWithFactorFactory
 {
 	public static PrefixWithFactor unity()
 	{

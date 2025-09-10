@@ -4,7 +4,7 @@ import java.util.stream.IntStream;
 
 public interface Group<T>
 {
-	default T power(T element, int exponent)
+	default T power(final T element, final int exponent)
 	{
 		return exponent == 0 ? identity() :
 				exponent < 0 ? power(inverse(element), -exponent) :
@@ -15,7 +15,7 @@ public interface Group<T>
 
 	T identity();
 
-	T inverse(T element);
+	T inverse(final T element);
 
-	T multiply(T a, T b);
+	T multiply(final T a, final T b);
 }

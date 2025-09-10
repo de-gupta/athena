@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public final class ClassNameUtility
 {
-	public static boolean hasValidJavaClassNameFormat(String domainName)
+	public static boolean hasValidJavaClassNameFormat(final String domainName)
 	{
 		return Optional.ofNullable(domainName)
 					   .filter(StringFormatUtility::startsWithUppercase)
