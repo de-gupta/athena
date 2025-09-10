@@ -4,10 +4,9 @@ import de.gupta.commons.utility.map.enumMap.EnumMapArithmetic;
 
 import java.util.EnumMap;
 
-final class FreeAbelianGroupCanonicalImplementation<V extends Enum<V>> implements FreeAbelianGroup<V>
+record FreeAbelianGroupCanonicalImplementation<V extends Enum<V>>(FreeAbelianGroupGeneratorType<V> generatorType)
+		implements FreeAbelianGroup<V>
 {
-	private final FreeAbelianGroupGeneratorType<V> generatorType;
-
 	static <V extends Enum<V>> FreeAbelianGroup<V> of(final FreeAbelianGroupGeneratorType<V> generatorType)
 	{
 		return new FreeAbelianGroupCanonicalImplementation<>(generatorType);
@@ -29,10 +28,5 @@ final class FreeAbelianGroupCanonicalImplementation<V extends Enum<V>> implement
 	public EnumMap<V, Integer> negate(final EnumMap<V, Integer> a)
 	{
 		return EnumMapArithmetic.manipulateAndCleanIfValueEqualsGivenValue(a, -1, (i, n) -> i * n, 0);
-	}
-
-	private FreeAbelianGroupCanonicalImplementation(final FreeAbelianGroupGeneratorType<V> generatorType)
-	{
-		this.generatorType = generatorType;
 	}
 }
