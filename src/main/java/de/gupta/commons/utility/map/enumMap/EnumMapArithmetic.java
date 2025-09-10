@@ -43,7 +43,6 @@ public final class EnumMapArithmetic
 		return result;
 	}
 
-
 	private EnumMapArithmetic()
 	{
 	}
