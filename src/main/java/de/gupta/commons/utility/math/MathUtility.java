@@ -25,6 +25,7 @@ public final class MathUtility
 	{
 		return value < floorGrace ? (value - floorGrace) / (perfectValue - value)
 				: value > ceilingGrace ? (ceilingGrace - value) / (value - perfectValue)
+				: value == floorGrace || value == ceilingGrace ? 1.0
 				: value <= perfectValue ? 1 - ((perfectValue - value) / (perfectValue - floorGrace))
 				: 1 - ((value - perfectValue) / (ceilingGrace - perfectValue));
 	}
