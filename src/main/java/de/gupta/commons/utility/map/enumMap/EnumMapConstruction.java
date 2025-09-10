@@ -10,7 +10,7 @@ public final class EnumMapConstruction
 		return from(Map.of(key, value), key.getDeclaringClass());
 	}
 
-	public static <K extends Enum<K>, V> EnumMap<K, V> from(final Map<K, V> map, Class<K> enumClass)
+	public static <K extends Enum<K>, V> EnumMap<K, V> from(final Map<K, V> map, final Class<K> enumClass)
 	{
 		return map.isEmpty() ? new EnumMap<>(enumClass) : new EnumMap<>(map);
 	}

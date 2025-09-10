@@ -8,7 +8,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,14 +19,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("EnumMapConstruction Tests")
 class EnumMapConstructionTest
 {
-	enum TestEnum
+	private enum TestEnum
 	{
 		FIRST,
 		SECOND,
 		THIRD
 	}
 
-	enum SingleValueEnum
+	private enum SingleValueEnum
 	{
 		ONLY_VALUE
 	}
@@ -36,7 +38,7 @@ class EnumMapConstructionTest
 		@ParameterizedTest(name = "{2}")
 		@MethodSource("validSingleTestCases")
 		@DisplayName("Test single method creates EnumMap with one entry")
-		void testSingleValidInputs(TestEnum key, Object value, String description)
+		void testSingleValidInputs(final TestEnum key, final Object value, final String description)
 		{
 			EnumMap<TestEnum, Object> result = EnumMapConstruction.single(key, value);
 
@@ -76,10 +78,26 @@ class EnumMapConstructionTest
 							  .containsEntry(SingleValueEnum.ONLY_VALUE, "test");
 		}
 
+		@Test
+		@DisplayName("Test single method creates modifiable EnumMap")
+		void testSingleCreatesModifiableMap()
+		{
+			EnumMap<TestEnum, String> result = EnumMapConstruction.single(TestEnum.FIRST, "initial_value");
+
+			result.put(TestEnum.SECOND, "added_value");
+			result.put(TestEnum.FIRST, "modified_value");
+
+			assertThat(result).as("Single method should create modifiable EnumMap")
+							  .isNotNull()
+							  .hasSize(2)
+							  .containsEntry(TestEnum.FIRST, "modified_value")
+							  .containsEntry(TestEnum.SECOND, "added_value");
+		}
+
 		@ParameterizedTest(name = "{1}")
 		@MethodSource("differentValueTypes")
 		@DisplayName("Test single method with different value types")
-		void testSingleDifferentValueTypes(Object value, String description)
+		void testSingleDifferentValueTypes(final Object value, final String description)
 		{
 			EnumMap<TestEnum, Object> result = EnumMapConstruction.single(TestEnum.FIRST, value);
 
@@ -108,7 +126,17 @@ class EnumMapConstructionTest
 					Arguments.of(123, "Integer value should be stored correctly"),
 					Arguments.of(45.67, "Double value should be stored correctly"),
 					Arguments.of(true, "Boolean value should be stored correctly"),
-					Arguments.of(new Object(), "Object value should be stored correctly")
+					Arguments.of(new Object(), "Object value should be stored correctly"),
+					Arguments.of(List.of("item1", "item2"), "List value should be stored correctly"),
+					Arguments.of(Set.of("set1", "set2"), "Set value should be stored correctly"),
+					Arguments.of(Map.of("key", "value"), "Map value should be stored correctly"),
+					Arguments.of(new int[]{1, 2, 3}, "Array value should be stored correctly"),
+					Arguments.of("", "Empty string value should be stored correctly"),
+					Arguments.of(0, "Zero value should be stored correctly"),
+					Arguments.of(-1, "Negative value should be stored correctly"),
+					Arguments.of(Long.MAX_VALUE, "Large long value should be stored correctly"),
+					Arguments.of(Double.NaN, "NaN double value should be stored correctly"),
+					Arguments.of(Double.POSITIVE_INFINITY, "Positive infinity should be stored correctly")
 			);
 		}
 
@@ -179,7 +207,8 @@ class EnumMapConstructionTest
 		@ParameterizedTest(name = "{2}")
 		@MethodSource("fromTestCases")
 		@DisplayName("Test from method with various map sizes")
-		void testFromVariousMapSizes(Map<TestEnum, String> sourceMap, int expectedSize, String description)
+		void testFromVariousMapSizes(final Map<TestEnum, String> sourceMap, final int expectedSize,
+									 final String description)
 		{
 			EnumMap<TestEnum, String> result = EnumMapConstruction.from(sourceMap, TestEnum.class);
 
@@ -333,7 +362,7 @@ class EnumMapConstructionTest
 		@ParameterizedTest(name = "{1}")
 		@MethodSource("copyOfTestCases")
 		@DisplayName("Test copyOf method with various EnumMap sizes")
-		void testCopyOfVariousSizes(EnumMap<TestEnum, String> originalMap, String description)
+		void testCopyOfVariousSizes(final EnumMap<TestEnum, String> originalMap, final String description)
 		{
 			EnumMap<TestEnum, String> result = EnumMapConstruction.copyOf(originalMap);
 
