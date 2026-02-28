@@ -15,7 +15,32 @@ public interface GroupStructure<T>
 
 	T identity();
 
+	default T zero()
+	{
+		return identity();
+	}
+
 	T inverse(final T element);
 
+	default T negation(final T element)
+	{
+		return inverse(element);
+	}
+
 	T multiply(final T a, final T b);
+
+	default T add(final T a, final T b)
+	{
+		return multiply(a, b);
+	}
+
+	default T divide(final T a, final T b)
+	{
+		return multiply(a, inverse(b));
+	}
+
+	default T subtract(final T a, final T b)
+	{
+		return divide(a, b);
+	}
 }
