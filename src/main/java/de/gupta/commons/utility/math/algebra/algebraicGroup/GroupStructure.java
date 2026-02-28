@@ -13,6 +13,11 @@ public interface GroupStructure<T>
 								 .reduce(element, this::multiply);
 	}
 
+	default T multiple(final T element, final int multiplier)
+	{
+		return power(element, multiplier);
+	}
+
 	T identity();
 
 	default T zero()
