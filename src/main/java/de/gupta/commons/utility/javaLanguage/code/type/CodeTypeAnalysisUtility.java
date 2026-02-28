@@ -56,14 +56,14 @@ public final class CodeTypeAnalysisUtility
 				Optional.empty();
 	}
 
-	public static boolean isTypeDeclaration(String line)
+	public static boolean isTypeDeclaration(final String line)
 	{
 		String pattern = "^(\\s*)(public\\s+|private\\s+|protected\\s+|static\\s+|final\\s+|abstract\\s+)*" +
 				"(class|interface|record)\\s+[A-Za-z0-9_$]+(<.*>)?";
 		return line.matches(pattern);
 	}
 
-	public static TypeDeclaration parseTypeDeclaration(String line)
+	public static TypeDeclaration parseTypeDeclaration(final String line)
 	{
 		return Optional.ofNullable(line)
 					   .map(String::trim)

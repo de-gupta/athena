@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 public final class HashUtility
 {
-	public static String md5Hash(String input)
+	public static String md5Hash(final String input)
 	{
 		try
 		{
