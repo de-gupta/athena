@@ -3,14 +3,14 @@ package de.gupta.commons.utility.math.algebra.algebraicGroup.freeAbelianGroup;
 import de.gupta.commons.utility.collection.SetUtility;
 import de.gupta.commons.utility.map.enumMap.EnumMapConstruction;
 import de.gupta.commons.utility.math.MathUtility;
-import de.gupta.commons.utility.math.algebra.algebraicGroup.Group;
+import de.gupta.commons.utility.math.algebra.algebraicGroup.GroupStructure;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public final class HomomorphicMapExtension
 {
-	public static <T extends Group<T>, K extends Enum<K>> Set<T> preimagesFromPartialMapping(
+	public static <T extends GroupStructure<T>, K extends Enum<K>> Set<T> preimagesFromPartialMapping(
 			final Map<T, EnumMap<K, Integer>> partialMapping, final EnumMap<K, Integer> element)
 	{
 		return element.entrySet()
@@ -49,7 +49,7 @@ public final class HomomorphicMapExtension
 						  .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
-	private static <T extends Group<T>> Set<T> fromPreimagesAndExponents(final Set<T> elements, int exponent)
+	private static <T extends GroupStructure<T>> Set<T> fromPreimagesAndExponents(final Set<T> elements, int exponent)
 	{
 		return elements.stream()
 					   .map(element -> element.power(element, exponent))

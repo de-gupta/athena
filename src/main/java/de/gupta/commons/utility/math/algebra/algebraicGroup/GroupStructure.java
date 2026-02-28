@@ -2,7 +2,7 @@ package de.gupta.commons.utility.math.algebra.algebraicGroup;
 
 import java.util.stream.IntStream;
 
-public interface Group<T>
+public interface GroupStructure<T>
 {
 	default T power(final T element, final int exponent)
 	{
