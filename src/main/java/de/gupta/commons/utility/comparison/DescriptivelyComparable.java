@@ -7,7 +7,7 @@ public interface DescriptivelyComparable<T>
 
 	default boolean isEqualTo(T other)
 	{
-		return compare(other).equals(ComparisonResult.EQUAL);
+		return compare(other) == ComparisonResult.EQUAL;
 	}
 
 	default boolean isNotEqualTo(T other)
@@ -17,22 +17,22 @@ public interface DescriptivelyComparable<T>
 
 	default boolean isLessThan(T other)
 	{
-		return compare(other).equals(ComparisonResult.LESS_THAN);
+		return compare(other) == ComparisonResult.LESS_THAN;
 	}
 
 	default boolean isGreaterThan(T other)
 	{
-		return compare(other).equals(ComparisonResult.GREATER_THAN);
+		return compare(other) == ComparisonResult.GREATER_THAN;
 	}
 
 	default boolean isLessThanOrEqualTo(T other)
 	{
-		return compare(other).equals(ComparisonResult.LESS_THAN_OR_EQUAL);
+		return compare(other) == ComparisonResult.LESS_THAN_OR_EQUAL;
 	}
 
 	default boolean isGreaterThanOrEqualTo(T other)
 	{
-		return compare(other).equals(ComparisonResult.GREATER_THAN_OR_EQUAL);
+		return compare(other) == ComparisonResult.GREATER_THAN_OR_EQUAL;
 	}
 
 	default boolean isNotLessThan(T other)

@@ -1,6 +1,6 @@
 package de.gupta.commons.utility.math.algebra.algebraicGroup;
 
-public interface Group<E>
+public interface MultiplicativeGroup<E>
 {
 	E identity();
 
