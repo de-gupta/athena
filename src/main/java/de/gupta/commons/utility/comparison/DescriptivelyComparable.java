@@ -1,5 +1,6 @@
 package de.gupta.commons.utility.comparison;
 
+@FunctionalInterface
 public interface DescriptivelyComparable<T>
 {
 	ComparisonResult compare(T other);
