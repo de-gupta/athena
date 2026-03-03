@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.algebra.algebraicGroup;
+package de.gupta.commons.utility.math.algebra.ring;
 
 public interface Field<E>
 {
