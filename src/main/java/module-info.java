@@ -22,5 +22,5 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.algebraicGroup;
 	exports de.gupta.commons.utility.math.algebra.ring;
 
-	requires aletheia;
+	requires de.gupta.aletheia;
 }
