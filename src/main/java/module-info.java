@@ -28,6 +28,8 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.laws.binary;
 	exports de.gupta.commons.utility.math.algebra.laws.ring;
 	exports de.gupta.commons.utility.math.algebra.free.abelian;
+	exports de.gupta.commons.utility.math.algebra.structure.binary.notation.additive;
+	exports de.gupta.commons.utility.math.algebra.element.binary.notation.additive;
 
 	requires de.gupta.aletheia;
 }
