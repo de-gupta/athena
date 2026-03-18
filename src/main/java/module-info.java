@@ -19,8 +19,15 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.security;
 
 	exports de.gupta.commons.utility.math.prefix;
-	exports de.gupta.commons.utility.math.algebra.algebraicGroup;
-	exports de.gupta.commons.utility.math.algebra.ring;
+	exports de.gupta.commons.utility.math.algebra.structure.binary;
+	exports de.gupta.commons.utility.math.algebra.structure.ring;
+	exports de.gupta.commons.utility.math.algebra.structure.morphism;
+	exports de.gupta.commons.utility.math.algebra.element.binary;
+	exports de.gupta.commons.utility.math.algebra.element.ring;
+	exports de.gupta.commons.utility.math.algebra.element.adapter;
+	exports de.gupta.commons.utility.math.algebra.laws.binary;
+	exports de.gupta.commons.utility.math.algebra.laws.ring;
+	exports de.gupta.commons.utility.math.algebra.free.abelian;
 
 	requires de.gupta.aletheia;
 }
