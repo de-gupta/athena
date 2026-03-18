@@ -1,6 +1,5 @@
 package de.gupta.commons.utility.math.algebra.free.abelian;
 
-import de.gupta.commons.utility.map.enumMap.EnumMapConstruction;
 import de.gupta.commons.utility.math.MathUtility;
 import de.gupta.commons.utility.math.algebra.structure.binary.GroupStructure;
 
@@ -11,12 +10,13 @@ public final class HomomorphicMapExtension
 {
 	public static <T, K extends Enum<K>> Set<T> preimagesFromPartialMapping(
 			final GroupStructure<T> structure,
+			final FreeAbelianGroupStructure<K> codomain,
 			final Map<T, EnumMap<K, Integer>> partialMapping,
 			final EnumMap<K, Integer> element)
 	{
 		return element.entrySet()
 					  .stream()
-					  .map(entry -> fromGeneratorSlice(entry, partialMapping)
+					  .map(entry -> fromGeneratorSlice(entry, codomain, partialMapping)
 							  .entrySet().stream()
 							  .map(e -> fromPreimagesAndExponents(structure, e.getKey(), e.getValue()))
 							  .flatMap(Set::stream)
@@ -37,19 +37,21 @@ public final class HomomorphicMapExtension
 
 	private static <T, K extends Enum<K>> Map<Set<T>, Integer> fromGeneratorSlice(
 			final Map.Entry<K, Integer> generatorSlice,
+			final FreeAbelianGroupStructure<K> codomain,
 			final Map<T, EnumMap<K, Integer>> partialMapping)
 	{
 		return MathUtility.positiveDivisors(generatorSlice.getValue())
 						  .stream()
 						  .map(divisor -> new AbstractMap.SimpleEntry<>(
 								  partialMapping.entrySet().stream()
-												.filter(e -> e.getValue().equals(EnumMapConstruction.single(
+												.filter(e -> e.getValue().equals(codomain.generator(
 														generatorSlice.getKey(), divisor)))
 												.map(Map.Entry::getKey)
 												.collect(Collectors.toSet()),
 								  generatorSlice.getValue() / divisor))
 						  .filter(entry -> !entry.getKey().isEmpty())
-						  .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+						  .collect(
+								  Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 	}
 
 	private static <T> Set<T> fromPreimagesAndExponents(final GroupStructure<T> structure,
