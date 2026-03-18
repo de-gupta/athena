@@ -17,7 +17,7 @@ public final class HomomorphicMapExtension
 			final Map<T, FreeAbelianElement<K>> partialMapping,
 			final FreeAbelianElement<K> element)
 	{
-		return element.stream()
+		return element.exponentStream()
 					  .map(entry -> fromGeneratorSlice(entry, codomain, partialMapping)
 							  .entrySet().stream()
 							  .map(e -> fromPreimagesAndExponents(structure, e.getKey(), e.getValue()))

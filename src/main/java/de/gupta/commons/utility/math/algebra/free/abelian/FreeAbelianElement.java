@@ -6,27 +6,32 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public record FreeAbelianElement<V extends Enum<V>>(Class<V> generatorType, Map<V, Integer> exponents)
+public final class FreeAbelianElement<V extends Enum<V>>
 {
-	public static <V extends Enum<V>> FreeAbelianElement<V> zero(final Class<V> generatorType)
-	{
-		return new FreeAbelianElement<>(generatorType, Map.of());
-	}
+	private final Class<V> generatorType;
+	private final Map<V, Integer> exponents;
 
-	public static <V extends Enum<V>> FreeAbelianElement<V> generator(final V generator)
+	static <V extends Enum<V>> FreeAbelianElement<V> generator(final V generator)
 	{
 		return generator(generator, 1);
 	}
 
-	public static <V extends Enum<V>> FreeAbelianElement<V> generator(final V generator, final int exponent)
+	static <V extends Enum<V>> FreeAbelianElement<V> generator(final V generator, final int exponent)
 	{
 		Objects.requireNonNull(generator, "generator");
 		return exponent == 0
 				? zero(generator.getDeclaringClass())
-				: new FreeAbelianElement<>(generator.getDeclaringClass(), Map.of(generator, exponent));
+				: from(generator.getDeclaringClass(), Map.of(generator, exponent));
 	}
 
-	public FreeAbelianElement
+	static <V extends Enum<V>> FreeAbelianElement<V> zero(final Class<V> generatorType)
+	{
+		Objects.requireNonNull(generatorType, "generatorType");
+		return new FreeAbelianElement<>(generatorType, new EnumMap<>(generatorType));
+	}
+
+	static <V extends Enum<V>> FreeAbelianElement<V> from(final Class<V> generatorType,
+														  final Map<? extends V, Integer> exponents)
 	{
 		Objects.requireNonNull(generatorType, "generatorType");
 		Objects.requireNonNull(exponents, "exponents");
@@ -44,7 +49,14 @@ public record FreeAbelianElement<V extends Enum<V>>(Class<V> generatorType, Map<
 				canonical.put(generator, exponent);
 			}
 		});
-		exponents = Collections.unmodifiableMap(canonical);
+		return new FreeAbelianElement<>(generatorType, canonical);
+	}
+
+	static <V extends Enum<V>> FreeAbelianElement<V> fromCanonical(final Class<V> generatorType,
+																   final EnumMap<V, Integer> exponents)
+	{
+		Objects.requireNonNull(exponents, "exponents");
+		return new FreeAbelianElement<>(generatorType, exponents);
 	}
 
 	public int exponentOf(final V generator)
@@ -57,8 +69,38 @@ public record FreeAbelianElement<V extends Enum<V>>(Class<V> generatorType, Map<
 		return exponents.isEmpty();
 	}
 
-	public Stream<Map.Entry<V, Integer>> stream()
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(generatorType, exponents);
+	}
+
+	@Override
+	public boolean equals(final Object o)
+	{
+		if (!(o instanceof final FreeAbelianElement<?> that)) return false;
+		return Objects.equals(generatorType, that.generatorType) && Objects.equals(exponents,
+				that.exponents);
+	}
+
+	Class<V> generatorType()
+	{
+		return generatorType;
+	}
+
+	Map<V, Integer> exponents()
+	{
+		return exponents;
+	}
+
+	Stream<Map.Entry<V, Integer>> exponentStream()
 	{
 		return exponents.entrySet().stream();
+	}
+
+	private FreeAbelianElement(final Class<V> generatorType, final EnumMap<V, Integer> canonicalExponents)
+	{
+		this.generatorType = Objects.requireNonNull(generatorType, "generatorType");
+		this.exponents = Collections.unmodifiableMap(new EnumMap<>(canonicalExponents));
 	}
 }

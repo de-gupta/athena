@@ -15,7 +15,7 @@ record FreeAbelianGroupCanonicalImplementation<V extends Enum<V>>(
 	@Override
 	public FreeAbelianElement<V> combine(final FreeAbelianElement<V> left, final FreeAbelianElement<V> right)
 	{
-		return new FreeAbelianElement<>(
+		return FreeAbelianElement.fromCanonical(
 				generatorType(),
 				EnumMapArithmetic.mergeAndCleanIfValueEqualsGivenValue(
 						EnumMapConstruction.from(left.exponents(), generatorType()),
@@ -27,7 +27,7 @@ record FreeAbelianGroupCanonicalImplementation<V extends Enum<V>>(
 	@Override
 	public FreeAbelianElement<V> inverse(final FreeAbelianElement<V> element)
 	{
-		return new FreeAbelianElement<>(
+		return FreeAbelianElement.fromCanonical(
 				generatorType(),
 				EnumMapArithmetic.manipulateAndCleanIfValueEqualsGivenValue(
 						EnumMapConstruction.from(element.exponents(), generatorType()),

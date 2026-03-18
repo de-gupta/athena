@@ -53,7 +53,7 @@ public interface FreeAbelianGroupStructure<V extends Enum<V>> extends AbelianGro
 	{
 		return element.isZero()
 				? "0"
-				: element.stream()
+				: element.exponentStream()
 						 .map(entry -> entry.getKey() + "^" + entry.getValue())
 						 .collect(Collectors.joining("·"));
 	}

@@ -13,14 +13,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class FreeAbelianElementTest
 {
 	@Test
-	@DisplayName("constructor should canonicalize, copy and protect exponent maps")
-	void constructorShouldCanonicalizeCopyAndProtectExponentMaps()
+	@DisplayName("factory should canonicalize, copy and protect exponent maps")
+	void factoryShouldCanonicalizeCopyAndProtectExponentMaps()
 	{
 		final EnumMap<TestEnum, Integer> source = new EnumMap<>(TestEnum.class);
 		source.put(TestEnum.FIRST, 3);
 		source.put(TestEnum.SECOND, 0);
 
-		final FreeAbelianElement<TestEnum> element = new FreeAbelianElement<>(TestEnum.class, source);
+		final FreeAbelianElement<TestEnum> element = FreeAbelianElement.from(TestEnum.class, source);
 		source.put(TestEnum.FIRST, 99);
 
 		assertThat(element.exponents())
@@ -35,7 +35,7 @@ class FreeAbelianElementTest
 	void generatorHelpersShouldProduceCanonicalElements()
 	{
 		assertThat(FreeAbelianElement.generator(TestEnum.FIRST))
-				.isEqualTo(new FreeAbelianElement<>(TestEnum.class, Map.of(TestEnum.FIRST, 1)));
+				.isEqualTo(FreeAbelianElement.from(TestEnum.class, Map.of(TestEnum.FIRST, 1)));
 
 		assertThat(FreeAbelianElement.generator(TestEnum.SECOND, 0))
 				.isEqualTo(FreeAbelianElement.zero(TestEnum.class));
@@ -46,15 +46,28 @@ class FreeAbelianElementTest
 	void zeroAndExponentAccessShouldBehaveNaturally()
 	{
 		final FreeAbelianElement<TestEnum> zero = FreeAbelianElement.zero(TestEnum.class);
-		final FreeAbelianElement<TestEnum> element = new FreeAbelianElement<>(
+		final FreeAbelianElement<TestEnum> element = FreeAbelianElement.from(
 				TestEnum.class,
 				Map.of(TestEnum.FIRST, 2, TestEnum.SECOND, -1));
 
 		assertThat(zero.isZero()).isTrue();
-		assertThat(zero.stream()).isEmpty();
+		assertThat(zero.exponentStream()).isEmpty();
 		assertThat(element.isZero()).isFalse();
 		assertThat(element.exponentOf(TestEnum.FIRST)).isEqualTo(2);
 		assertThat(element.exponentOf(TestEnum.THIRD)).isEqualTo(0);
+	}
+
+	@Test
+	@DisplayName("factory should reject null inputs")
+	void factoryShouldRejectNullInputs()
+	{
+		assertThatThrownBy(() -> FreeAbelianElement.from(null, Map.of(TestEnum.FIRST, 1)))
+				.isInstanceOf(NullPointerException.class)
+				.hasMessage("generatorType");
+
+		assertThatThrownBy(() -> FreeAbelianElement.from(TestEnum.class, null))
+				.isInstanceOf(NullPointerException.class)
+				.hasMessage("exponents");
 	}
 
 	private enum TestEnum
