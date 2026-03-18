@@ -1,8 +1,6 @@
-package de.gupta.commons.utility.math.algebra.element.binary;
+package de.gupta.commons.utility.math.algebra.element.binary.notation.additive;
 
 import de.gupta.aletheia.collection.folding.Loom;
-import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveAbelianGroup;
-import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveMonoid;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,22 +8,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Binary Element Defaults")
-class BinaryElementDefaultsTest
+@DisplayName("Additive Element Notation")
+class AdditiveElementNotationTest
 {
-	@Test
-	@DisplayName("semigroup and monoid element helpers should preserve order and identity")
-	void semigroupAndMonoidElementHelpersPreserveOrderAndIdentity()
-	{
-		Word seed = new Word("a");
-
-		assertThat(seed.combineAll(Loom.harness(List.of(new Word("b"), new Word("c")))))
-				.isEqualTo(new Word("abc"));
-		assertThat(seed.combineAll(List.of(new Word("b"), new Word("c"))))
-				.isEqualTo(new Word("abc"));
-		assertThat(seed.identity()).isEqualTo(new Word(""));
-	}
-
 	@Test
 	@DisplayName("additive semigroup and monoid aliases should delegate cleanly")
 	void additiveSemigroupAndMonoidAliasesShouldDelegateCleanly()
@@ -40,20 +25,8 @@ class BinaryElementDefaultsTest
 	}
 
 	@Test
-	@DisplayName("group element helpers should support divide and power")
-	void groupElementHelpersSupportDivideAndPower()
-	{
-		IntegerAdditionElement three = new IntegerAdditionElement(3);
-
-		assertThat(three.divide(new IntegerAdditionElement(2))).isEqualTo(new IntegerAdditionElement(1));
-		assertThat(three.power(4)).isEqualTo(new IntegerAdditionElement(12));
-		assertThat(three.power(-2)).isEqualTo(new IntegerAdditionElement(-6));
-		assertThat(three.power(0)).isEqualTo(new IntegerAdditionElement(0));
-	}
-
-	@Test
-	@DisplayName("additive group element aliases should delegate to the neutral core")
-	void additiveGroupElementAliasesShouldDelegateToTheNeutralCore()
+	@DisplayName("additive group aliases should delegate to the neutral core")
+	void additiveGroupAliasesShouldDelegateToTheNeutralCore()
 	{
 		IntegerAdditionElement three = new IntegerAdditionElement(3);
 
@@ -64,28 +37,13 @@ class BinaryElementDefaultsTest
 	}
 
 	@Test
-	@DisplayName("additive abelian group element should remain commutative")
-	void additiveAbelianGroupElementShouldRemainCommutative()
+	@DisplayName("additive abelian group should remain commutative")
+	void additiveAbelianGroupShouldRemainCommutative()
 	{
 		IntegerAdditionElement three = new IntegerAdditionElement(3);
 		IntegerAdditionElement two = new IntegerAdditionElement(2);
 
 		assertThat(three.add(two)).isEqualTo(two.add(three));
-	}
-
-	private record Word(String value) implements Monoid<Word>
-	{
-		@Override
-		public Word combine(final Word other)
-		{
-			return new Word(value + other.value);
-		}
-
-		@Override
-		public Word identity()
-		{
-			return new Word("");
-		}
 	}
 
 	private record AdditiveNaturalNumber(int value) implements AdditiveMonoid<AdditiveNaturalNumber>

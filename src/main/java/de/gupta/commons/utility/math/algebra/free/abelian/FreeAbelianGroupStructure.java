@@ -1,10 +1,11 @@
 package de.gupta.commons.utility.math.algebra.free.abelian;
 
-import de.gupta.commons.utility.math.algebra.structure.binary.AbelianGroupStructure;
+import de.gupta.commons.utility.math.algebra.structure.binary.notation.additive.AdditiveAbelianGroupStructure;
 
 import java.util.stream.Collectors;
 
-public interface FreeAbelianGroupStructure<V extends Enum<V>> extends AbelianGroupStructure<FreeAbelianElement<V>>
+public interface FreeAbelianGroupStructure<V extends Enum<V>>
+		extends AdditiveAbelianGroupStructure<FreeAbelianElement<V>>
 {
 	Class<V> generatorType();
 
