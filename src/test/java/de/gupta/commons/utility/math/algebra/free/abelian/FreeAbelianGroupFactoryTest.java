@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,34 +38,33 @@ class FreeAbelianGroupFactoryTest
 		@ParameterizedTest
 		@DisplayName("should create free abelian group for valid enum classes")
 		@MethodSource("validEnumClassTestCases")
-		<V extends Enum<V>> void testCreateWithValidEnumClasses(final Class<V> enumClass, final String description,
+		<V extends Enum<V>> void testCreateWithValidEnumClasses(final Class<V> enumClass,
+																final String description,
 																final int expectedEnumConstantsCount)
 		{
-			var result = FreeAbelianGroupFactory.create(enumClass);
+			final FreeAbelianGroup<V> result = FreeAbelianGroupFactory.create(enumClass);
 
 			assertThat(result)
 					.as("Factory should return non-null FreeAbelianGroup for %s", description)
-					.isNotNull();
-
-			assertThat(result)
-					.as("Factory should return FreeAbelianGroupCanonicalImplementation instance")
+					.isNotNull()
 					.isInstanceOf(FreeAbelianGroupCanonicalImplementation.class);
 
-			var zeroElement = result.zero();
-			assertThat(zeroElement)
-					.as("Zero element should not be null")
-					.isNotNull();
+			assertThat(result.generatorType())
+					.as("Factory should keep the enum type for %s", description)
+					.isEqualTo(enumClass);
 
-			var testElement = result.zero();
-			for (var constant : enumClass.getEnumConstants())
-			{
-				testElement.put(constant, 1);
-			}
-			assertThat(testElement.size())
+			assertThat(result.zero())
+					.as("Zero element should be the identity element")
+					.isEqualTo(result.identity());
+
+			final FreeAbelianElement<V> allGenerators = result.combineAll(
+					Arrays.stream(enumClass.getEnumConstants()).map(result::generator).toList());
+
+			assertThat(allGenerators.exponents())
 					.as("Group should support all enum constants for %s", description)
-					.isEqualTo(expectedEnumConstantsCount);
+					.hasSize(expectedEnumConstantsCount);
 
-			assertThat(result.isZero(zeroElement))
+			assertThat(result.isZero(result.zero()))
 					.as("Zero element should be recognized as zero")
 					.isTrue();
 		}
@@ -73,13 +73,13 @@ class FreeAbelianGroupFactoryTest
 		@DisplayName("should create functional free abelian group with basic operations")
 		void testCreateProducesFunctionalGroup()
 		{
-			var group = FreeAbelianGroupFactory.create(TestEnum.class);
-			var zero = group.zero();
+			final FreeAbelianGroup<TestEnum> group = FreeAbelianGroupFactory.create(TestEnum.class);
+			final FreeAbelianElement<TestEnum> element = group.add(
+					group.generator(TestEnum.FIRST, 3),
+					group.generator(TestEnum.SECOND, -2));
 
-			zero.put(TestEnum.FIRST, 3);
-			zero.put(TestEnum.SECOND, -2);
+			final FreeAbelianElement<TestEnum> negated = group.negate(element);
 
-			var negated = group.negate(zero);
 			assertThat(group.exponentOf(negated, TestEnum.FIRST))
 					.as("Negation should flip sign of first component")
 					.isEqualTo(-3);
@@ -88,46 +88,38 @@ class FreeAbelianGroupFactoryTest
 					.as("Negation should flip sign of second component")
 					.isEqualTo(2);
 
-			var sum = group.add(zero, negated);
-			assertThat(group.isZero(sum))
+			assertThat(group.add(element, negated))
 					.as("Adding element and its negation should yield zero")
-					.isTrue();
+					.isEqualTo(group.zero());
 		}
 
 		@Test
 		@DisplayName("should create group with proper scaling functionality")
 		void testCreateProducesGroupWithScaling()
 		{
-			var group = FreeAbelianGroupFactory.create(TestEnum.class);
-			var element = group.zero();
-			element.put(TestEnum.FIRST, 2);
+			final FreeAbelianGroup<TestEnum> group = FreeAbelianGroupFactory.create(TestEnum.class);
+			final FreeAbelianElement<TestEnum> element = group.generator(TestEnum.FIRST, 2);
 
-			var scaled = group.scale(element, 3);
-			assertThat(group.exponentOf(scaled, TestEnum.FIRST))
+			assertThat(group.scale(element, 3))
 					.as("Scaling by 3 should multiply exponent by 3")
-					.isEqualTo(6);
+					.isEqualTo(group.generator(TestEnum.FIRST, 6));
 
-			var zeroScaled = group.scale(element, 0);
-			assertThat(group.isZero(zeroScaled))
+			assertThat(group.scale(element, 0))
 					.as("Scaling by zero should yield zero element")
-					.isTrue();
+					.isEqualTo(group.zero());
 		}
 
 		@Test
 		@DisplayName("should create group with proper subtraction functionality")
 		void testCreateProducesGroupWithSubtraction()
 		{
-			var group = FreeAbelianGroupFactory.create(TestEnum.class);
-			var a = group.zero();
-			a.put(TestEnum.FIRST, 5);
+			final FreeAbelianGroup<TestEnum> group = FreeAbelianGroupFactory.create(TestEnum.class);
 
-			var b = group.zero();
-			b.put(TestEnum.FIRST, 3);
-
-			var difference = group.subtract(a, b);
-			assertThat(group.exponentOf(difference, TestEnum.FIRST))
+			assertThat(group.subtract(
+					group.generator(TestEnum.FIRST, 5),
+					group.generator(TestEnum.FIRST, 3)))
 					.as("Subtraction should compute correct difference")
-					.isEqualTo(2);
+					.isEqualTo(group.generator(TestEnum.FIRST, 2));
 		}
 
 		private static Stream<Arguments> validEnumClassTestCases()
@@ -135,17 +127,17 @@ class FreeAbelianGroupFactoryTest
 			return Stream.of(
 					ValidEnumClassTestCase.of(TestEnum.class, "simple test enum", 3),
 					ValidEnumClassTestCase.of(SingleValueEnum.class, "single value enum", 1),
-					ValidEnumClassTestCase.of(LargeEnum.class, "larger enum with many values", 5)
-			).map(ValidEnumClassTestCase::toArguments);
+								 ValidEnumClassTestCase.of(LargeEnum.class, "larger enum with many values", 5))
+						 .map(ValidEnumClassTestCase::toArguments);
 		}
 
 		private record ValidEnumClassTestCase(
 				Class<? extends Enum<?>> enumClass,
 				String description,
-				int expectedEnumConstantsCount
-		)
+				int expectedEnumConstantsCount)
 		{
-			static ValidEnumClassTestCase of(final Class<? extends Enum<?>> enumClass, final String description,
+			static ValidEnumClassTestCase of(final Class<? extends Enum<?>> enumClass,
+											 final String description,
 											 final int expectedEnumConstantsCount)
 			{
 				return new ValidEnumClassTestCase(enumClass, description, expectedEnumConstantsCount);
@@ -162,24 +154,16 @@ class FreeAbelianGroupFactoryTest
 	@DisplayName("Group Properties Tests")
 	final class GroupPropertiesTests
 	{
-		@ParameterizedTest(name = "{2}")
+		@ParameterizedTest(name = "{1}")
 		@DisplayName("should create groups with algebraic properties")
 		@MethodSource("algebraicPropertyTestCases")
 		<V extends Enum<V>> void testAlgebraicProperties(final Class<V> enumClass, final String propertyDescription)
 		{
-			var group = FreeAbelianGroupFactory.create(enumClass);
-			var zero = group.zero();
-			var a = group.zero();
-			var b = group.zero();
-
-			if (enumClass.getEnumConstants().length > 0)
-			{
-				a.put(enumClass.getEnumConstants()[0], 2);
-				if (enumClass.getEnumConstants().length > 1)
-				{
-					b.put(enumClass.getEnumConstants()[1], 3);
-				}
-			}
+			final FreeAbelianGroup<V> group = FreeAbelianGroupFactory.create(enumClass);
+			final V[] constants = enumClass.getEnumConstants();
+			final FreeAbelianElement<V> zero = group.zero();
+			final FreeAbelianElement<V> a = group.generator(constants[0], 2);
+			final FreeAbelianElement<V> b = constants.length > 1 ? group.generator(constants[1], 3) : zero;
 
 			assertThat(group.add(a, zero))
 					.as("Adding zero should be identity operation")
@@ -189,42 +173,39 @@ class FreeAbelianGroupFactoryTest
 					.as("Zero should be left identity")
 					.isEqualTo(a);
 
-			var negA = group.negate(a);
-			var shouldBeZero = group.add(a, negA);
-			assertThat(group.isZero(shouldBeZero))
+			assertThat(group.add(a, group.negate(a)))
 					.as("Adding element and its negation should yield zero")
-					.isTrue();
+					.isEqualTo(zero);
 
-			if (enumClass.getEnumConstants().length > 1)
-			{
-				assertThat(group.add(a, b))
-						.as("Addition should be commutative")
-						.isEqualTo(group.add(b, a));
-			}
+			assertThat(group.add(a, b))
+					.as("Addition should be commutative")
+					.isEqualTo(group.add(b, a));
 		}
 
 		@Test
 		@DisplayName("should create groups where canonical string representation works")
 		void testCanonicalStringRepresentation()
 		{
-			var group = FreeAbelianGroupFactory.create(TestEnum.class);
-			var element = group.zero();
-			element.put(TestEnum.FIRST, 2);
-			element.put(TestEnum.SECOND, -1);
+			final FreeAbelianGroup<TestEnum> group = FreeAbelianGroupFactory.create(TestEnum.class);
+			final FreeAbelianElement<TestEnum> element = group.add(
+					group.generator(TestEnum.FIRST, 2),
+					group.generator(TestEnum.SECOND, -1));
 
-			var canonicalString = group.toCanonicalString(element);
-			assertThat(canonicalString)
-					.as("Canonical string should contain exponents")
-					.contains("^2", "^-1");
+			assertThat(group.toCanonicalString(element))
+					.as("Canonical string should contain generators and exponents")
+					.contains("FIRST^2", "SECOND^-1");
+
+			assertThat(group.toCanonicalString(group.zero()))
+					.as("Zero should render canonically")
+					.isEqualTo("0");
 		}
 
 		@Test
 		@DisplayName("should create groups with proper exponent extraction")
 		void testExponentExtraction()
 		{
-			var group = FreeAbelianGroupFactory.create(TestEnum.class);
-			var element = group.zero();
-			element.put(TestEnum.FIRST, 7);
+			final FreeAbelianGroup<TestEnum> group = FreeAbelianGroupFactory.create(TestEnum.class);
+			final FreeAbelianElement<TestEnum> element = group.generator(TestEnum.FIRST, 7);
 
 			assertThat(group.exponentOf(element, TestEnum.FIRST))
 					.as("Should extract correct exponent for existing entry")
@@ -240,14 +221,13 @@ class FreeAbelianGroupFactoryTest
 			return Stream.of(
 					AlgebraicPropertyTestCase.of(TestEnum.class, "test enum algebraic properties"),
 					AlgebraicPropertyTestCase.of(SingleValueEnum.class, "single value enum algebraic properties"),
-					AlgebraicPropertyTestCase.of(LargeEnum.class, "large enum algebraic properties")
-			).map(AlgebraicPropertyTestCase::toArguments);
+								 AlgebraicPropertyTestCase.of(LargeEnum.class, "large enum algebraic properties"))
+						 .map(AlgebraicPropertyTestCase::toArguments);
 		}
 
 		private record AlgebraicPropertyTestCase(
 				Class<? extends Enum<?>> enumClass,
-				String propertyDescription
-		)
+				String propertyDescription)
 		{
 			static AlgebraicPropertyTestCase of(final Class<? extends Enum<?>> enumClass,
 												final String propertyDescription)
@@ -270,47 +250,39 @@ class FreeAbelianGroupFactoryTest
 		@DisplayName("should handle single value enums correctly")
 		void testSingleValueEnum()
 		{
-			var group = FreeAbelianGroupFactory.create(SingleValueEnum.class);
-			var element = group.zero();
-			element.put(SingleValueEnum.ONLY, 5);
+			final FreeAbelianGroup<SingleValueEnum> group = FreeAbelianGroupFactory.create(SingleValueEnum.class);
+			final FreeAbelianElement<SingleValueEnum> element = group.generator(SingleValueEnum.ONLY, 5);
 
-			var doubled = group.scale(element, 2);
-			assertThat(group.exponentOf(doubled, SingleValueEnum.ONLY))
+			assertThat(group.scale(element, 2))
 					.as("Single value enum should scale correctly")
-					.isEqualTo(10);
+					.isEqualTo(group.generator(SingleValueEnum.ONLY, 10));
 		}
 
 		@Test
 		@DisplayName("should create distinct instances for different calls")
 		void testFactoryCreatesDistinctInstances()
 		{
-			var group1 = FreeAbelianGroupFactory.create(TestEnum.class);
-			var group2 = FreeAbelianGroupFactory.create(TestEnum.class);
-
-			assertThat(group1)
+			assertThat(FreeAbelianGroupFactory.create(TestEnum.class))
 					.as("Factory should create distinct instances")
-					.isNotSameAs(group2);
+					.isNotSameAs(FreeAbelianGroupFactory.create(TestEnum.class));
 		}
 
 		@Test
 		@DisplayName("should handle enums with many constants")
 		void testLargeEnum()
 		{
-			var group = FreeAbelianGroupFactory.create(LargeEnum.class);
-			var zero = group.zero();
+			final FreeAbelianGroup<LargeEnum> group = FreeAbelianGroupFactory.create(LargeEnum.class);
 
-			var testElement = group.zero();
-			for (var constant : LargeEnum.values())
-			{
-				testElement.put(constant, 1);
-			}
-			assertThat(testElement.size())
+			final FreeAbelianElement<LargeEnum> element = group.combineAll(
+					Arrays.stream(LargeEnum.values()).map(group::generator).toList());
+
+			assertThat(element.exponents())
 					.as("Large enum should support all constants when populated")
-					.isEqualTo(LargeEnum.values().length);
+					.hasSize(LargeEnum.values().length);
 
-			for (var constant : LargeEnum.values())
+			for (final LargeEnum constant : LargeEnum.values())
 			{
-				assertThat(group.exponentOf(zero, constant))
+				assertThat(group.exponentOf(group.zero(), constant))
 						.as("All exponents should start at zero")
 						.isEqualTo(0);
 			}
@@ -325,8 +297,7 @@ class FreeAbelianGroupFactoryTest
 		@DisplayName("should have private constructor")
 		void testPrivateConstructor() throws Exception
 		{
-			var constructor = FreeAbelianGroupFactory.class.getDeclaredConstructor();
-			assertThat(Modifier.isPrivate(constructor.getModifiers()))
+			assertThat(Modifier.isPrivate(FreeAbelianGroupFactory.class.getDeclaredConstructor().getModifiers()))
 					.as("Constructor should be private")
 					.isTrue();
 		}

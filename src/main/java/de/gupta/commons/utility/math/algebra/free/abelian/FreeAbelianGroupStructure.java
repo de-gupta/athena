@@ -1,71 +1,70 @@
 package de.gupta.commons.utility.math.algebra.free.abelian;
 
-import de.gupta.commons.utility.map.enumMap.EnumMapConstruction;
 import de.gupta.commons.utility.math.algebra.structure.binary.AbelianGroupStructure;
 
-import java.util.EnumMap;
 import java.util.stream.Collectors;
 
-public interface FreeAbelianGroupStructure<V extends Enum<V>> extends AbelianGroupStructure<EnumMap<V, Integer>>
+public interface FreeAbelianGroupStructure<V extends Enum<V>> extends AbelianGroupStructure<FreeAbelianElement<V>>
 {
 	Class<V> generatorType();
 
 	@Override
-	default EnumMap<V, Integer> identity()
+	default FreeAbelianElement<V> identity()
 	{
-		return new EnumMap<>(generatorType());
+		return FreeAbelianElement.zero(generatorType());
 	}
 
-	default EnumMap<V, Integer> zero()
+	default FreeAbelianElement<V> zero()
 	{
 		return identity();
 	}
 
-	default EnumMap<V, Integer> generator(final V generator)
+	default FreeAbelianElement<V> generator(final V generator)
 	{
-		return generator(generator, 1);
+		return FreeAbelianElement.generator(generator);
 	}
 
-	default EnumMap<V, Integer> generator(final V generator, final int exponent)
+	default FreeAbelianElement<V> generator(final V generator, final int exponent)
 	{
-		return exponent == 0 ? zero() : EnumMapConstruction.single(generator, exponent);
+		return FreeAbelianElement.generator(generator, exponent);
 	}
 
-	default EnumMap<V, Integer> add(final EnumMap<V, Integer> left, final EnumMap<V, Integer> right)
+	default FreeAbelianElement<V> add(final FreeAbelianElement<V> left, final FreeAbelianElement<V> right)
 	{
 		return combine(left, right);
 	}
 
-	default EnumMap<V, Integer> negate(final EnumMap<V, Integer> element)
+	default FreeAbelianElement<V> negate(final FreeAbelianElement<V> element)
 	{
 		return inverse(element);
 	}
 
-	default EnumMap<V, Integer> subtract(final EnumMap<V, Integer> left, final EnumMap<V, Integer> right)
+	default FreeAbelianElement<V> subtract(final FreeAbelianElement<V> left, final FreeAbelianElement<V> right)
 	{
 		return divide(left, right);
 	}
 
-	default EnumMap<V, Integer> scale(final EnumMap<V, Integer> element, final int n)
+	default FreeAbelianElement<V> scale(final FreeAbelianElement<V> element, final int n)
 	{
 		return power(element, n);
 	}
 
-	default String toCanonicalString(final EnumMap<V, Integer> element)
+	default String toCanonicalString(final FreeAbelianElement<V> element)
 	{
-		return element.entrySet().stream()
-					  .filter(e -> e.getValue() != 0)
-					  .map(e -> e.getKey() + "^" + e.getValue())
-					  .collect(Collectors.joining("·"));
+		return element.isZero()
+				? "0"
+				: element.stream()
+						 .map(entry -> entry.getKey() + "^" + entry.getValue())
+						 .collect(Collectors.joining("·"));
 	}
 
-	default int exponentOf(final EnumMap<V, Integer> element, final V generator)
+	default int exponentOf(final FreeAbelianElement<V> element, final V generator)
 	{
-		return element.getOrDefault(generator, 0);
+		return element.exponentOf(generator);
 	}
 
-	default boolean isZero(final EnumMap<V, Integer> element)
+	default boolean isZero(final FreeAbelianElement<V> element)
 	{
-		return element.values().stream().allMatch(i -> i == 0);
+		return element.isZero();
 	}
 }

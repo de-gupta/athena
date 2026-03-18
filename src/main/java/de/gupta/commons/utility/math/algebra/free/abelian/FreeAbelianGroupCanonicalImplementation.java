@@ -1,8 +1,7 @@
 package de.gupta.commons.utility.math.algebra.free.abelian;
 
 import de.gupta.commons.utility.map.enumMap.EnumMapArithmetic;
-
-import java.util.EnumMap;
+import de.gupta.commons.utility.map.enumMap.EnumMapConstruction;
 
 record FreeAbelianGroupCanonicalImplementation<V extends Enum<V>>(
 		FreeAbelianGroupGeneratorType<V> generatorTypeDefinition)
@@ -14,15 +13,27 @@ record FreeAbelianGroupCanonicalImplementation<V extends Enum<V>>(
 	}
 
 	@Override
-	public EnumMap<V, Integer> combine(final EnumMap<V, Integer> a, final EnumMap<V, Integer> b)
+	public FreeAbelianElement<V> combine(final FreeAbelianElement<V> left, final FreeAbelianElement<V> right)
 	{
-		return EnumMapArithmetic.mergeAndCleanIfValueEqualsGivenValue(a, b, Integer::sum, 0);
+		return new FreeAbelianElement<>(
+				generatorType(),
+				EnumMapArithmetic.mergeAndCleanIfValueEqualsGivenValue(
+						EnumMapConstruction.from(left.exponents(), generatorType()),
+						EnumMapConstruction.from(right.exponents(), generatorType()),
+						Integer::sum,
+						0));
 	}
 
 	@Override
-	public EnumMap<V, Integer> inverse(final EnumMap<V, Integer> a)
+	public FreeAbelianElement<V> inverse(final FreeAbelianElement<V> element)
 	{
-		return EnumMapArithmetic.manipulateAndCleanIfValueEqualsGivenValue(a, -1, (i, n) -> i * n, 0);
+		return new FreeAbelianElement<>(
+				generatorType(),
+				EnumMapArithmetic.manipulateAndCleanIfValueEqualsGivenValue(
+						EnumMapConstruction.from(element.exponents(), generatorType()),
+						-1,
+						(i, n) -> i * n,
+						0));
 	}
 
 	@Override

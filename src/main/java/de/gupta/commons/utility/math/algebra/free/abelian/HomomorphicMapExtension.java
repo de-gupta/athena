@@ -3,7 +3,10 @@ package de.gupta.commons.utility.math.algebra.free.abelian;
 import de.gupta.commons.utility.math.MathUtility;
 import de.gupta.commons.utility.math.algebra.structure.binary.GroupStructure;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class HomomorphicMapExtension
@@ -11,11 +14,10 @@ public final class HomomorphicMapExtension
 	public static <T, K extends Enum<K>> Set<T> preimagesFromPartialMapping(
 			final GroupStructure<T> structure,
 			final FreeAbelianGroupStructure<K> codomain,
-			final Map<T, EnumMap<K, Integer>> partialMapping,
-			final EnumMap<K, Integer> element)
+			final Map<T, FreeAbelianElement<K>> partialMapping,
+			final FreeAbelianElement<K> element)
 	{
-		return element.entrySet()
-					  .stream()
+		return element.stream()
 					  .map(entry -> fromGeneratorSlice(entry, codomain, partialMapping)
 							  .entrySet().stream()
 							  .map(e -> fromPreimagesAndExponents(structure, e.getKey(), e.getValue()))
@@ -38,7 +40,7 @@ public final class HomomorphicMapExtension
 	private static <T, K extends Enum<K>> Map<Set<T>, Integer> fromGeneratorSlice(
 			final Map.Entry<K, Integer> generatorSlice,
 			final FreeAbelianGroupStructure<K> codomain,
-			final Map<T, EnumMap<K, Integer>> partialMapping)
+			final Map<T, FreeAbelianElement<K>> partialMapping)
 	{
 		return MathUtility.positiveDivisors(generatorSlice.getValue())
 						  .stream()
@@ -63,8 +65,8 @@ public final class HomomorphicMapExtension
 					   .collect(Collectors.toSet());
 	}
 
-	private static <T, K extends Enum<K>> Set<T> fromDirectMapping(final EnumMap<K, Integer> element,
-																   final Map<T, EnumMap<K, Integer>> partialMapping)
+	private static <T, K extends Enum<K>> Set<T> fromDirectMapping(final FreeAbelianElement<K> element,
+																   final Map<T, FreeAbelianElement<K>> partialMapping)
 	{
 		return partialMapping.entrySet()
 							 .stream()
