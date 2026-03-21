@@ -25,7 +25,7 @@ public final class HomomorphicMapExtension
 							  .collect(Collectors.toSet()))
 					  .reduce((a, b) -> a.stream()
 										 .flatMap(aElement -> b.stream()
-															   .map(bElement -> structure.combine(aElement, bElement)))
+															   .map(bElement -> structure.multiply(aElement, bElement)))
 										 .collect(Collectors.toSet()))
 					  .map(a ->
 					  {

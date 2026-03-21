@@ -23,7 +23,7 @@ final class BinaryStructureDefaultsTest
 		}
 
 		@Override
-		public String combine(final String left, final String right)
+		public String multiply(final String left, final String right)
 		{
 			return left + right;
 		}
@@ -44,35 +44,35 @@ final class BinaryStructureDefaultsTest
 		}
 
 		@Override
-		public Integer combine(final Integer left, final Integer right)
+		public Integer multiply(final Integer left, final Integer right)
 		{
 			return left + right;
 		}
 	};
 
 	@Test
-	@DisplayName("semigroup combineAll should preserve order for loom inputs")
-	void semigroupCombineAllPreservesOrderForLoomInputs()
+	@DisplayName("semigroup multiplyAll should preserve order for loom inputs")
+	void semigroupMultiplyAllPreservesOrderForLoomInputs()
 	{
-		String result = CONCATENATION.combineAll(Loom.harness(List.of("a", "b", "c")));
+		String result = CONCATENATION.multiplyAll(Loom.harness(List.of("a", "b", "c")));
 
 		assertThat(result).isEqualTo("abc");
 	}
 
 	@Test
-	@DisplayName("semigroup combineAll should reject empty inputs")
-	void semigroupCombineAllRejectsEmptyInputs()
+	@DisplayName("semigroup multiplyAll should reject empty inputs")
+	void semigroupMultiplyAllRejectsEmptyInputs()
 	{
-		assertThatThrownBy(() -> CONCATENATION.combineAll(List.of()))
+		assertThatThrownBy(() -> CONCATENATION.multiplyAll(List.of()))
 				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("A semigroup requires at least one element to combine.");
+				.hasMessage("A semigroup requires at least one element to multiply.");
 	}
 
 	@Test
-	@DisplayName("monoid combineAll should return identity for empty input")
-	void monoidCombineAllReturnsIdentityForEmptyInput()
+	@DisplayName("monoid multiplyAll should return identity for empty input")
+	void monoidMultiplyAllReturnsIdentityForEmptyInput()
 	{
-		String result = CONCATENATION_MONOID.combineAll(List.of());
+		String result = CONCATENATION_MONOID.multiplyAll(List.of());
 
 		assertThat(result).isEqualTo("");
 	}
@@ -88,10 +88,10 @@ final class BinaryStructureDefaultsTest
 	}
 
 	@Test
-	@DisplayName("abelian group combineAll should support iterable overload")
-	void abelianGroupCombineAllSupportsIterableOverload()
+	@DisplayName("abelian group multiplyAll should support iterable overload")
+	void abelianGroupMultiplyAllSupportsIterableOverload()
 	{
-		Integer result = INTEGER_ADDITION.combineAll(List.of(1, 2, 3, 4));
+		Integer result = INTEGER_ADDITION.multiplyAll(List.of(1, 2, 3, 4));
 
 		assertThat(result).isEqualTo(10);
 	}

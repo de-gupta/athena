@@ -6,18 +6,18 @@ import java.util.Objects;
 
 public interface Semigroup<E extends Semigroup<E>>
 {
-	E combine(E other);
+	E multiply(E other);
 
-	default E combineAll(final Loom<E> others)
+	default E multiplyAll(final Loom<E> others)
 	{
 		Objects.requireNonNull(others, "others");
-		return others.weave(self(), Semigroup::combine);
+		return others.weave(self(), Semigroup::multiply);
 	}
 
-	default E combineAll(final Iterable<? extends E> others)
+	default E multiplyAll(final Iterable<? extends E> others)
 	{
 		Objects.requireNonNull(others, "others");
-		return combineAll(Loom.harness(others));
+		return multiplyAll(Loom.harness(others));
 	}
 
 	@SuppressWarnings("unchecked")

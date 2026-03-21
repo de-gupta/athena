@@ -50,7 +50,7 @@ class AdditiveStructureNotationTest
 	};
 
 	@Test
-	@DisplayName("additive semigroup aliases should delegate to combine semantics")
+	@DisplayName("additive semigroup aliases should delegate to additive semantics")
 	void additiveSemigroupAliasesShouldDelegateToCombineSemantics()
 	{
 		assertThat(ADDITIVE_SEMIGROUP.add(2, 5)).isEqualTo(7);

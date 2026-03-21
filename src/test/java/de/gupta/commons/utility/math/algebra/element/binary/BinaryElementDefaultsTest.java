@@ -17,9 +17,9 @@ class BinaryElementDefaultsTest
 	{
 		Word seed = new Word("a");
 
-		assertThat(seed.combineAll(Loom.harness(List.of(new Word("b"), new Word("c")))))
+		assertThat(seed.multiplyAll(Loom.harness(List.of(new Word("b"), new Word("c")))))
 				.isEqualTo(new Word("abc"));
-		assertThat(seed.combineAll(List.of(new Word("b"), new Word("c"))))
+		assertThat(seed.multiplyAll(List.of(new Word("b"), new Word("c"))))
 				.isEqualTo(new Word("abc"));
 		assertThat(seed.identity()).isEqualTo(new Word(""));
 	}
@@ -39,7 +39,7 @@ class BinaryElementDefaultsTest
 	private record Word(String value) implements Monoid<Word>
 	{
 		@Override
-		public Word combine(final Word other)
+		public Word multiply(final Word other)
 		{
 			return new Word(value + other.value);
 		}
@@ -54,7 +54,7 @@ class BinaryElementDefaultsTest
 	private record IntegerAdditionElement(int value) implements AbelianGroup<IntegerAdditionElement>
 	{
 		@Override
-		public IntegerAdditionElement combine(final IntegerAdditionElement other)
+		public IntegerAdditionElement multiply(final IntegerAdditionElement other)
 		{
 			return new IntegerAdditionElement(value + other.value);
 		}

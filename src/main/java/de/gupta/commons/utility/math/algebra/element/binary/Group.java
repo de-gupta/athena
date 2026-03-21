@@ -8,7 +8,7 @@ public interface Group<E extends Group<E>> extends Monoid<E>
 
 	default E divide(final E other)
 	{
-		return combine(other.inverse());
+		return multiply(other.inverse());
 	}
 
 	default E power(final int exponent)
@@ -17,7 +17,7 @@ public interface Group<E extends Group<E>> extends Monoid<E>
 				exponent < 0 ? self().inverse().power(-exponent) :
 						IntStream.range(0, exponent - 1)
 								 .mapToObj(_ -> self())
-								 .reduce(self(), Group::combine);
+								 .reduce(self(), Group::multiply);
 	}
 
 	@SuppressWarnings("unchecked")
