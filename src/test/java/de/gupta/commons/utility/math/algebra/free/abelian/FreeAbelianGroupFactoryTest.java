@@ -54,10 +54,10 @@ class FreeAbelianGroupFactoryTest
 					.isEqualTo(enumClass);
 
 			assertThat(result.zero())
-					.as("Zero element should be the identity element")
-					.isEqualTo(result.identity());
+					.as("Zero element should be the empty-safe additive identity")
+					.isEqualTo(result.addAll(java.util.List.of()));
 
-			final FreeAbelianElement<V> allGenerators = result.combineAll(
+			final FreeAbelianElement<V> allGenerators = result.addAll(
 					Arrays.stream(enumClass.getEnumConstants()).map(result::generator).toList());
 
 			assertThat(allGenerators.exponents())
@@ -273,7 +273,7 @@ class FreeAbelianGroupFactoryTest
 		{
 			final FreeAbelianGroup<LargeEnum> group = FreeAbelianGroupFactory.create(LargeEnum.class);
 
-			final FreeAbelianElement<LargeEnum> element = group.combineAll(
+			final FreeAbelianElement<LargeEnum> element = group.addAll(
 					Arrays.stream(LargeEnum.values()).map(group::generator).toList());
 
 			assertThat(element.exponents())

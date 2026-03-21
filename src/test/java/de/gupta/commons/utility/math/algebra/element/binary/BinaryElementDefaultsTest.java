@@ -1,8 +1,6 @@
 package de.gupta.commons.utility.math.algebra.element.binary;
 
 import de.gupta.aletheia.collection.folding.Loom;
-import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveAbelianGroup;
-import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveMonoid;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,19 +25,6 @@ class BinaryElementDefaultsTest
 	}
 
 	@Test
-	@DisplayName("additive semigroup and monoid aliases should delegate cleanly")
-	void additiveSemigroupAndMonoidAliasesShouldDelegateCleanly()
-	{
-		AdditiveNaturalNumber two = new AdditiveNaturalNumber(2);
-		AdditiveNaturalNumber one = new AdditiveNaturalNumber(1);
-
-		assertThat(two.add(one)).isEqualTo(new AdditiveNaturalNumber(3));
-		assertThat(two.addAll(Loom.harness(List.of(one, new AdditiveNaturalNumber(3))))).isEqualTo(
-				new AdditiveNaturalNumber(6));
-		assertThat(two.zero()).isEqualTo(new AdditiveNaturalNumber(0));
-	}
-
-	@Test
 	@DisplayName("group element helpers should support divide and power")
 	void groupElementHelpersSupportDivideAndPower()
 	{
@@ -49,28 +34,6 @@ class BinaryElementDefaultsTest
 		assertThat(three.power(4)).isEqualTo(new IntegerAdditionElement(12));
 		assertThat(three.power(-2)).isEqualTo(new IntegerAdditionElement(-6));
 		assertThat(three.power(0)).isEqualTo(new IntegerAdditionElement(0));
-	}
-
-	@Test
-	@DisplayName("additive group element aliases should delegate to the neutral core")
-	void additiveGroupElementAliasesShouldDelegateToTheNeutralCore()
-	{
-		IntegerAdditionElement three = new IntegerAdditionElement(3);
-
-		assertThat(three.add(new IntegerAdditionElement(2))).isEqualTo(new IntegerAdditionElement(5));
-		assertThat(three.negate()).isEqualTo(new IntegerAdditionElement(-3));
-		assertThat(three.subtract(new IntegerAdditionElement(1))).isEqualTo(new IntegerAdditionElement(2));
-		assertThat(three.zero()).isEqualTo(new IntegerAdditionElement(0));
-	}
-
-	@Test
-	@DisplayName("additive abelian group element should remain commutative")
-	void additiveAbelianGroupElementShouldRemainCommutative()
-	{
-		IntegerAdditionElement three = new IntegerAdditionElement(3);
-		IntegerAdditionElement two = new IntegerAdditionElement(2);
-
-		assertThat(three.add(two)).isEqualTo(two.add(three));
 	}
 
 	private record Word(String value) implements Monoid<Word>
@@ -88,22 +51,7 @@ class BinaryElementDefaultsTest
 		}
 	}
 
-	private record AdditiveNaturalNumber(int value) implements AdditiveMonoid<AdditiveNaturalNumber>
-	{
-		@Override
-		public AdditiveNaturalNumber combine(final AdditiveNaturalNumber other)
-		{
-			return new AdditiveNaturalNumber(value + other.value);
-		}
-
-		@Override
-		public AdditiveNaturalNumber identity()
-		{
-			return new AdditiveNaturalNumber(0);
-		}
-	}
-
-	private record IntegerAdditionElement(int value) implements AdditiveAbelianGroup<IntegerAdditionElement>
+	private record IntegerAdditionElement(int value) implements AbelianGroup<IntegerAdditionElement>
 	{
 		@Override
 		public IntegerAdditionElement combine(final IntegerAdditionElement other)

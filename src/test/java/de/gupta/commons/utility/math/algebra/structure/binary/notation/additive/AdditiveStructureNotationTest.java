@@ -16,13 +16,13 @@ class AdditiveStructureNotationTest
 	private static final AdditiveMonoidStructure<Integer> ADDITIVE_MONOID = new AdditiveMonoidStructure<>()
 	{
 		@Override
-		public Integer identity()
+		public Integer zero()
 		{
 			return 0;
 		}
 
 		@Override
-		public Integer combine(final Integer left, final Integer right)
+		public Integer add(final Integer left, final Integer right)
 		{
 			return left + right;
 		}
@@ -31,21 +31,21 @@ class AdditiveStructureNotationTest
 	private static final AdditiveAbelianGroupStructure<Integer> INTEGER_ADDITION = new AdditiveAbelianGroupStructure<>()
 	{
 		@Override
-		public Integer inverse(final Integer element)
-		{
-			return -element;
-		}
-
-		@Override
-		public Integer identity()
+		public Integer zero()
 		{
 			return 0;
 		}
 
 		@Override
-		public Integer combine(final Integer left, final Integer right)
+		public Integer add(final Integer left, final Integer right)
 		{
 			return left + right;
+		}
+
+		@Override
+		public Integer negate(final Integer element)
+		{
+			return -element;
 		}
 	};
 
