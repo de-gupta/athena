@@ -6,9 +6,9 @@ import de.gupta.commons.utility.math.algebra.structure.binary.GroupStructure;
 public abstract class StructuredGroupElement<E extends StructuredGroupElement<E>> implements Group<E>
 {
 	@Override
-	public final E combine(final E other)
+	public final E multiply(final E other)
 	{
-		return structure().combine(self(), other);
+		return structure().multiply(self(), other);
 	}
 
 	@Override

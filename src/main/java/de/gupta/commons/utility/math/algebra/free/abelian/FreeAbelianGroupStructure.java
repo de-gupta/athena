@@ -9,17 +9,6 @@ public interface FreeAbelianGroupStructure<V extends Enum<V>>
 {
 	Class<V> generatorType();
 
-	@Override
-	default FreeAbelianElement<V> identity()
-	{
-		return FreeAbelianElement.zero(generatorType());
-	}
-
-	default FreeAbelianElement<V> zero()
-	{
-		return identity();
-	}
-
 	default FreeAbelianElement<V> generator(final V generator)
 	{
 		return FreeAbelianElement.generator(generator);
@@ -28,21 +17,6 @@ public interface FreeAbelianGroupStructure<V extends Enum<V>>
 	default FreeAbelianElement<V> generator(final V generator, final int exponent)
 	{
 		return FreeAbelianElement.generator(generator, exponent);
-	}
-
-	default FreeAbelianElement<V> add(final FreeAbelianElement<V> left, final FreeAbelianElement<V> right)
-	{
-		return combine(left, right);
-	}
-
-	default FreeAbelianElement<V> negate(final FreeAbelianElement<V> element)
-	{
-		return inverse(element);
-	}
-
-	default FreeAbelianElement<V> subtract(final FreeAbelianElement<V> left, final FreeAbelianElement<V> right)
-	{
-		return divide(left, right);
 	}
 
 	default FreeAbelianElement<V> scale(final FreeAbelianElement<V> element, final int n)

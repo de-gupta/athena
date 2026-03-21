@@ -19,9 +19,9 @@ public record ElementBackedGroupStructure<E extends Group<E>>(Supplier<E> identi
 	}
 
 	@Override
-	public E combine(final E left, final E right)
+	public E multiply(final E left, final E right)
 	{
-		return left.combine(right);
+		return left.multiply(right);
 	}
 
 	@Override

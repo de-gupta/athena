@@ -27,7 +27,7 @@ class HomomorphicMapExtensionTest
 		}
 
 		@Override
-		public Integer combine(final Integer left, final Integer right)
+		public Integer multiply(final Integer left, final Integer right)
 		{
 			return left + right;
 		}

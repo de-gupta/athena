@@ -1,22 +1,25 @@
 package de.gupta.commons.utility.math.algebra.structure.binary.notation.additive;
 
 import de.gupta.aletheia.collection.folding.Loom;
-import de.gupta.commons.utility.math.algebra.structure.binary.SemigroupStructure;
 
-public interface AdditiveSemigroupStructure<E> extends SemigroupStructure<E>
+import java.util.Objects;
+
+@FunctionalInterface
+public interface AdditiveSemigroupStructure<E>
 {
-	default E add(final E left, final E right)
-	{
-		return combine(left, right);
-	}
+	E add(E left, E right);
 
 	default E addAll(final Loom<E> elements)
 	{
-		return combineAll(elements);
+		Objects.requireNonNull(elements, "elements");
+		return elements.forge(this::add)
+					   .decree(() -> new IllegalArgumentException(
+							   "An additive semigroup requires at least one element to add."));
 	}
 
 	default E addAll(final Iterable<? extends E> elements)
 	{
-		return combineAll(elements);
+		Objects.requireNonNull(elements, "elements");
+		return addAll(Loom.harness(elements));
 	}
 }

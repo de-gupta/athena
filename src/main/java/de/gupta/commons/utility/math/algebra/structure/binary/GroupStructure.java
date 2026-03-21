@@ -11,7 +11,7 @@ public interface GroupStructure<E> extends MonoidStructure<E>
 	{
 		Objects.requireNonNull(left, "left");
 		Objects.requireNonNull(right, "right");
-		return combine(left, inverse(right));
+		return multiply(left, inverse(right));
 	}
 
 	default E power(final E element, final int exponent)
@@ -21,6 +21,6 @@ public interface GroupStructure<E> extends MonoidStructure<E>
 				exponent < 0 ? power(inverse(element), -exponent) :
 						IntStream.range(0, exponent - 1)
 								 .mapToObj(_ -> element)
-								 .reduce(element, this::combine);
+								 .reduce(element, this::multiply);
 	}
 }

@@ -13,7 +13,7 @@ record FreeAbelianGroupCanonicalImplementation<V extends Enum<V>>(
 	}
 
 	@Override
-	public FreeAbelianElement<V> combine(final FreeAbelianElement<V> left, final FreeAbelianElement<V> right)
+	public FreeAbelianElement<V> add(final FreeAbelianElement<V> left, final FreeAbelianElement<V> right)
 	{
 		return FreeAbelianElement.from(
 				generatorType(),
@@ -25,7 +25,7 @@ record FreeAbelianGroupCanonicalImplementation<V extends Enum<V>>(
 	}
 
 	@Override
-	public FreeAbelianElement<V> inverse(final FreeAbelianElement<V> element)
+	public FreeAbelianElement<V> negate(final FreeAbelianElement<V> element)
 	{
 		return FreeAbelianElement.from(
 				generatorType(),
@@ -40,5 +40,11 @@ record FreeAbelianGroupCanonicalImplementation<V extends Enum<V>>(
 	public Class<V> generatorType()
 	{
 		return generatorTypeDefinition.componentsEnum();
+	}
+
+	@Override
+	public FreeAbelianElement<V> zero()
+	{
+		return FreeAbelianElement.zero(generatorType());
 	}
 }

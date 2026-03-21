@@ -20,7 +20,7 @@ class AdditiveElementNotationTest
 
 		assertThat(two.add(one)).isEqualTo(new AdditiveNaturalNumber(3));
 		assertThat(two.addAll(Loom.harness(List.of(one, new AdditiveNaturalNumber(3))))).isEqualTo(
-				new AdditiveNaturalNumber(6));
+				new AdditiveNaturalNumber(4));
 		assertThat(two.zero()).isEqualTo(new AdditiveNaturalNumber(0));
 	}
 
@@ -49,13 +49,13 @@ class AdditiveElementNotationTest
 	private record AdditiveNaturalNumber(int value) implements AdditiveMonoid<AdditiveNaturalNumber>
 	{
 		@Override
-		public AdditiveNaturalNumber combine(final AdditiveNaturalNumber other)
+		public AdditiveNaturalNumber add(final AdditiveNaturalNumber other)
 		{
 			return new AdditiveNaturalNumber(value + other.value);
 		}
 
 		@Override
-		public AdditiveNaturalNumber identity()
+		public AdditiveNaturalNumber zero()
 		{
 			return new AdditiveNaturalNumber(0);
 		}
@@ -64,19 +64,19 @@ class AdditiveElementNotationTest
 	private record IntegerAdditionElement(int value) implements AdditiveAbelianGroup<IntegerAdditionElement>
 	{
 		@Override
-		public IntegerAdditionElement combine(final IntegerAdditionElement other)
+		public IntegerAdditionElement add(final IntegerAdditionElement other)
 		{
 			return new IntegerAdditionElement(value + other.value);
 		}
 
 		@Override
-		public IntegerAdditionElement identity()
+		public IntegerAdditionElement zero()
 		{
 			return new IntegerAdditionElement(0);
 		}
 
 		@Override
-		public IntegerAdditionElement inverse()
+		public IntegerAdditionElement negate()
 		{
 			return new IntegerAdditionElement(-value);
 		}

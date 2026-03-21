@@ -1,22 +1,28 @@
 package de.gupta.commons.utility.math.algebra.element.binary.notation.additive;
 
 import de.gupta.aletheia.collection.folding.Loom;
-import de.gupta.commons.utility.math.algebra.element.binary.Semigroup;
 
-public interface AdditiveSemigroup<E extends AdditiveSemigroup<E>> extends Semigroup<E>
+import java.util.Objects;
+
+public interface AdditiveSemigroup<E extends AdditiveSemigroup<E>>
 {
-	default E add(final E other)
-	{
-		return combine(other);
-	}
+	E add(E other);
 
 	default E addAll(final Loom<E> others)
 	{
-		return combineAll(others);
+		Objects.requireNonNull(others, "others");
+		return others.weave(self(), AdditiveSemigroup::add);
 	}
 
 	default E addAll(final Iterable<? extends E> others)
 	{
-		return combineAll(others);
+		Objects.requireNonNull(others, "others");
+		return addAll(Loom.harness(others));
+	}
+
+	@SuppressWarnings("unchecked")
+	private E self()
+	{
+		return (E) this;
 	}
 }

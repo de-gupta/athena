@@ -9,9 +9,9 @@ public interface MonoidStructure<E> extends SemigroupStructure<E>
 	E identity();
 
 	@Override
-	default E combineAll(final Loom<E> elements)
+	default E multiplyAll(final Loom<E> elements)
 	{
 		Objects.requireNonNull(elements, "elements");
-		return elements.weave(identity(), this::combine);
+		return elements.weave(identity(), this::multiply);
 	}
 }
