@@ -52,13 +52,6 @@ public final class FreeAbelianElement<V extends Enum<V>>
 		return new FreeAbelianElement<>(generatorType, canonical);
 	}
 
-	static <V extends Enum<V>> FreeAbelianElement<V> fromCanonical(final Class<V> generatorType,
-																   final EnumMap<V, Integer> exponents)
-	{
-		Objects.requireNonNull(exponents, "exponents");
-		return new FreeAbelianElement<>(generatorType, exponents);
-	}
-
 	public int exponentOf(final V generator)
 	{
 		return exponents.getOrDefault(generator, 0);
