@@ -18,6 +18,8 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.string;
 	exports de.gupta.commons.utility.security;
 
+	exports de.gupta.commons.utility.properties;
+
 	exports de.gupta.commons.utility.math.prefix;
 	exports de.gupta.commons.utility.math.algebra.structure.binary;
 	exports de.gupta.commons.utility.math.algebra.structure.ring;
