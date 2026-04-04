@@ -15,13 +15,30 @@ public final class CodeTypeAnalysisUtility
 	public static String findUniqueTypeName(final String sourceCode)
 	{
 		return Optional.ofNullable(sourceCode)
-					   .filter(StringSanitizationUtility::isStringNonBlank)
+		               .filter(StringSanitizationUtility::isNotBlank)
 					   .map(String::trim)
 					   .map(s -> s.split("\\r?\\n"))
 					   .map(Arrays::stream)
 					   .map(lines -> findTheRelevantDeclarationFrom(typeDeclarationsIn(lines.toList())))
 					   .map(TypeDeclaration::name)
 					   .orElseThrow(() -> EmptySourceCodeException.withMessage("Source code cannot be null or blank"));
+	}
+
+	public static boolean isTypeDeclaration(final String line)
+	{
+		String pattern = "^(\\s*)(public\\s+|private\\s+|protected\\s+|static\\s+|final\\s+|abstract\\s+)*" +
+				"(class|interface|record)\\s+[A-Za-z0-9_$]+(<.*>)?";
+		return line.matches(pattern);
+	}
+
+	public static TypeDeclaration parseTypeDeclaration(final String line)
+	{
+		return Optional.ofNullable(line)
+		               .map(String::trim)
+		               .flatMap(CodeTypeAnalysisUtility::extractTypeType)
+		               .map(typeType -> extractTypeName(line, typeType))
+		               .map(typeName -> TypeDeclaration.of(typeName, line.contains("public")))
+		               .orElseThrow(() -> new IllegalArgumentException("Line cannot be null or blank"));
 	}
 
 	private static TypeDeclaration findTheRelevantDeclarationFrom(final Collection<TypeDeclaration> typeDeclarations)
@@ -54,23 +71,6 @@ public final class CodeTypeAnalysisUtility
 	{
 		return containsAUniqueNonPublicDeclaration(typeDeclarations) ? aNonPublicDeclarationFrom(typeDeclarations) :
 				Optional.empty();
-	}
-
-	public static boolean isTypeDeclaration(final String line)
-	{
-		String pattern = "^(\\s*)(public\\s+|private\\s+|protected\\s+|static\\s+|final\\s+|abstract\\s+)*" +
-				"(class|interface|record)\\s+[A-Za-z0-9_$]+(<.*>)?";
-		return line.matches(pattern);
-	}
-
-	public static TypeDeclaration parseTypeDeclaration(final String line)
-	{
-		return Optional.ofNullable(line)
-					   .map(String::trim)
-					   .flatMap(CodeTypeAnalysisUtility::extractTypeType)
-					   .map(typeType -> extractTypeName(line, typeType))
-					   .map(typeName -> TypeDeclaration.of(typeName, line.contains("public")))
-					   .orElseThrow(() -> new IllegalArgumentException("Line cannot be null or blank"));
 	}
 
 	private static boolean containsAUniquePublicDeclaration(final Collection<TypeDeclaration> typeDeclarations)

@@ -15,36 +15,36 @@ final class StringSanitizationUtilityTest
 	@ParameterizedTest(name = "{3}")
 	@MethodSource("stringEmptinessProvider")
 	@DisplayName("Test isStringEmpty method")
-	void isStringEmpty(String input, boolean expectedEmpty, boolean expectedNonEmpty, String testDescription)
+	void isAbsentOrEmpty(String input, boolean expectedEmpty, boolean expectedNonEmpty, String testDescription)
 	{
-		boolean result = StringSanitizationUtility.isStringEmpty(input);
+		boolean result = StringSanitizationUtility.isAbsentOrEmpty(input);
 		assertThat(result).as(testDescription).isEqualTo(expectedEmpty);
 	}
 
 	@ParameterizedTest(name = "{3}")
 	@MethodSource("stringEmptinessProvider")
 	@DisplayName("Test isStringNonEmpty method")
-	void isStringNonEmpty(String input, boolean expectedEmpty, boolean expectedNonEmpty, String testDescription)
+	void isNonEmpty(String input, boolean expectedEmpty, boolean expectedNonEmpty, String testDescription)
 	{
-		boolean result = StringSanitizationUtility.isStringNonEmpty(input);
+		boolean result = StringSanitizationUtility.isNonEmpty(input);
 		assertThat(result).as(testDescription).isEqualTo(expectedNonEmpty);
 	}
 
 	@ParameterizedTest(name = "{3}")
 	@MethodSource("stringBlanknessProvider")
 	@DisplayName("Test isStringBlank method")
-	void isStringBlank(String input, boolean expectedBlank, String testDescription)
+	void isAbsentOrBlank(String input, boolean expectedBlank, String testDescription)
 	{
-		boolean result = StringSanitizationUtility.isStringBlank(input);
+		boolean result = StringSanitizationUtility.isAbsentOrBlank(input);
 		assertThat(result).as(testDescription).isEqualTo(expectedBlank);
 	}
 
 	@ParameterizedTest(name = "{3}")
 	@MethodSource("stringBlanknessProvider")
 	@DisplayName("Test isStringNonBlank method")
-	void isStringNonBlank(String input, boolean expectedBlank, String testDescription)
+	void isNotBlank(String input, boolean expectedBlank, String testDescription)
 	{
-		boolean result = StringSanitizationUtility.isStringNonBlank(input);
+		boolean result = StringSanitizationUtility.isNotBlank(input);
 		assertThat(result).as(testDescription).isEqualTo(!expectedBlank);
 	}
 
@@ -69,9 +69,9 @@ final class StringSanitizationUtilityTest
 		@ParameterizedTest(name = "{2}")
 		@MethodSource("stringTrimmednessProvider")
 		@DisplayName("Test isStringTrimmed method")
-		void isStringTrimmed(String input, boolean expectedTrimmed, String testDescription)
+		void isTrimmed(String input, boolean expectedTrimmed, String testDescription)
 		{
-			boolean result = StringSanitizationUtility.isStringTrimmed(input);
+			boolean result = StringSanitizationUtility.isTrimmed(input);
 			assertThat(result).as(testDescription).isEqualTo(expectedTrimmed);
 		}
 

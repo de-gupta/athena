@@ -10,7 +10,7 @@ public final class PackageNameValidator
 	public static boolean isValidJavaPackageName(final String packageName)
 	{
 		return Optional.ofNullable(packageName)
-					   .filter(StringSanitizationUtility::isStringNonBlank)
+		               .filter(StringSanitizationUtility::isNotBlank)
 					   .filter(PackageNameValidator::containsNoSpaces)
 					   .filter(PackageNameValidator::onlyContainsAllowedCharacters)
 					   .filter(PackageNameValidator::hasNoConsecutivePeriods)
@@ -54,7 +54,7 @@ public final class PackageNameValidator
 	private static boolean eachSegmentStartsWithLetter(final String packageName)
 	{
 		return Arrays.stream(packageName.split("\\."))
-					 .allMatch(segment -> StringSanitizationUtility.isStringNonBlank(segment) && Character.isLetter(
+		             .allMatch(segment -> StringSanitizationUtility.isNotBlank(segment) && Character.isLetter(
 							 segment.charAt(0)));
 	}
 
