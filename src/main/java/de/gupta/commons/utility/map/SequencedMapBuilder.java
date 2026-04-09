@@ -24,6 +24,12 @@ public final class SequencedMapBuilder<K, V>
 		return this;
 	}
 
+	public SequencedMapBuilder<K, V> addAll(final SequencedMap<K, V> map)
+	{
+		map.forEach(this::add);
+		return this;
+	}
+
 	public SequencedMap<K, V> build()
 	{
 		return Collections.unmodifiableSequencedMap(new LinkedHashMap<>(map));
