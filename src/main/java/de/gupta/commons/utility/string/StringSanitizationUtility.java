@@ -1,5 +1,7 @@
 package de.gupta.commons.utility.string;
 
+import java.util.function.Supplier;
+
 public final class StringSanitizationUtility
 {
 	public static boolean isNonEmpty(final String input)
@@ -35,6 +37,19 @@ public final class StringSanitizationUtility
 	public static String[] breakIntoLines(final String input, final String delimiter)
 	{
 		return input.split(delimiter, -1);
+	}
+
+	public static void requireNotBlank(final String input, final Supplier<RuntimeException> exceptionSupplier)
+	{
+		if (isAbsentOrBlank(input))
+		{
+			throw exceptionSupplier.get();
+		}
+	}
+
+	public static void requireNotBlank(final String input, final String message)
+	{
+		requireNotBlank(input, () -> new IllegalArgumentException(message));
 	}
 
 	private StringSanitizationUtility()
