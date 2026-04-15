@@ -54,7 +54,7 @@ final class BinaryStructureDefaultsTest
 	@DisplayName("semigroup multiplyAll should preserve order for loom inputs")
 	void semigroupMultiplyAllPreservesOrderForLoomInputs()
 	{
-		String result = CONCATENATION.multiplyAll(Loom.harness(List.of("a", "b", "c")));
+		String result = CONCATENATION.multiplyAll(Loom.thread(List.of("a", "b", "c")));
 
 		assertThat(result).isEqualTo("abc");
 	}

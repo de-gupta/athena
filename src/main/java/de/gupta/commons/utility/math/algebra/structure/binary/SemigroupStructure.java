@@ -20,6 +20,6 @@ public interface SemigroupStructure<E>
 	default E multiplyAll(final Iterable<? extends E> elements)
 	{
 		Objects.requireNonNull(elements, "elements");
-		return multiplyAll(Loom.harness(elements));
+		return multiplyAll(Loom.thread(elements));
 	}
 }

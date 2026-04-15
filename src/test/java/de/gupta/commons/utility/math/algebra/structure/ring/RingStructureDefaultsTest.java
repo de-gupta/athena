@@ -139,7 +139,7 @@ class RingStructureDefaultsTest
 	void semiringAddAllAndMultiplyAllFoldCorrectly()
 	{
 		assertThat(INTEGER_RING.addAll(List.of(1, 2, 3, 4))).isEqualTo(10);
-		assertThat(INTEGER_RING.multiplyAll(Loom.harness(List.of(2, 3, 4)))).isEqualTo(24);
+		assertThat(INTEGER_RING.multiplyAll(Loom.thread(List.of(2, 3, 4)))).isEqualTo(24);
 		assertThat(INTEGER_RING.multiplyAll(List.of(2, 3, 4))).isEqualTo(24);
 	}
 

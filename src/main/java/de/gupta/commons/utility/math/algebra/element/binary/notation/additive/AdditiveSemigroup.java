@@ -17,7 +17,7 @@ public interface AdditiveSemigroup<E extends AdditiveSemigroup<E>>
 	default E addAll(final Iterable<? extends E> others)
 	{
 		Objects.requireNonNull(others, "others");
-		return addAll(Loom.harness(others));
+		return addAll(Loom.thread(others));
 	}
 
 	@SuppressWarnings("unchecked")

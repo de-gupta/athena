@@ -19,7 +19,7 @@ class AdditiveElementNotationTest
 		AdditiveNaturalNumber one = new AdditiveNaturalNumber(1);
 
 		assertThat(two.add(one)).isEqualTo(new AdditiveNaturalNumber(3));
-		assertThat(two.addAll(Loom.harness(List.of(one, new AdditiveNaturalNumber(3))))).isEqualTo(
+		assertThat(two.addAll(Loom.thread(List.of(one, new AdditiveNaturalNumber(3))))).isEqualTo(
 				new AdditiveNaturalNumber(4));
 		assertThat(two.zero()).isEqualTo(new AdditiveNaturalNumber(0));
 	}

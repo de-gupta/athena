@@ -54,7 +54,7 @@ class AdditiveStructureNotationTest
 	void additiveSemigroupAliasesShouldDelegateToCombineSemantics()
 	{
 		assertThat(ADDITIVE_SEMIGROUP.add(2, 5)).isEqualTo(7);
-		assertThat(ADDITIVE_SEMIGROUP.addAll(Loom.harness(List.of(1, 2, 3)))).isEqualTo(6);
+		assertThat(ADDITIVE_SEMIGROUP.addAll(Loom.thread(List.of(1, 2, 3)))).isEqualTo(6);
 		assertThat(ADDITIVE_SEMIGROUP.addAll(List.of(1, 2, 3))).isEqualTo(6);
 	}
 
@@ -64,7 +64,7 @@ class AdditiveStructureNotationTest
 	{
 		assertThat(ADDITIVE_MONOID.zero()).isEqualTo(0);
 		assertThat(ADDITIVE_MONOID.addAll(List.of())).isEqualTo(0);
-		assertThat(ADDITIVE_MONOID.addAll(Loom.harness(List.of(1, 2, 3)))).isEqualTo(6);
+		assertThat(ADDITIVE_MONOID.addAll(Loom.thread(List.of(1, 2, 3)))).isEqualTo(6);
 	}
 
 	@Test

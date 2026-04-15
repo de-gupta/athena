@@ -17,7 +17,7 @@ public interface Semigroup<E extends Semigroup<E>>
 	default E multiplyAll(final Iterable<? extends E> others)
 	{
 		Objects.requireNonNull(others, "others");
-		return multiplyAll(Loom.harness(others));
+		return multiplyAll(Loom.thread(others));
 	}
 
 	@SuppressWarnings("unchecked")

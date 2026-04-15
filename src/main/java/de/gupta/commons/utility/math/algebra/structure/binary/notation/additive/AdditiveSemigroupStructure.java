@@ -20,6 +20,6 @@ public interface AdditiveSemigroupStructure<E>
 	default E addAll(final Iterable<? extends E> elements)
 	{
 		Objects.requireNonNull(elements, "elements");
-		return addAll(Loom.harness(elements));
+		return addAll(Loom.thread(elements));
 	}
 }

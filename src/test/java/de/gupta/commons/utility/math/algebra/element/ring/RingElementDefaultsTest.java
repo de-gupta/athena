@@ -19,7 +19,7 @@ class RingElementDefaultsTest
 		IntRing seed = new IntRing(5);
 
 		assertThat(seed.sumAll(List.of(new IntRing(2), new IntRing(3)))).isEqualTo(new IntRing(10));
-		assertThat(seed.productAll(Loom.harness(List.of(new IntRing(2), new IntRing(3)))))
+		assertThat(seed.productAll(Loom.thread(List.of(new IntRing(2), new IntRing(3)))))
 				.isEqualTo(new IntRing(30));
 		assertThat(seed.productAll(List.of(new IntRing(2), new IntRing(3)))).isEqualTo(new IntRing(30));
 		assertThat(seed.subtract(new IntRing(2))).isEqualTo(new IntRing(3));

@@ -32,7 +32,7 @@ public interface Semiring<E extends Semiring<E>>
 	default E productAll(final Iterable<? extends E> others)
 	{
 		Objects.requireNonNull(others, "others");
-		return productAll(Loom.harness(others));
+		return productAll(Loom.thread(others));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -17,7 +17,7 @@ class BinaryElementDefaultsTest
 	{
 		Word seed = new Word("a");
 
-		assertThat(seed.multiplyAll(Loom.harness(List.of(new Word("b"), new Word("c")))))
+		assertThat(seed.multiplyAll(Loom.thread(List.of(new Word("b"), new Word("c")))))
 				.isEqualTo(new Word("abc"));
 		assertThat(seed.multiplyAll(List.of(new Word("b"), new Word("c"))))
 				.isEqualTo(new Word("abc"));
