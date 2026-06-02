@@ -27,12 +27,12 @@ public interface DescriptivelyComparable<T>
 
 	default boolean isLessThanOrEqualTo(T other)
 	{
-		return compare(other) == ComparisonResult.LESS_THAN_OR_EQUAL;
+		return compare(other) != ComparisonResult.GREATER_THAN;
 	}
 
 	default boolean isGreaterThanOrEqualTo(T other)
 	{
-		return compare(other) == ComparisonResult.GREATER_THAN_OR_EQUAL;
+		return compare(other) != ComparisonResult.LESS_THAN;
 	}
 
 	default boolean isNotLessThan(T other)
