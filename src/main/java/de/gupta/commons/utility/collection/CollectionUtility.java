@@ -1,5 +1,7 @@
 package de.gupta.commons.utility.collection;
 
+import de.gupta.aletheia.collection.folding.Loom;
+
 import java.util.*;
 
 public final class CollectionUtility
@@ -8,35 +10,34 @@ public final class CollectionUtility
 	{
 		Objects.requireNonNull(axes, "axes must not be null");
 
-		List<SequencedMap<K, V>> accumulator = List.of(new LinkedHashMap<>());
+		List<SequencedMap<K, V>> seed = List.of(new LinkedHashMap<>());
 
-		for (var entry : axes.sequencedEntrySet())
-		{
-			var key = entry.getKey();
-			var values = entry.getValue();
-			Objects.requireNonNull(values, "value list for key must not be null");
+		return Loom.thread(axes.sequencedEntrySet())
+		           .weave(seed, CollectionUtility::expand)
+		           .stream()
+		           .map(Collections::unmodifiableSequencedMap)
+		           .toList();
+	}
 
-			if (values.isEmpty())
-			{
-				return List.of();
-			}
-
-			List<SequencedMap<K, V>> expanded = new ArrayList<>();
-			for (var partial : accumulator)
-			{
-				for (var value : values)
-				{
-					var combo = new LinkedHashMap<>(partial);
-					combo.put(key, value);
-					expanded.add(combo);
-				}
-			}
-			accumulator = expanded;
-		}
-
+	private static <K, V> List<SequencedMap<K, V>> expand(
+			final List<SequencedMap<K, V>> accumulator,
+			final Map.Entry<K, List<V>> entry)
+	{
+		var key = entry.getKey();
+		var values = entry.getValue();
+		Objects.requireNonNull(values, "value list for key must not be null");
 		return accumulator.stream()
-		                  .map(Collections::unmodifiableSequencedMap)
+		                  .flatMap(partial -> values.stream()
+		                                            .map(value -> withEntry(partial, key, value)))
 		                  .toList();
+	}
+
+	private static <K, V> SequencedMap<K, V> withEntry(
+			final SequencedMap<K, V> partial, final K key, final V value)
+	{
+		var combo = new LinkedHashMap<>(partial);
+		combo.put(key, value);
+		return combo;
 	}
 
 	private CollectionUtility()
