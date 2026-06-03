@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.collection;
 
 import de.gupta.aletheia.collection.folding.Loom;
+import de.gupta.commons.utility.map.MapUtility;
 
 import java.util.*;
 
@@ -28,16 +29,8 @@ public final class CollectionUtility
 		Objects.requireNonNull(values, "value list for key must not be null");
 		return accumulator.stream()
 		                  .flatMap(partial -> values.stream()
-		                                            .map(value -> withEntry(partial, key, value)))
+		                                            .map(value -> MapUtility.withEntry(partial, key, value)))
 		                  .toList();
-	}
-
-	private static <K, V> SequencedMap<K, V> withEntry(
-			final SequencedMap<K, V> partial, final K key, final V value)
-	{
-		var combo = new LinkedHashMap<>(partial);
-		combo.put(key, value);
-		return combo;
 	}
 
 	private CollectionUtility()
