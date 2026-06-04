@@ -1,12 +1,16 @@
 package de.gupta.commons.utility.io.table;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.SequencedMap;
+import java.util.*;
 
 public final class TableRow
 {
 	private final SequencedMap<String, String> cells;
+
+	public static TableRow of(final SequencedMap<String, String> cells)
+	{
+		Objects.requireNonNull(cells, "cells must not be null");
+		return new TableRow(Collections.unmodifiableSequencedMap(new LinkedHashMap<>(cells)));
+	}
 
 	public SequencedMap<String, String> cells()
 	{

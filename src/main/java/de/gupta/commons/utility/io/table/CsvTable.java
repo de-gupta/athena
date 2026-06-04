@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public final class CsvTable
 {
@@ -69,7 +72,7 @@ public final class CsvTable
 		{
 			cells.put(header, rowMap.getOrDefault(header, ""));
 		}
-		return new TableRow(Collections.unmodifiableSequencedMap(cells));
+		return TableRow.of(cells);
 	}
 
 	private static void appendRow(final StringBuilder sb, final List<String> fields)
