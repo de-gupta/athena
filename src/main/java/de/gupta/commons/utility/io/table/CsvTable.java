@@ -70,7 +70,8 @@ public final class CsvTable
 		var cells = new LinkedHashMap<String, String>();
 		for (var header : headers)
 		{
-			cells.put(header, rowMap.getOrDefault(header, ""));
+			var value = rowMap.getOrDefault(header, "");
+			cells.put(header, value != null ? value : "");
 		}
 		return TableRow.of(cells);
 	}

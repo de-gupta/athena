@@ -56,7 +56,7 @@ sealed interface PropertySource permits PropertySource.ClasspathResource,
 		public Map<String, String> load()
 		{
 			return Unfolding.beckon(path)
-			                .discern(p -> Files.exists(p) && Files.isReadable(p))
+			                .discern(p -> Files.isRegularFile(p) && Files.isReadable(p))
 			                .metamorphose(FilesystemPath::readPath)
 			                .infuse(Map::of);
 		}

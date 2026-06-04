@@ -138,10 +138,6 @@ final class CsvParser
 		for (var i = 1; i < nonBlankRows.size(); i++)
 		{
 			var raw = nonBlankRows.get(i);
-			if (raw.stream().allMatch(String::isBlank))
-			{
-				continue;
-			}
 			var cells = new LinkedHashMap<String, String>();
 			for (var j = 0; j < headers.size(); j++)
 			{
