@@ -4,13 +4,23 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public final class CsvTable
 {
 	private final List<String> headers;
 	private final List<TableRow> rows;
+
+	public static CsvTable of(final List<String> headers, final List<Map<String, String>> rows)
+	{
+		Objects.requireNonNull(headers, "headers must not be null");
+		Objects.requireNonNull(rows, "rows must not be null");
+		var immutableHeaders = List.copyOf(headers);
+		var tableRows = rows.stream()
+		                    .map(rowMap -> buildRow(immutableHeaders, rowMap))
+		                    .toList();
+		return new CsvTable(immutableHeaders, tableRows);
+	}
 
 	public static CsvTable parse(final String content)
 	{
@@ -49,6 +59,17 @@ public final class CsvTable
 			appendRow(sb, List.copyOf(row.cells().values()));
 		}
 		return sb.toString();
+	}
+
+	private static TableRow buildRow(final List<String> headers, final Map<String, String> rowMap)
+	{
+		Objects.requireNonNull(rowMap, "row map must not be null");
+		var cells = new LinkedHashMap<String, String>();
+		for (var header : headers)
+		{
+			cells.put(header, rowMap.getOrDefault(header, ""));
+		}
+		return new TableRow(Collections.unmodifiableMap(cells));
 	}
 
 	private static void appendRow(final StringBuilder sb, final List<String> fields)
