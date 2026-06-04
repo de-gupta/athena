@@ -20,7 +20,7 @@ final class TableRowCellsTest
 		var map = new LinkedHashMap<String, String>();
 		map.put(k1, v1);
 		map.put(k2, v2);
-		return new TableRow(Collections.unmodifiableMap(map));
+		return new TableRow(Collections.unmodifiableSequencedMap(map));
 	}
 
 	private static TableRow rowOf(final String k1, final String v1,
@@ -31,7 +31,7 @@ final class TableRowCellsTest
 		map.put(k1, v1);
 		map.put(k2, v2);
 		map.put(k3, v3);
-		return new TableRow(Collections.unmodifiableMap(map));
+		return new TableRow(Collections.unmodifiableSequencedMap(map));
 	}
 
 	// --- Helpers ---
@@ -40,7 +40,7 @@ final class TableRowCellsTest
 	{
 		var map = new LinkedHashMap<String, String>();
 		map.put(key, value);
-		return new TableRow(Collections.unmodifiableMap(map));
+		return new TableRow(Collections.unmodifiableSequencedMap(map));
 	}
 
 	@Nested
@@ -89,7 +89,7 @@ final class TableRowCellsTest
 		@DisplayName("returns an empty map")
 		void returnsAnEmptyMap()
 		{
-			var row = new TableRow(Collections.unmodifiableMap(new LinkedHashMap<>()));
+			var row = new TableRow(Collections.unmodifiableSequencedMap(new LinkedHashMap<>()));
 
 			assertThat(row.cells())
 					.as("row with no cells should return an empty map")

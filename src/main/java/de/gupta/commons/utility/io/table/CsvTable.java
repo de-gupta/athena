@@ -69,7 +69,7 @@ public final class CsvTable
 		{
 			cells.put(header, rowMap.getOrDefault(header, ""));
 		}
-		return new TableRow(Collections.unmodifiableMap(cells));
+		return new TableRow(Collections.unmodifiableSequencedMap(cells));
 	}
 
 	private static void appendRow(final StringBuilder sb, final List<String> fields)

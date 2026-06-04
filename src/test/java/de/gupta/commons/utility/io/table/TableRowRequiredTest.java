@@ -22,7 +22,7 @@ final class TableRowRequiredTest
 	{
 		var map = new LinkedHashMap<String, String>();
 		map.put(key, value);
-		return new TableRow(Collections.unmodifiableMap(map));
+		return new TableRow(Collections.unmodifiableSequencedMap(map));
 	}
 
 	@Nested

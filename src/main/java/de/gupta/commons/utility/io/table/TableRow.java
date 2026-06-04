@@ -1,12 +1,17 @@
 package de.gupta.commons.utility.io.table;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.SequencedMap;
 
 public final class TableRow
 {
-	private final Map<String, String> cells;
+	private final SequencedMap<String, String> cells;
+
+	public SequencedMap<String, String> cells()
+	{
+		return cells;
+	}
 
 	public String required(final String column)
 	{
@@ -30,12 +35,7 @@ public final class TableRow
 		return cells.getOrDefault(column, fallback);
 	}
 
-	public Map<String, String> cells()
-	{
-		return cells;
-	}
-
-	TableRow(final Map<String, String> cells)
+	TableRow(final SequencedMap<String, String> cells)
 	{
 		this.cells = cells;
 	}

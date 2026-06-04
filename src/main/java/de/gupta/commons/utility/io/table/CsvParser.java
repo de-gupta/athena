@@ -147,7 +147,7 @@ final class CsvParser
 			{
 				cells.put(headers.get(j), j < raw.size() ? raw.get(j) : "");
 			}
-			tableRows.add(new TableRow(Collections.unmodifiableMap(cells)));
+			tableRows.add(new TableRow(Collections.unmodifiableSequencedMap(cells)));
 		}
 
 		return new CsvTable(headers,
