@@ -5,6 +5,7 @@ module de.gupta.athena
 
 	exports de.gupta.commons.utility.io.path;
 	exports de.gupta.commons.utility.io.read;
+	exports de.gupta.commons.utility.io.table;
 	exports de.gupta.commons.utility.io.write;
 
 	exports de.gupta.commons.utility.javaLanguage.classes;
