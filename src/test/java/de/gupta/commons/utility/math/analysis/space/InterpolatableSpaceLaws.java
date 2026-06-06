@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 record InterpolatableSpaceLaws<X>(InterpolatableSpace<X> subject, X left, X interior, X right)
 {
+	private static final double COMPARISON_THRESHOLD = 1e-12;
+
 	Stream<DynamicTest> tests()
 	{
 		return Stream.concat(
@@ -27,12 +29,12 @@ record InterpolatableSpaceLaws<X>(InterpolatableSpace<X> subject, X left, X inte
 
 	private void parameterAtLeftEndpointIsZero()
 	{
-		assertThat(subject.parameter(left, right, left)).isCloseTo(0.0, within(1e-12));
+		assertThat(subject.parameter(left, right, left)).isCloseTo(0.0, within(COMPARISON_THRESHOLD));
 	}
 
 	private void parameterAtRightEndpointIsOne()
 	{
-		assertThat(subject.parameter(left, right, right)).isCloseTo(1.0, within(1e-12));
+		assertThat(subject.parameter(left, right, right)).isCloseTo(1.0, within(COMPARISON_THRESHOLD));
 	}
 
 	private void parameterForInteriorPointIsInUnitInterval()
