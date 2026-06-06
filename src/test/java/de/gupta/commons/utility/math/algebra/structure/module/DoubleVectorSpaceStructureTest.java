@@ -2,9 +2,13 @@ package de.gupta.commons.utility.math.algebra.structure.module;
 
 import de.gupta.commons.utility.math.algebra.structure.ring.FieldStructure;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
-@DisplayName("VectorSpaceStructure laws — Double over Double")
-final class DoubleVectorSpaceStructureTest extends VectorSpaceStructureLawsTest<Double, Double>
+import java.util.stream.Stream;
+
+@DisplayName("VectorSpaceStructure — Double over Double")
+final class DoubleVectorSpaceStructureTest
 {
 	private static final FieldStructure<Double> DOUBLE_FIELD = new FieldStructure<>()
 	{
@@ -78,33 +82,10 @@ final class DoubleVectorSpaceStructureTest extends VectorSpaceStructureLawsTest<
 		}
 	};
 
-	@Override
-	protected VectorSpaceStructure<Double, Double> module()
+	@TestFactory
+	@DisplayName("satisfies all vector space laws")
+	Stream<DynamicTest> vectorSpaceLaws()
 	{
-		return DOUBLE_SPACE;
-	}
-
-	@Override
-	protected Double vector()
-	{
-		return 3.0;
-	}
-
-	@Override
-	protected Double secondVector()
-	{
-		return 7.0;
-	}
-
-	@Override
-	protected Double scalar()
-	{
-		return 2.0;
-	}
-
-	@Override
-	protected Double secondScalar()
-	{
-		return 5.0;
+		return new VectorSpaceStructureLaws<>(DOUBLE_SPACE, 3.0, 7.0, 2.0, 5.0).tests();
 	}
 }
