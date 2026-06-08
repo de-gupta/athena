@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -21,11 +22,10 @@ final class NearestNeighborMethodTest
 
 	private static InterpolationData<Double, Double> dataOf(final double... pairs)
 	{
-		List<Sample<Double, Double>> samples = java.util.stream.IntStream.iterate(0, i -> i + 2)
-		                                                                 .limit(pairs.length / 2)
-		                                                                 .mapToObj(i -> new Sample<>(pairs[i],
-																				 pairs[i + 1]))
-		                                                                 .toList();
+		List<Sample<Double, Double>> samples = IntStream.iterate(0, i -> i + 2)
+		                                                .limit(pairs.length / 2)
+		                                                .mapToObj(i -> new Sample<>(pairs[i], pairs[i + 1]))
+		                                                .toList();
 		return InterpolationData.of(samples, Double::compare);
 	}
 
@@ -153,6 +153,7 @@ final class NearestNeighborMethodTest
 		void ofWithAveragePolicyThrows()
 		{
 			assertThatIllegalArgumentException()
+					.as("of() with AVERAGE policy must throw IllegalArgumentException")
 					.isThrownBy(() -> NearestNeighborMethod.of(DoubleInterpolatableSpace.LINEAR,
 							TieBreakingPolicy.AVERAGE));
 		}
@@ -162,6 +163,7 @@ final class NearestNeighborMethodTest
 		void nullSpaceThrows()
 		{
 			assertThatNullPointerException()
+					.as("null space must throw NullPointerException")
 					.isThrownBy(() -> NearestNeighborMethod.of(null, TieBreakingPolicy.LOWER))
 					.withMessage("space");
 		}
@@ -171,6 +173,7 @@ final class NearestNeighborMethodTest
 		void nullTieBreakingThrows()
 		{
 			assertThatNullPointerException()
+					.as("null tie-breaking policy must throw NullPointerException")
 					.isThrownBy(() -> NearestNeighborMethod.of(DoubleInterpolatableSpace.LINEAR, null))
 					.withMessage("tieBreaking");
 		}
@@ -187,6 +190,7 @@ final class NearestNeighborMethodTest
 			InterpolationData<Double, Double> empty = InterpolationData.of(List.of(), Double::compare);
 
 			assertThatIllegalArgumentException()
+					.as("fit() on empty data must throw IllegalArgumentException")
 					.isThrownBy(() -> LOWER_METHOD.fit(empty));
 		}
 	}
@@ -200,6 +204,7 @@ final class NearestNeighborMethodTest
 		void nullDataThrows()
 		{
 			assertThatNullPointerException()
+					.as("null data must throw NullPointerException")
 					.isThrownBy(() -> LOWER_METHOD.fit(null))
 					.withMessage("data");
 		}

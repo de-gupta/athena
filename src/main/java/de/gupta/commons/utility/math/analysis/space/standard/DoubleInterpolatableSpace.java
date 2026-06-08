@@ -34,8 +34,8 @@ public enum DoubleInterpolatableSpace implements DifferentiableSpace<Double>
 			};
 
 	@Override
-	public int compare(final Double a, final Double b)
+	public int compare(final Double left, final Double right)
 	{
-		return Double.compare(a, b);
+		return Double.compare(left, right);
 	}
 }

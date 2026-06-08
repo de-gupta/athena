@@ -40,8 +40,8 @@ public enum BigDecimalInterpolatableSpace implements DifferentiableSpace<BigDeci
 			};
 
 	@Override
-	public int compare(final BigDecimal a, final BigDecimal b)
+	public int compare(final BigDecimal left, final BigDecimal right)
 	{
-		return a.compareTo(b);
+		return left.compareTo(right);
 	}
 }

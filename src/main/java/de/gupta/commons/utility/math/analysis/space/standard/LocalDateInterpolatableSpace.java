@@ -22,8 +22,8 @@ public enum LocalDateInterpolatableSpace implements InterpolatableSpace<LocalDat
 	}
 
 	@Override
-	public int compare(final LocalDate a, final LocalDate b)
+	public int compare(final LocalDate left, final LocalDate right)
 	{
-		return a.compareTo(b);
+		return left.compareTo(right);
 	}
 }
