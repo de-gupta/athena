@@ -24,7 +24,9 @@ record ModuleStructureLaws<V, R>(ModuleStructure<V, R> subject, V vector, V seco
 		V left = subject.scale(scalar, subject.add(vector, secondVector));
 		V right = subject.add(subject.scale(scalar, vector), subject.scale(scalar, secondVector));
 
-		assertThat(left).isEqualTo(right);
+		assertThat(left)
+				.as("r·(v+w) must equal r·v + r·w")
+				.isEqualTo(right);
 	}
 
 	private void scaleDistributesOverScalarAddition()
@@ -32,7 +34,9 @@ record ModuleStructureLaws<V, R>(ModuleStructure<V, R> subject, V vector, V seco
 		V left = subject.scale(subject.scalars().add(scalar, secondScalar), vector);
 		V right = subject.add(subject.scale(scalar, vector), subject.scale(secondScalar, vector));
 
-		assertThat(left).isEqualTo(right);
+		assertThat(left)
+				.as("(r+s)·v must equal r·v + s·v")
+				.isEqualTo(right);
 	}
 
 	private void scaleIsCompatibleWithRingMultiplication()
@@ -40,11 +44,15 @@ record ModuleStructureLaws<V, R>(ModuleStructure<V, R> subject, V vector, V seco
 		V left = subject.scale(subject.scalars().multiply(scalar, secondScalar), vector);
 		V right = subject.scale(scalar, subject.scale(secondScalar, vector));
 
-		assertThat(left).isEqualTo(right);
+		assertThat(left)
+				.as("(r·s)·v must equal r·(s·v)")
+				.isEqualTo(right);
 	}
 
 	private void unitScalarActsAsIdentity()
 	{
-		assertThat(subject.scale(subject.scalars().one(), vector)).isEqualTo(vector);
+		assertThat(subject.scale(subject.scalars().one(), vector))
+				.as("1·v must equal v")
+				.isEqualTo(vector);
 	}
 }

@@ -21,36 +21,43 @@ record InterpolatableSpaceLaws<X>(InterpolatableSpace<X> subject, X left, X inte
 						dynamicTest("parameter(left, right, right) == 1", this::parameterAtRightEndpointIsOne),
 						dynamicTest("parameter for interior point is in (0, 1)",
 								this::parameterForInteriorPointIsInUnitInterval),
-						dynamicTest("compare(left, right) < 0", this::compareIsConsistentWithOrdering),
-						dynamicTest("space is usable as Comparator<X>", this::spaceIsUsableAsComparator)
+						dynamicTest("compare(left, right) < 0 and compare(right, left) > 0",
+								this::compareIsConsistentWithOrdering)
 				)
 		);
 	}
 
 	private void parameterAtLeftEndpointIsZero()
 	{
-		assertThat(subject.parameter(left, right, left)).isCloseTo(0.0, within(COMPARISON_THRESHOLD));
+		assertThat(subject.parameter(left, right, left))
+				.as("parameter at left endpoint must be 0")
+				.isCloseTo(0.0, within(COMPARISON_THRESHOLD));
 	}
 
 	private void parameterAtRightEndpointIsOne()
 	{
-		assertThat(subject.parameter(left, right, right)).isCloseTo(1.0, within(COMPARISON_THRESHOLD));
+		assertThat(subject.parameter(left, right, right))
+				.as("parameter at right endpoint must be 1")
+				.isCloseTo(1.0, within(COMPARISON_THRESHOLD));
 	}
 
 	private void parameterForInteriorPointIsInUnitInterval()
 	{
-		assertThat(subject.parameter(left, right, interior)).isBetween(0.0, 1.0);
+		assertThat(subject.parameter(left, right, interior))
+				.as("parameter for interior point must be in (0, 1)")
+				.isBetween(0.0, 1.0);
 	}
 
 	private void compareIsConsistentWithOrdering()
 	{
-		assertThat(subject.compare(left, right)).isNegative();
-		assertThat(subject.compare(right, left)).isPositive();
-		assertThat(subject.compare(left, left)).isZero(); // called on itself? why?
-	}
-
-	private void spaceIsUsableAsComparator()
-	{
-		assertThat(subject.compare(left, right)).isNegative();
+		assertThat(subject.compare(left, right))
+				.as("compare(left, right) must be negative")
+				.isNegative();
+		assertThat(subject.compare(right, left))
+				.as("compare(right, left) must be positive")
+				.isPositive();
+		assertThat(subject.compare(left, left))
+				.as("compare(a, a) must be zero")
+				.isZero();
 	}
 }

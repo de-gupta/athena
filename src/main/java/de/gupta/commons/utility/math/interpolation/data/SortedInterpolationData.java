@@ -31,23 +31,22 @@ final class SortedInterpolationData<X, Y> implements InterpolationData<X, Y>
 		int high = size - 1;
 		while (low <= high)
 		{
-			int mid = (low + high) >>> 1;
-			int comparison = order.compare(samples.get(mid).x(), query);
+			int midpoint = (low + high) >>> 1;
+			int comparison = order.compare(samples.get(midpoint).x(), query);
 			if (comparison < 0)
 			{
-				low = mid + 1;
+				low = midpoint + 1;
 			}
 			else if (comparison > 0)
 			{
-				high = mid - 1;
+				high = midpoint - 1;
 			}
 			else
 			{
-				int leftIndex = Math.min(mid, size - 2);
+				int leftIndex = Math.min(midpoint, size - 2);
 				return Optional.of(Dyad.of(samples.get(leftIndex), samples.get(leftIndex + 1)));
 			}
 		}
-//		int leftIndex = Math.max(0, Math.min(low - 1, size - 2));
 		int leftIndex = Math.clamp(low - 1, 0, size - 2);
 		return Optional.of(Dyad.of(samples.get(leftIndex), samples.get(leftIndex + 1)));
 	}

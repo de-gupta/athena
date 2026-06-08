@@ -30,8 +30,8 @@ final class InterpolationDataTest
 	}
 
 	@Nested
-	@DisplayName("samples()")
-	final class Samples
+	@DisplayName("when samples() is called")
+	final class WhenSamplesQueried
 	{
 		@Test
 		@DisplayName("returns samples sorted ascending by X regardless of insertion order")
@@ -40,91 +40,104 @@ final class InterpolationDataTest
 			InterpolationData<Double, String> data = InterpolationData.of(
 					List.of(S7, S1, S5, S3), Double::compare);
 
-			assertThat(data.samples()).containsExactly(S1, S3, S5, S7);
+			assertThat(data.samples())
+					.as("samples must be sorted ascending by X")
+					.containsExactly(S1, S3, S5, S7);
 		}
 
 		@Test
 		@DisplayName("returns an unmodifiable view")
 		void returnsUnmodifiableList()
 		{
-			assertThat(fourKnots().samples()).isUnmodifiable();
+			assertThat(fourKnots().samples())
+					.as("samples list must be unmodifiable")
+					.isUnmodifiable();
 		}
 	}
 
 	@Nested
-	@DisplayName("bracket() — interior query")
-	final class BracketInteriorQuery
+	@DisplayName("when query is interior")
+	final class WhenQueryIsInterior
 	{
-		@ParameterizedTest(name = "{2}")
-		@MethodSource("interiorQueryCases")
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("returnsStraddlingPairCases")
 		@DisplayName("returns the pair of samples straddling the query")
-		void returnsStraddlingPair(final double query,
-		                           final Dyad<Sample<Double, String>, Sample<Double, String>> expected,
-		                           final String description)
+		void returnsStraddlingPair(final String as, final double query,
+		                           final Dyad<Sample<Double, String>, Sample<Double, String>> expected)
 		{
 			Optional<Dyad<Sample<Double, String>, Sample<Double, String>>> result = fourKnots().bracket(query);
 
-			assertThat(result).contains(expected);
+			assertThat(result).as(as).contains(expected);
 		}
 
-		private static Stream<Arguments> interiorQueryCases()
+		private static Stream<Arguments> returnsStraddlingPairCases()
 		{
 			return Stream.of(
-					Arguments.of(2.0, Dyad.of(S1, S3), "query between first and second knot"),
-					Arguments.of(4.0, Dyad.of(S3, S5), "query between second and third knot"),
-					Arguments.of(6.0, Dyad.of(S5, S7), "query between third and fourth knot")
+					Arguments.of("query between first and second knot", 2.0, Dyad.of(S1, S3)),
+					Arguments.of("query between second and third knot", 4.0, Dyad.of(S3, S5)),
+					Arguments.of("query between third and fourth knot", 6.0, Dyad.of(S5, S7))
 			);
 		}
 	}
 
 	@Nested
-	@DisplayName("bracket() — exact hit on knot")
-	final class BracketExactHit
+	@DisplayName("when query hits a knot exactly")
+	final class WhenQueryHitsKnotExactly
 	{
 		@Test
 		@DisplayName("hit on first knot returns first pair")
 		void hitOnFirstKnotReturnsFirstPair()
 		{
-			assertThat(fourKnots().bracket(1.0)).contains(Dyad.of(S1, S3));
+			assertThat(fourKnots().bracket(1.0))
+					.as("exact hit on first knot must return first pair")
+					.contains(Dyad.of(S1, S3));
 		}
 
 		@Test
 		@DisplayName("hit on last knot returns last pair")
 		void hitOnLastKnotReturnsLastPair()
 		{
-			assertThat(fourKnots().bracket(7.0)).contains(Dyad.of(S5, S7));
+			assertThat(fourKnots().bracket(7.0))
+					.as("exact hit on last knot must return last pair")
+					.contains(Dyad.of(S5, S7));
 		}
 
 		@Test
 		@DisplayName("hit on interior knot returns that knot as left of its rightward pair")
 		void hitOnInteriorKnotReturnsLeftBiasedPair()
 		{
-			assertThat(fourKnots().bracket(3.0)).contains(Dyad.of(S3, S5));
+			assertThat(fourKnots().bracket(3.0))
+					.as("exact hit on interior knot must return leftward pair")
+					.contains(Dyad.of(S3, S5));
 		}
 	}
 
 	@Nested
-	@DisplayName("bracket() — query out of range")
-	final class BracketOutOfRange
+	@DisplayName("when query is out of range")
+	final class WhenQueryIsOutOfRange
 	{
 		@Test
 		@DisplayName("query below minimum returns the leftmost pair")
 		void queryBelowMinimumReturnsLeftmostPair()
 		{
-			assertThat(fourKnots().bracket(-99.0)).contains(Dyad.of(S1, S3));
+			assertThat(fourKnots().bracket(-99.0))
+					.as("query below minimum must return leftmost pair")
+					.contains(Dyad.of(S1, S3));
 		}
 
 		@Test
 		@DisplayName("query above maximum returns the rightmost pair")
 		void queryAboveMaximumReturnsRightmostPair()
 		{
-			assertThat(fourKnots().bracket(99.0)).contains(Dyad.of(S5, S7));
+			assertThat(fourKnots().bracket(99.0))
+					.as("query above maximum must return rightmost pair")
+					.contains(Dyad.of(S5, S7));
 		}
 	}
 
 	@Nested
-	@DisplayName("bracket() — minimal data")
-	final class BracketMinimalData
+	@DisplayName("when data is minimal")
+	final class WhenDataIsMinimal
 	{
 		@Test
 		@DisplayName("two knots always returns that pair regardless of query")
@@ -132,9 +145,12 @@ final class InterpolationDataTest
 		{
 			InterpolationData<Double, String> data = InterpolationData.of(List.of(S1, S7), Double::compare);
 
-			assertThat(data.bracket(0.0)).contains(Dyad.of(S1, S7));
-			assertThat(data.bracket(4.0)).contains(Dyad.of(S1, S7));
-			assertThat(data.bracket(99.0)).contains(Dyad.of(S1, S7));
+			assertThat(data.bracket(0.0)).as("two-knot data must return the only pair for any query")
+			                             .contains(Dyad.of(S1, S7));
+			assertThat(data.bracket(4.0)).as("two-knot data must return the only pair for any query")
+			                             .contains(Dyad.of(S1, S7));
+			assertThat(data.bracket(99.0)).as("two-knot data must return the only pair for any query")
+			                              .contains(Dyad.of(S1, S7));
 		}
 
 		@Test
@@ -143,7 +159,9 @@ final class InterpolationDataTest
 		{
 			InterpolationData<Double, String> data = InterpolationData.of(List.of(S1), Double::compare);
 
-			assertThat(data.bracket(1.0)).isEmpty();
+			assertThat(data.bracket(1.0))
+					.as("single-knot data must return empty")
+					.isEmpty();
 		}
 
 		@Test
@@ -152,13 +170,15 @@ final class InterpolationDataTest
 		{
 			InterpolationData<Double, String> data = InterpolationData.of(List.of(), Double::compare);
 
-			assertThat(data.bracket(0.0)).isEmpty();
+			assertThat(data.bracket(0.0))
+					.as("empty data must return empty")
+					.isEmpty();
 		}
 	}
 
 	@Nested
-	@DisplayName("construction validation")
-	final class ConstructionValidation
+	@DisplayName("with null arguments")
+	final class WithNullArguments
 	{
 		@Test
 		@DisplayName("null samples list throws NullPointerException")

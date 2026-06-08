@@ -26,7 +26,9 @@ record VectorSpaceStructureLaws<V, F>(VectorSpaceStructure<V, F> subject, V vect
 		V scaled = subject.scale(scalar, vector);
 		V unscaled = subject.scale(subject.scalars().multiplicativeInverse(scalar), scaled);
 
-		assertThat(unscaled).isEqualTo(vector);
+		assertThat(unscaled)
+				.as("scaling then unscaling must return the original vector")
+				.isEqualTo(vector);
 	}
 
 	private void scaleByAdditiveInverseOfOneNegatesVector()
@@ -35,6 +37,8 @@ record VectorSpaceStructureLaws<V, F>(VectorSpaceStructure<V, F> subject, V vect
 		V scaledByNegativeOne = subject.scale(negativeOne, vector);
 		V negated = subject.negate(vector);
 
-		assertThat(scaledByNegativeOne).isEqualTo(negated);
+		assertThat(scaledByNegativeOne)
+				.as("(-1)·v must equal -v")
+				.isEqualTo(negated);
 	}
 }

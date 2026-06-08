@@ -21,17 +21,23 @@ record MetricSpaceLaws<X>(MetricSpace<X> subject, X pointA, X pointB, X pointC)
 
 	private void selfDistanceIsZero()
 	{
-		assertThat(subject.distance(pointA, pointA)).isZero();
+		assertThat(subject.distance(pointA, pointA))
+				.as("d(a, a) must be zero")
+				.isZero();
 	}
 
 	private void distanceIsNonNegative()
 	{
-		assertThat(subject.distance(pointA, pointB)).isGreaterThanOrEqualTo(0.0);
+		assertThat(subject.distance(pointA, pointB))
+				.as("d(a, b) must be non-negative")
+				.isGreaterThanOrEqualTo(0.0);
 	}
 
 	private void distanceIsSymmetric()
 	{
-		assertThat(subject.distance(pointA, pointB)).isEqualTo(subject.distance(pointB, pointA));
+		assertThat(subject.distance(pointA, pointB))
+				.as("d(a, b) must equal d(b, a)")
+				.isEqualTo(subject.distance(pointB, pointA));
 	}
 
 	private void triangleInequalityHolds()
@@ -40,6 +46,8 @@ record MetricSpaceLaws<X>(MetricSpace<X> subject, X pointA, X pointB, X pointC)
 		double distanceBC = subject.distance(pointB, pointC);
 		double distanceAC = subject.distance(pointA, pointC);
 
-		assertThat(distanceAC).isLessThanOrEqualTo(distanceAB + distanceBC + 1e-12);
+		assertThat(distanceAC)
+				.as("d(a, c) must not exceed d(a, b) + d(b, c)")
+				.isLessThanOrEqualTo(distanceAB + distanceBC + 1e-12);
 	}
 }

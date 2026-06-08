@@ -25,17 +25,23 @@ record DifferentiableSpaceLaws<X>(DifferentiableSpace<X> subject, X left, X inte
 
 	private void spanIsNonNegative()
 	{
-		assertThat(subject.span(left, right)).isGreaterThanOrEqualTo(0.0);
+		assertThat(subject.span(left, right))
+				.as("span must be non-negative")
+				.isGreaterThanOrEqualTo(0.0);
 	}
 
 	private void spanIsSymmetric()
 	{
-		assertThat(subject.span(left, right)).isCloseTo(subject.span(right, left), within(1e-12));
+		assertThat(subject.span(left, right))
+				.as("span must be symmetric")
+				.isCloseTo(subject.span(right, left), within(1e-12));
 	}
 
 	private void spanOfEqualPointsIsZero()
 	{
-		assertThat(subject.span(left, left)).isCloseTo(0.0, within(1e-12));
+		assertThat(subject.span(left, left))
+				.as("span of equal points must be zero")
+				.isCloseTo(0.0, within(1e-12));
 	}
 
 	private void spanThrowsOnNullLeft()
