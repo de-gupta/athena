@@ -8,11 +8,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-record InterpolatableSpaceLaws<X>(InterpolatableSpace<X> subject, X left, X interior, X right)
+public record InterpolatableSpaceLaws<X>(InterpolatableSpace<X> subject, X left, X interior, X right)
 {
 	private static final double COMPARISON_THRESHOLD = 1e-12;
 
-	Stream<DynamicTest> tests()
+	public Stream<DynamicTest> tests()
 	{
 		return Stream.concat(
 				new MetricSpaceLaws<>(subject, left, right, interior).tests(),

@@ -7,10 +7,10 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-record VectorSpaceStructureLaws<V, F>(VectorSpaceStructure<V, F> subject, V vector, V secondVector, F scalar,
+public record VectorSpaceStructureLaws<V, F>(VectorSpaceStructure<V, F> subject, V vector, V secondVector, F scalar,
                                       F secondScalar)
 {
-	Stream<DynamicTest> tests()
+	public Stream<DynamicTest> tests()
 	{
 		return Stream.concat(
 				new ModuleStructureLaws<>(subject, vector, secondVector, scalar, secondScalar).tests(),

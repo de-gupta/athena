@@ -7,9 +7,10 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-record ModuleStructureLaws<V, R>(ModuleStructure<V, R> subject, V vector, V secondVector, R scalar, R secondScalar)
+public record ModuleStructureLaws<V, R>(ModuleStructure<V, R> subject, V vector, V secondVector, R scalar,
+                                        R secondScalar)
 {
-	Stream<DynamicTest> tests()
+	public Stream<DynamicTest> tests()
 	{
 		return Stream.of(
 				dynamicTest("r·(v+w) == r·v + r·w", this::scaleDistributesOverVectorAddition),

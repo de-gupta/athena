@@ -7,9 +7,9 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-record MetricSpaceLaws<X>(MetricSpace<X> subject, X pointA, X pointB, X pointC)
+public record MetricSpaceLaws<X>(MetricSpace<X> subject, X pointA, X pointB, X pointC)
 {
-	Stream<DynamicTest> tests()
+	public Stream<DynamicTest> tests()
 	{
 		return Stream.of(
 				dynamicTest("d(a, a) == 0", this::selfDistanceIsZero),

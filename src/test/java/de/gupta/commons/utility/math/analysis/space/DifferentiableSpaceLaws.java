@@ -7,9 +7,9 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-record DifferentiableSpaceLaws<X>(DifferentiableSpace<X> subject, X left, X interior, X right)
+public record DifferentiableSpaceLaws<X>(DifferentiableSpace<X> subject, X left, X interior, X right)
 {
-	Stream<DynamicTest> tests()
+	public Stream<DynamicTest> tests()
 	{
 		return Stream.concat(
 				new InterpolatableSpaceLaws<>(subject, left, interior, right).tests(),
