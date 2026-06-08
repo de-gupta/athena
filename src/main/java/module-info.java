@@ -22,6 +22,8 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.properties;
 
 	exports de.gupta.commons.utility.math.analysis.space;
+	exports de.gupta.commons.utility.math.interpolation;
+	exports de.gupta.commons.utility.math.interpolation.data;
 
 	exports de.gupta.commons.utility.math.prefix;
 	exports de.gupta.commons.utility.math.algebra.structure.binary;
