@@ -96,11 +96,10 @@ public final class InterpolationGrid<X1, X2, Y>
 			}
 
 			List<X1> dim1Keys = new ArrayList<>(slices.keySet());
-			List<Interpolator<X2, Y>> dim2Interpolators = new ArrayList<>(slices.size());
-			for (List<Sample<X2, Y>> sliceSamples : slices.values())
-			{
-				dim2Interpolators.add(dim2Method.fit(InterpolationData.of(sliceSamples, dim2Order)));
-			}
+			List<Interpolator<X2, Y>> dim2Interpolators = slices.values().stream()
+			                                                    .map(sliceSamples -> dim2Method.fit(
+					                                                    InterpolationData.of(sliceSamples, dim2Order)))
+			                                                    .toList();
 
 			return new InterpolationGrid<>(dim1Keys, dim2Interpolators, dim1Method, dim1Order);
 		}

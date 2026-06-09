@@ -32,7 +32,6 @@ final class InterpolationGridTest
 
 	private static List<GridSample<Double, Double, Double>> linearGrid()
 	{
-		// 3×3 grid where y = x1 + x2
 		return List.of(
 				new GridSample<>(0.0, 0.0, 0.0), new GridSample<>(0.0, 1.0, 1.0), new GridSample<>(0.0, 2.0, 2.0),
 				new GridSample<>(1.0, 0.0, 1.0), new GridSample<>(1.0, 1.0, 2.0), new GridSample<>(1.0, 2.0, 3.0),
@@ -54,7 +53,7 @@ final class InterpolationGridTest
 	final class WhenQueriedAtExactGridKnots
 	{
 		@ParameterizedTest(name = "{0}")
-		@MethodSource("exactKnotCases")
+		@MethodSource("returnsExactKnotValueCases")
 		@DisplayName("returns the exact knot value")
 		void returnsExactKnotValue(final String as, final double x1, final double x2, final double expected)
 		{
@@ -63,7 +62,7 @@ final class InterpolationGridTest
 					.isCloseTo(expected, within(1e-12));
 		}
 
-		private static Stream<Arguments> exactKnotCases()
+		private static Stream<Arguments> returnsExactKnotValueCases()
 		{
 			return Stream.of(
 					Arguments.of("corner (0,0) → 0", 0.0, 0.0, 0.0),

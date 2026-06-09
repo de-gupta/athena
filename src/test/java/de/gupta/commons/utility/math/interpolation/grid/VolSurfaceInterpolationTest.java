@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
@@ -20,21 +21,6 @@ import static org.assertj.core.api.Assertions.within;
 @DisplayName("Vol surface interpolation — integration test")
 final class VolSurfaceInterpolationTest
 {
-	/*
-	 * 4 expiries × 5 strikes. Strike dimension uses LOG parameterisation (monotone cubic).
-	 * Expiry dimension uses calendar-day linear interpolation.
-	 *
-	 * Implied vols (percent) — smile with a downward skew and rising term structure:
-	 *
-	 *           K=80   K=90   K=100  K=110  K=120
-	 * 2024-03-31  25     22     20     21     23
-	 * 2024-06-30  26     23     21     22     24
-	 * 2024-09-30  27     24     22     23     25
-	 * 2024-12-31  28     25     23     24     26
-	 *
-	 * All values divided by 100 when stored as decimals.
-	 */
-
 	private static final LocalDate MAR = LocalDate.of(2024, 3, 31);
 	private static final LocalDate JUN = LocalDate.of(2024, 6, 30);
 	private static final LocalDate SEP = LocalDate.of(2024, 9, 30);
@@ -51,17 +37,15 @@ final class VolSurfaceInterpolationTest
 
 	private static InterpolationGrid<LocalDate, Double, Double> buildSurface()
 	{
-		List<GridSample<LocalDate, Double, Double>> samples = java.util.stream.IntStream.range(0, 4)
-		                                                                                .boxed()
-		                                                                                .flatMap(
-																								expiryIndex -> java.util.stream.IntStream.range(
-																														   0, 5)
-				                                                                                                                         .mapToObj(
-																																				 strikeIndex -> new GridSample<>(
-																																						 EXPIRIES[expiryIndex],
-																																						 STRIKES[strikeIndex],
-																																						 VOLS[expiryIndex][strikeIndex])))
-		                                                                                .toList();
+		List<GridSample<LocalDate, Double, Double>> samples = IntStream.range(0, 4)
+		                                                               .boxed()
+		                                                               .flatMap(expiryIndex -> IntStream.range(0, 5)
+		                                                                                                .mapToObj(
+				                                                                                                strikeIndex -> new GridSample<>(
+																														EXPIRIES[expiryIndex],
+																														STRIKES[strikeIndex],
+																														VOLS[expiryIndex][strikeIndex])))
+		                                                               .toList();
 
 		return InterpolationGrid.<LocalDate, Double, Double>builder()
 		                        .withData(samples)
@@ -124,9 +108,6 @@ final class VolSurfaceInterpolationTest
 		@DisplayName("ATM vol at 2024-05-01 is linearly interpolated between 3-month and 6-month")
 		void atmVolIsLinearlyInterpolatedBetweenNeighbouringExpiries()
 		{
-			// 2024-03-31 → 2024-06-30 = 91 calendar days
-			// 2024-03-31 → 2024-05-01 = 31 calendar days  (April=30, May 1 = +1)
-			// λ = 31/91;  vol = 0.20 + λ * (0.21 - 0.20)
 			double lambda = 31.0 / 91.0;
 			double expected = 0.20 + lambda * 0.01;
 

@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("LinearInterpolationMethod")
+@DisplayName("LinearInterpolationMethod#fit")
 final class LinearInterpolationMethodTest
 {
 	private static final LinearInterpolationMethod<Double, Double, Double> FLAT_METHOD =

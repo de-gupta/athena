@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("MonotoneCubicMethod")
+@DisplayName("MonotoneCubicMethod#fit")
 final class MonotoneCubicMethodTest
 {
 	private static final MonotoneCubicMethod<Double, Double> FLAT_METHOD =
@@ -56,7 +56,6 @@ final class MonotoneCubicMethodTest
 		@DisplayName("interpolated values do not overshoot between any two adjacent knots")
 		void doesNotOvershootBetweenAdjacentKnots()
 		{
-			// S-curve: flat then rising then flat — classic overshooting scenario for natural spline
 			InterpolationData<Double, Double> data = samplesOf(0.0, 0.0, 1.0, 0.0, 2.0, 1.0, 3.0, 1.0);
 			Interpolator<Double, Double> interpolator = FLAT_METHOD.fit(data);
 

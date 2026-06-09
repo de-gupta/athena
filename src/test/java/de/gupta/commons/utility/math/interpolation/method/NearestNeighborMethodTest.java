@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("NearestNeighborMethod")
+@DisplayName("NearestNeighborMethod#fit")
 final class NearestNeighborMethodTest
 {
 	private static final NearestNeighborMethod<Double, Double> LOWER_METHOD =

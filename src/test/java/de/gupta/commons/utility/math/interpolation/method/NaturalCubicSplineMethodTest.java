@@ -11,10 +11,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DisplayName("NaturalCubicSplineMethod")
+@DisplayName("NaturalCubicSplineMethod#fit")
 final class NaturalCubicSplineMethodTest
 {
 	private static final NaturalCubicSplineMethod<Double, Double, Double> FLAT_METHOD =
@@ -23,11 +24,10 @@ final class NaturalCubicSplineMethodTest
 
 	private static InterpolationData<Double, Double> samplesOf(final double... pairs)
 	{
-		List<Sample<Double, Double>> samples = java.util.stream.IntStream.iterate(0, i -> i + 2)
-		                                                                 .limit(pairs.length / 2)
-		                                                                 .mapToObj(i -> new Sample<>(pairs[i],
-																				 pairs[i + 1]))
-		                                                                 .toList();
+		List<Sample<Double, Double>> samples = IntStream.iterate(0, i -> i + 2)
+		                                                .limit(pairs.length / 2)
+		                                                .mapToObj(i -> new Sample<>(pairs[i], pairs[i + 1]))
+		                                                .toList();
 		return InterpolationData.of(samples, Double::compare);
 	}
 
@@ -62,11 +62,6 @@ final class NaturalCubicSplineMethodTest
 		@DisplayName("returns the analytically computed value for 3 quadratic samples")
 		void returnsAnalyticallyComputedValueForQuadraticSamples()
 		{
-			// Samples (0,0),(1,1),(2,4): h₀=h₁=1, M₀=M₂=0
-			// Interior eq: 4*M₁ = 6*((4-1)/1 - (1-0)/1) = 12  →  M₁=3
-			// S(0.5) in interval [0,1], λ=0.5:
-			//   h²/6 = 1/6, coeffLeft = 1/6*(0.5*0.5*(0.5-2)) = -0.0625
-			//   S = 0*0.5 + 1*0.5 + (-0.0625)*0 + (-0.0625)*3 = 0.5 - 0.1875 = 0.3125
 			InterpolationData<Double, Double> data = samplesOf(0.0, 0.0, 1.0, 1.0, 2.0, 4.0);
 
 			assertThat(FLAT_METHOD.fit(data).interpolate(0.5))

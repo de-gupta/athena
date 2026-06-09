@@ -139,8 +139,8 @@ public final class NaturalCubicSplineMethod<X, Y, F> implements InterpolationMet
 		double span = spans[i];
 		double lambda = space.parameter(samples.get(i).x(), samples.get(i + 1).x(), query);
 		double spanSquaredOverSix = span * span / 6.0;
-		double coeffLeft = spanSquaredOverSix * (1 - lambda) * lambda * (lambda - 2);
-		double coeffRight = spanSquaredOverSix * lambda * (lambda - 1) * (lambda + 1);
+		double coefficientLeft = spanSquaredOverSix * (1 - lambda) * lambda * (lambda - 2);
+		double coefficientRight = spanSquaredOverSix * lambda * (lambda - 1) * (lambda + 1);
 
 		return outputSpace.add(
 				outputSpace.add(
@@ -148,8 +148,8 @@ public final class NaturalCubicSplineMethod<X, Y, F> implements InterpolationMet
 						outputSpace.scale(scalarOf.apply(lambda), samples.get(i + 1).y())
 				),
 				outputSpace.add(
-						outputSpace.scale(scalarOf.apply(coeffLeft), secondDerivatives.get(i)),
-						outputSpace.scale(scalarOf.apply(coeffRight), secondDerivatives.get(i + 1))
+						outputSpace.scale(scalarOf.apply(coefficientLeft), secondDerivatives.get(i)),
+						outputSpace.scale(scalarOf.apply(coefficientRight), secondDerivatives.get(i + 1))
 				)
 		);
 	}
@@ -175,7 +175,6 @@ public final class NaturalCubicSplineMethod<X, Y, F> implements InterpolationMet
 				return Math.min(midpoint, xValues.size() - 2);
 			}
 		}
-//		return Math.max(0, Math.min(low - 1, xValues.size() - 2));
 		return Math.clamp(low - 1, 0, xValues.size() - 2);
 	}
 

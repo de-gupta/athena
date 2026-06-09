@@ -186,7 +186,6 @@ public final class MonotoneCubicMethod<X, F> implements InterpolationMethod<X, F
 				return Math.min(midpoint, xValues.size() - 2);
 			}
 		}
-//		return Math.max(0, Math.min(low - 1, xValues.size() - 2));
 		return Math.clamp(low - 1, 0, xValues.size() - 2);
 	}
 
