@@ -11,9 +11,13 @@
     <artifactId>athena</artifactId>
     <version>0.7.2-SNAPSHOT</version>
 
-    <name>${artifactId}</name>
+    <name>${project.artifactId}</name>
     <description>A library with common utility functions for java</description>
     <url>https://github.com/de-gupta/athena.git</url>
+
+    <properties>
+        <junit.jupiter.version>6.1.0</junit.jupiter.version>
+    </properties>
 
     <scm>
         <connection>scm:git:git@github.com:de-gupta/athena.git</connection>
@@ -21,6 +25,18 @@
         <url>https://github.com/de-gupta/athena.git</url>
         <tag>HEAD</tag>
     </scm>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
