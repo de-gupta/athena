@@ -24,7 +24,7 @@ final class NearestNeighborMethodTest
 	{
 		List<Sample<Double, Double>> samples = IntStream.iterate(0, i -> i + 2)
 		                                                .limit(pairs.length / 2)
-		                                                .mapToObj(i -> new Sample<>(pairs[i], pairs[i + 1]))
+		                                                .mapToObj(i -> Sample.of(pairs[i], pairs[i + 1]))
 		                                                .toList();
 		return InterpolationData.of(samples, Double::compare);
 	}

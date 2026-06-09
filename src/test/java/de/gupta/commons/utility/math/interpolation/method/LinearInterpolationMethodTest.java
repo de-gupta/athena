@@ -26,7 +26,7 @@ final class LinearInterpolationMethodTest
 	private static InterpolationData<Double, Double> unitRamp()
 	{
 		return InterpolationData.of(
-				List.of(new Sample<>(0.0, 0.0), new Sample<>(10.0, 100.0)),
+				List.of(Sample.of(0.0, 0.0), Sample.of(10.0, 100.0)),
 				Double::compare);
 	}
 
@@ -53,7 +53,7 @@ final class LinearInterpolationMethodTest
 		void returnsExactKnotValueWhenQueryMatchesKnot()
 		{
 			InterpolationData<Double, Double> data = InterpolationData.of(
-					List.of(new Sample<>(1.0, 10.0), new Sample<>(5.0, 50.0), new Sample<>(9.0, 90.0)),
+					List.of(Sample.of(1.0, 10.0), Sample.of(5.0, 50.0), Sample.of(9.0, 90.0)),
 					Double::compare);
 			Interpolator<Double, Double> interpolator = FLAT_METHOD.fit(data);
 
@@ -156,8 +156,8 @@ final class LinearInterpolationMethodTest
 		{
 			InterpolationData<LocalDate, Double> data = InterpolationData.of(
 					List.of(
-							new Sample<>(LocalDate.of(2024, 1, 1), 0.0),
-							new Sample<>(LocalDate.of(2024, 12, 31), 365.0)
+							Sample.of(LocalDate.of(2024, 1, 1), 0.0),
+							Sample.of(LocalDate.of(2024, 12, 31), 365.0)
 					),
 					LocalDate::compareTo);
 
@@ -180,7 +180,7 @@ final class LinearInterpolationMethodTest
 		void fitThrowsWithFewerThanTwoSamples()
 		{
 			InterpolationData<Double, Double> singleKnot = InterpolationData.of(
-					List.of(new Sample<>(1.0, 1.0)), Double::compare);
+					List.of(Sample.of(1.0, 1.0)), Double::compare);
 
 			assertThatIllegalArgumentException()
 					.as("fit() must throw when data has only one sample")

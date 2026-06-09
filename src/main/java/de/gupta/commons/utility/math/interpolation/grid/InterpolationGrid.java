@@ -24,7 +24,7 @@ public final class InterpolationGrid<X1, X2, Y>
 	public Y interpolate(final X1 x1, final X2 x2)
 	{
 		List<Sample<X1, Y>> virtualSamples = IntStream.range(0, dim1Keys.size())
-		                                              .mapToObj(i -> new Sample<>(dim1Keys.get(i),
+		                                              .mapToObj(i -> Sample.of(dim1Keys.get(i),
 															  dim2Interpolators.get(i).interpolate(x2)))
 		                                              .toList();
 		return dim1Method.fit(InterpolationData.of(virtualSamples, dim1Order)).interpolate(x1);
@@ -86,7 +86,7 @@ public final class InterpolationGrid<X1, X2, Y>
 			for (GridSample<X1, X2, Y> gridSample : data)
 			{
 				slices.computeIfAbsent(gridSample.x1(), _ -> new ArrayList<>())
-				      .add(new Sample<>(gridSample.x2(), gridSample.y()));
+				      .add(Sample.of(gridSample.x2(), gridSample.y()));
 			}
 
 			if (slices.size() < 2)

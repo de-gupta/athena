@@ -19,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 @DisplayName("InterpolationData")
 final class InterpolationDataTest
 {
-	private static final Sample<Double, String> S1 = new Sample<>(1.0, "a");
-	private static final Sample<Double, String> S3 = new Sample<>(3.0, "b");
-	private static final Sample<Double, String> S5 = new Sample<>(5.0, "c");
-	private static final Sample<Double, String> S7 = new Sample<>(7.0, "d");
+	private static final Sample<Double, String> S1 = Sample.of(1.0, "a");
+	private static final Sample<Double, String> S3 = Sample.of(3.0, "b");
+	private static final Sample<Double, String> S5 = Sample.of(5.0, "c");
+	private static final Sample<Double, String> S7 = Sample.of(7.0, "d");
 
 	private static InterpolationData<Double, String> fourKnots()
 	{
