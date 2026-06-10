@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>io.github.de-gupta</groupId>
         <artifactId>de-gupta-parent</artifactId>
-        <version>0.2.1</version>
+        <version>0.2.2</version>
     </parent>
 
     <artifactId>athena</artifactId>
@@ -15,28 +15,12 @@
     <description>A library with common utility functions for java</description>
     <url>https://github.com/de-gupta/athena.git</url>
 
-    <properties>
-        <junit.jupiter.version>6.1.0</junit.jupiter.version>
-    </properties>
-
     <scm>
         <connection>scm:git:git@github.com:de-gupta/athena.git</connection>
         <developerConnection>scm:git:git@github.com:de-gupta/athena.git</developerConnection>
         <url>https://github.com/de-gupta/athena.git</url>
         <tag>HEAD</tag>
     </scm>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
