@@ -4,10 +4,8 @@ import de.gupta.aletheia.collection.folding.Loom;
 
 import java.util.Objects;
 
-public interface MonoidStructure<E> extends SemigroupStructure<E>
+public interface MonoidStructure<E> extends SemigroupStructure<E>, UnitalStructure<E>
 {
-	E identity();
-
 	@Override
 	default E multiplyAll(final Loom<E> elements)
 	{

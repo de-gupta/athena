@@ -4,10 +4,8 @@ import de.gupta.aletheia.collection.folding.Loom;
 
 import java.util.Objects;
 
-public interface AdditiveMonoid<E extends AdditiveMonoid<E>> extends AdditiveSemigroup<E>
+public interface AdditiveMonoid<E extends AdditiveMonoid<E>> extends AdditiveSemigroup<E>, Zero<E>
 {
-	E zero();
-
 	@Override
 	default E addAll(final Loom<E> others)
 	{
