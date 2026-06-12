@@ -36,7 +36,10 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.element.binary;
 	exports de.gupta.commons.utility.math.algebra.element.ring;
 	exports de.gupta.commons.utility.math.algebra.element.adapter;
+	exports de.gupta.commons.utility.math.algebra.element.binary.action;
+	exports de.gupta.commons.utility.math.algebra.structure.binary.action;
 	exports de.gupta.commons.utility.math.algebra.laws.binary;
+	exports de.gupta.commons.utility.math.algebra.laws.action;
 	exports de.gupta.commons.utility.math.algebra.laws.ring;
 	exports de.gupta.commons.utility.math.algebra.free.abelian;
 	exports de.gupta.commons.utility.math.algebra.structure.binary.notation.additive;
