@@ -98,6 +98,14 @@ final class OrderRelationTest
 			assertThat(OrderRelation.from(input)).as(as).isEqualTo(expected);
 		}
 
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("fromIntMapsSignumToOrderRelationCases")
+		@DisplayName("from(int) maps signum to the correct OrderRelation")
+		void fromIntMapsSignumToOrderRelation(final String as, final int input, final OrderRelation expected)
+		{
+			assertThat(OrderRelation.from(input)).as(as).isEqualTo(expected);
+		}
+
 		private static Stream<Arguments> toComparisonResultReturnsPresentForComparableValuesAndEmptyForIncomparableCases()
 		{
 			return Stream.of(
@@ -115,6 +123,21 @@ final class OrderRelationTest
 					Arguments.of("LESS_THAN", ComparisonResult.LESS_THAN, LESS_THAN),
 					Arguments.of("EQUAL", ComparisonResult.EQUAL, EQUAL),
 					Arguments.of("GREATER_THAN", ComparisonResult.GREATER_THAN, GREATER_THAN)
+			);
+		}
+
+		private static Stream<Arguments> fromIntMapsSignumToOrderRelationCases()
+		{
+			return Stream.of(
+					Arguments.of("-1 maps to LESS_THAN", -1, LESS_THAN),
+					Arguments.of("-42 maps to LESS_THAN", -42, LESS_THAN),
+					Arguments.of("-1000 maps to LESS_THAN", -1000, LESS_THAN),
+					Arguments.of("MIN_VALUE maps to LESS_THAN", Integer.MIN_VALUE, LESS_THAN),
+					Arguments.of("0 maps to EQUAL", 0, EQUAL),
+					Arguments.of("1 maps to GREATER_THAN", 1, GREATER_THAN),
+					Arguments.of("42 maps to GREATER_THAN", 42, GREATER_THAN),
+					Arguments.of("1000 maps to GREATER_THAN", 1000, GREATER_THAN),
+					Arguments.of("MAX_VALUE maps to GREATER_THAN", Integer.MAX_VALUE, GREATER_THAN)
 			);
 		}
 	}
