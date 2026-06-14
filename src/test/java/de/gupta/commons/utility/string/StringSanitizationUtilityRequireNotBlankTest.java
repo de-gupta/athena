@@ -12,8 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("StringSanitizationUtility - requireNotBlank Tests")
 final class StringSanitizationUtilityRequireNotBlankTest
@@ -323,6 +322,201 @@ final class StringSanitizationUtilityRequireNotBlankTest
 					Arguments.of("value must not be blank or null",
 							"Message containing 'null' is propagated correctly"),
 					Arguments.of("Validation failed: input is blank", "Prefixed message is propagated correctly"),
+					Arguments.of("unicode message: こんにちは", "Unicode in message is propagated correctly"),
+					Arguments.of("special chars: !@#$%^&*()", "Special characters in message are propagated correctly")
+			);
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// requireNotBlankAnd(String, String, UnaryOperator<String>)
+	// -------------------------------------------------------------------------
+
+	@Nested
+	@DisplayName("requireNotBlankAnd - Non-blank inputs (operation applied and result returned)")
+	final class RequireNotBlankAnd_ValidInputTests
+	{
+		@ParameterizedTest(name = "{2}")
+		@MethodSource("trimOperationProvider")
+		@DisplayName("Should apply trim operation and return result for non-blank input")
+		void requireNotBlankAnd_appliesTrimAndReturnsResult(String input, String expected, String description)
+		{
+			String result = StringSanitizationUtility.requireNotBlankAnd(input, "should not throw", String::trim);
+			assertThat(result).as(description).isEqualTo(expected);
+		}
+
+		@Test
+		@DisplayName("Should return result of custom operation applied to input")
+		void requireNotBlankAnd_returnsCustomOperationResult()
+		{
+			String result = StringSanitizationUtility.requireNotBlankAnd("hello", "error", String::toUpperCase);
+			assertThat(result).isEqualTo("HELLO");
+		}
+
+		@Test
+		@DisplayName("Identity operation returns the same object reference")
+		void requireNotBlankAnd_identityOperationReturnsSameReference()
+		{
+			String input = "test string";
+			String result = StringSanitizationUtility.requireNotBlankAnd(input, "error", s -> s);
+			assertThat(result).isSameAs(input);
+		}
+
+		@Test
+		@DisplayName("Operation returning null propagates null as the return value")
+		void requireNotBlankAnd_operationReturningNullReturnsNull()
+		{
+			String result = StringSanitizationUtility.requireNotBlankAnd("valid", "error", _ -> null);
+			assertThat(result).isNull();
+		}
+
+		private static Stream<Arguments> trimOperationProvider()
+		{
+			return Stream.of(
+					Arguments.of("hello", "hello", "Plain word is returned unchanged by trim"),
+					Arguments.of(" hello ", "hello", "Trim removes surrounding spaces"),
+					Arguments.of("  hi  ", "hi", "Trim removes multiple surrounding spaces"),
+					Arguments.of("a", "a", "Single character is returned unchanged by trim"),
+					Arguments.of("123", "123", "Numeric string is returned unchanged by trim")
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("requireNotBlankAnd - Blank / null inputs (exception before operation)")
+	final class RequireNotBlankAnd_BlankInputTests
+	{
+		@ParameterizedTest
+		@NullSource
+		@DisplayName("Should throw IllegalArgumentException for null input")
+		void requireNotBlankAnd_nullThrows(String input)
+		{
+			assertThatThrownBy(() ->
+					StringSanitizationUtility.requireNotBlankAnd(input, "null not allowed", s -> s))
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessage("null not allowed");
+		}
+
+		@ParameterizedTest(name = "{1}")
+		@MethodSource("blankInputProvider")
+		@DisplayName("Should throw IllegalArgumentException for blank input")
+		void requireNotBlankAnd_blankThrows(String input, String description)
+		{
+			assertThatThrownBy(() ->
+					StringSanitizationUtility.requireNotBlankAnd(input, "blank not allowed", s -> s))
+					.as(description)
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessage("blank not allowed");
+		}
+
+		@Test
+		@DisplayName("Operation must not be invoked when input is blank")
+		void requireNotBlankAnd_operationNotInvokedForBlank()
+		{
+			AtomicInteger callCount = new AtomicInteger(0);
+			assertThatThrownBy(() ->
+					StringSanitizationUtility.requireNotBlankAnd("", "blank", s ->
+					{
+						callCount.incrementAndGet();
+						return s;
+					}))
+					.isInstanceOf(IllegalArgumentException.class);
+			assertThat(callCount).hasValue(0);
+		}
+
+		@Test
+		@DisplayName("Operation must not be invoked when input is null")
+		void requireNotBlankAnd_operationNotInvokedForNull()
+		{
+			AtomicInteger callCount = new AtomicInteger(0);
+			assertThatThrownBy(() ->
+					StringSanitizationUtility.requireNotBlankAnd(null, "null", s ->
+					{
+						callCount.incrementAndGet();
+						return s;
+					}))
+					.isInstanceOf(IllegalArgumentException.class);
+			assertThat(callCount).hasValue(0);
+		}
+
+		private static Stream<Arguments> blankInputProvider()
+		{
+			return Stream.of(
+					Arguments.of("", "Empty string should throw"),
+					Arguments.of(" ", "Single space should throw"),
+					Arguments.of("   ", "Multiple spaces should throw"),
+					Arguments.of("\t", "Tab-only string should throw"),
+					Arguments.of("\n", "Newline-only string should throw"),
+					Arguments.of("\r\n", "CRLF string should throw"),
+					Arguments.of(" \t\n\r\f", "Mixed whitespace string should throw")
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("requireNotBlankAnd - Operation invocation")
+	final class RequireNotBlankAnd_OperationInvocationTests
+	{
+		@Test
+		@DisplayName("Operation should be invoked exactly once for valid input")
+		void requireNotBlankAnd_operationInvokedExactlyOnce()
+		{
+			AtomicInteger callCount = new AtomicInteger(0);
+			StringSanitizationUtility.requireNotBlankAnd("valid", "error", s ->
+			{
+				callCount.incrementAndGet();
+				return s;
+			});
+			assertThat(callCount).hasValue(1);
+		}
+
+		@Test
+		@DisplayName("Operation receives the original input, not a modified copy")
+		void requireNotBlankAnd_operationReceivesOriginalInput()
+		{
+			String input = " padded ";
+			StringBuilder received = new StringBuilder();
+			StringSanitizationUtility.requireNotBlankAnd(input, "error", s ->
+			{
+				received.append(s);
+				return s;
+			});
+			assertThat(received).hasToString(input);
+		}
+	}
+
+	@Nested
+	@DisplayName("requireNotBlankAnd - Message propagation")
+	final class RequireNotBlankAnd_MessagePropagationTests
+	{
+		@ParameterizedTest(name = "{1}")
+		@MethodSource("messagePropagationProvider")
+		@DisplayName("Should use the provided message as the exception message")
+		void requireNotBlankAnd_correctMessagePropagated(String message, String description)
+		{
+			assertThatThrownBy(() ->
+					StringSanitizationUtility.requireNotBlankAnd("", message, s -> s))
+					.as(description)
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessage(message);
+		}
+
+		@Test
+		@DisplayName("Should throw with exact message for null input")
+		void requireNotBlankAnd_exactMessageForNull()
+		{
+			assertThatThrownBy(() ->
+					StringSanitizationUtility.requireNotBlankAnd(null, "input is required", s -> s))
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessage("input is required");
+		}
+
+		private static Stream<Arguments> messagePropagationProvider()
+		{
+			return Stream.of(
+					Arguments.of("must not be blank", "Plain message is propagated correctly"),
+					Arguments.of("", "Empty message string is propagated correctly"),
+					Arguments.of("field 'name' is required", "Descriptive message is propagated correctly"),
 					Arguments.of("unicode message: こんにちは", "Unicode in message is propagated correctly"),
 					Arguments.of("special chars: !@#$%^&*()", "Special characters in message are propagated correctly")
 			);

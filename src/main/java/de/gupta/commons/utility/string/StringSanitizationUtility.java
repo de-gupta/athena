@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.string;
 
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 public final class StringSanitizationUtility
 {
@@ -50,6 +51,13 @@ public final class StringSanitizationUtility
 	public static void requireNotBlank(final String input, final String message)
 	{
 		requireNotBlank(input, () -> new IllegalArgumentException(message));
+	}
+
+	public static String requireNotBlankAnd(final String input, final String message,
+	                                        final UnaryOperator<String> operation)
+	{
+		requireNotBlank(input, message);
+		return operation.apply(input);
 	}
 
 	private StringSanitizationUtility()
