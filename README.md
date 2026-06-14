@@ -4,8 +4,6 @@
 provides production-ready utility functions across 11 domains, emphasizing functional style, immutability, and
 mathematical rigor.
 
-Current version: `0.5.4-SNAPSHOT`. Latest release: `v0.5.3`.
-
 ---
 
 ## Scope and Features
@@ -39,8 +37,10 @@ Current version: `0.5.4-SNAPSHOT`. Latest release: `v0.5.3`.
 
 - **`ComparisonUtility`**: Generic comparison of two values using a caller-supplied predicate and a `ComparisonType`
   enum.
-- **`DescriptivelyComparable<T>`**: Functional interface with default methods for `isEqualTo`, `isGreaterThan`,
-  `isLessThan`, and combinations thereof.
+- **`DescriptivelyComparable<T>`**: Functional interface (element side). Primitive: `compare(T other)` →
+  `ComparisonResult`. Defaults: `isEqualTo`, `isGreaterThan`, `isLessThan`, and combinations.
+- **`DescriptivelyComparableStructure<T>`**: Functional interface (structure side). Primitive:
+  `compare(T left, T right)` → `ComparisonResult`. Same defaults, uncurried. Static factory: `of(Comparator<T>)`.
 - **`ComparisonType`**: Enum: `EQUAL`, `GREATER_THAN`, `LESS_THAN`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`,
   `NOT_EQUAL`.
 
@@ -80,6 +80,27 @@ Free Abelian groups over enum generators:
 - **`FreeAbelianGroupCanonicalImplementation`**: Concrete implementation maintaining canonical (zero-suppressed) form
   backed by `EnumMap`.
 - **`FreeAbelianGroupFactory`**: `zero(Class<V>)` and `of(Class<V>, Map<V,Integer>)` factory methods.
+
+#### Ordering (`math.ordering`)
+
+Dual-hierarchy (element / structure) ordering abstractions. Both sides share the same primitive and defaults — element
+side is F-bounded and curried (`this` is left operand); structure side is unbounded and uncurried.
+
+- **`OrderRelation`**: Enum — `LESS_THAN`, `EQUAL`, `GREATER_THAN`, `INCOMPARABLE`. Boolean classifiers: `isLessThan`,
+  `isLessThanOrEqualTo`, `isEqualTo`, `isGreaterThan`, `isGreaterThanOrEqualTo`, `isComparable`, `isIncomparable`.
+  Bridges to `ComparisonResult` via `toComparisonResult()` → `Optional<ComparisonResult>` and `from(ComparisonResult)`.
+- **`PartiallyOrdered<E extends PartiallyOrdered<E>>`** (`element`): `@FunctionalInterface`. Primitive:
+  `OrderRelation compare(E other)`. Defaults: `leq`, `lt`, `geq`, `gt`, `isComparableTo`, `isIncomparableTo`.
+- **`TotallyOrdered<E>`** (`element`): extends `PartiallyOrdered`. Adds `toComparisonResult(E)` → `ComparisonResult`.
+- **`PartialOrderStructure<E>`** (`structure`): `@FunctionalInterface`. Primitive:
+  `OrderRelation compare(E left, E right)`. Same defaults, uncurried.
+- **`TotalOrderStructure<E>`** (`structure`): extends `PartialOrderStructure`. Adds
+  `asDescriptivelyComparableStructure()` → `DescriptivelyComparableStructure<E>`.
+- **`IntegerNaturalOrder`** (`structure`): Canonical `TotalOrderStructure<Integer>` singleton.
+- **Laws** (`laws`): `ReflexiveLaw`, `AntisymmetricLaw`, `TransitiveLaw`, `TotalityLaw` — marker interfaces.
+- **Law records** (test source): `PartialOrderStructureLaws<E>`, `TotalOrderStructureLaws<E>`,
+  `PartiallyOrderedLaws<E>`, `TotallyOrderedLaws<E>` — pluggable `@TestFactory` law verifiers; pass subject + three
+  ordered samples `a ≤ b ≤ c`.
 
 #### Metric Prefixes (`math.prefix`)
 
@@ -304,10 +325,25 @@ javaLanguage.comments
 javaLanguage.packages
 map
 map.enumMap
-math.algebra.element
+math.algebra.element.binary
+math.algebra.element.binary.action
+math.algebra.element.binary.notation.additive
+math.algebra.element.ring
+math.algebra.element.adapter
 math.algebra.free.abelian
-math.algebra.laws
-math.algebra.structure
+math.algebra.laws.binary
+math.algebra.laws.action
+math.algebra.laws.ring
+math.algebra.structure.binary
+math.algebra.structure.binary.action
+math.algebra.structure.binary.notation.additive
+math.algebra.structure.module
+math.algebra.structure.morphism
+math.algebra.structure.ring
+math.ordering
+math.ordering.element
+math.ordering.structure
+math.ordering.laws
 math.prefix
 properties
 security
