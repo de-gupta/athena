@@ -28,6 +28,11 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.interpolation.grid;
 	exports de.gupta.commons.utility.math.interpolation.data;
 
+	exports de.gupta.commons.utility.math.ordering;
+	exports de.gupta.commons.utility.math.ordering.element;
+	exports de.gupta.commons.utility.math.ordering.structure;
+	exports de.gupta.commons.utility.math.ordering.laws;
+
 	exports de.gupta.commons.utility.math.prefix;
 	exports de.gupta.commons.utility.math.algebra.structure.binary;
 	exports de.gupta.commons.utility.math.algebra.structure.module;
