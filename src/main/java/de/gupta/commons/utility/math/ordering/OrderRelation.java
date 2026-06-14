@@ -21,6 +21,17 @@ public enum OrderRelation
 		};
 	}
 
+	public static OrderRelation from(final int comparisonResult)
+	{
+		return switch (Integer.signum(comparisonResult))
+		{
+			case -1 -> LESS_THAN;
+			case 0 -> EQUAL;
+			case 1 -> GREATER_THAN;
+			default -> throw new IllegalArgumentException("Invalid comparison result: " + comparisonResult);
+		};
+	}
+
 	public boolean isComparable()
 	{
 		return this != INCOMPARABLE;
