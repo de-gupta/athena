@@ -38,13 +38,13 @@ final class BooleanAlgebraTest implements BooleanAlgebraLaws<BooleanAlgebraTest.
 		}
 
 		@Override
-		public Bit top()
+		public Bit supremum()
 		{
 			return TRUE;
 		}
 
 		@Override
-		public Bit bottom()
+		public Bit infimum()
 		{
 			return FALSE;
 		}

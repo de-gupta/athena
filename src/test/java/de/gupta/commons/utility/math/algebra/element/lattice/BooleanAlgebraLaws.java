@@ -10,24 +10,24 @@ public interface BooleanAlgebraLaws<E extends BooleanAlgebra<E>> extends Distrib
 	@Property
 	default void complementLawForMeet(@ForAll("elements") E a)
 	{
-		assertThat(a.meet(a.complement())).as("a.meet(a.complement())").isEqualTo(a.bottom());
+		assertThat(a.meet(a.complement())).as("a.meet(a.complement())").isEqualTo(a.infimum());
 	}
 
 	@Property
 	default void complementLawForJoin(@ForAll("elements") E a)
 	{
-		assertThat(a.join(a.complement())).as("a.join(a.complement())").isEqualTo(a.top());
+		assertThat(a.join(a.complement())).as("a.join(a.complement())").isEqualTo(a.supremum());
 	}
 
 	@Property
 	default void selfXorIsBottom(@ForAll("elements") E a)
 	{
-		assertThat(a.xor(a)).as("a.xor(a)").isEqualTo(a.bottom());
+		assertThat(a.xor(a)).as("a.xor(a)").isEqualTo(a.infimum());
 	}
 
 	@Property
 	default void xorWithComplementIsTop(@ForAll("elements") E a)
 	{
-		assertThat(a.xor(a.complement())).as("a.xor(a.complement())").isEqualTo(a.top());
+		assertThat(a.xor(a.complement())).as("a.xor(a.complement())").isEqualTo(a.supremum());
 	}
 }
