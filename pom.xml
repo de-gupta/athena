@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.de-gupta</groupId>
         <artifactId>de-gupta-parent</artifactId>
-        <version>0.4.2</version>
+        <version>0.6.0</version>
     </parent>
 
     <artifactId>athena</artifactId>
