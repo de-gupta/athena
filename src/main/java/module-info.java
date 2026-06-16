@@ -42,7 +42,10 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.element.ring;
 	exports de.gupta.commons.utility.math.algebra.element.adapter;
 	exports de.gupta.commons.utility.math.algebra.element.binary.action;
+	exports de.gupta.commons.utility.math.algebra.element.lattice;
 	exports de.gupta.commons.utility.math.algebra.structure.binary.action;
+	exports de.gupta.commons.utility.math.algebra.structure.lattice;
+	exports de.gupta.commons.utility.math.algebra.laws.lattice;
 	exports de.gupta.commons.utility.math.algebra.laws.binary;
 	exports de.gupta.commons.utility.math.algebra.laws.action;
 	exports de.gupta.commons.utility.math.algebra.laws.ring;
