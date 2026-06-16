@@ -1,35 +1,31 @@
 package de.gupta.commons.utility.math.algebra.element.lattice;
 
-import org.junit.jupiter.api.DynamicTest;
-
-import java.util.stream.Stream;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.ForAll;
+import net.jqwik.api.Property;
+import net.jqwik.api.Provide;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public record MeetSemilatticeLaws<E extends MeetSemilattice<E>>(E a, E b, E c)
+public interface MeetSemilatticeLaws<E extends MeetSemilattice<E>>
 {
-	public Stream<DynamicTest> tests()
-	{
-		return Stream.of(
-				dynamicTest("a.meet(a) == a (idempotence)", this::idempotence),
-				dynamicTest("a.meet(b) == b.meet(a) (commutativity)", this::commutativity),
-				dynamicTest("a.meet(b).meet(c) == a.meet(b.meet(c)) (associativity)", this::associativity)
-		);
-	}
+	@Provide
+	Arbitrary<E> elements();
 
-	private void idempotence()
+	@Property
+	default void meetIsIdempotent(@ForAll("elements") E a)
 	{
 		assertThat(a.meet(a)).as("a.meet(a)").isEqualTo(a);
-		assertThat(b.meet(b)).as("b.meet(b)").isEqualTo(b);
 	}
 
-	private void commutativity()
+	@Property
+	default void meetIsCommutative(@ForAll("elements") E a, @ForAll("elements") E b)
 	{
 		assertThat(a.meet(b)).as("a.meet(b)").isEqualTo(b.meet(a));
 	}
 
-	private void associativity()
+	@Property
+	default void meetIsAssociative(@ForAll("elements") E a, @ForAll("elements") E b, @ForAll("elements") E c)
 	{
 		assertThat(a.meet(b).meet(c)).as("a.meet(b).meet(c)").isEqualTo(a.meet(b.meet(c)));
 	}

@@ -1,18 +1,23 @@
 package de.gupta.commons.utility.math.algebra.structure.lattice;
 
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.Provide;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
-import java.util.stream.Stream;
 
 @DisplayName("BooleanLogicStructure")
-final class BooleanLogicStructureTest
+final class BooleanLogicStructureTest implements BooleanAlgebraStructureLaws<Boolean>
 {
-	@TestFactory
-	@DisplayName("satisfies all Boolean algebra laws")
-	Stream<DynamicTest> satisfiesAllBooleanAlgebraLaws()
+	@Override
+	public BooleanAlgebraStructure<Boolean> subject()
 	{
-		return new BooleanAlgebraStructureLaws<>(BooleanLogicStructure.INSTANCE, true, false, true).tests();
+		return BooleanLogicStructure.INSTANCE;
+	}
+
+	@Override
+	@Provide
+	public Arbitrary<Boolean> elements()
+	{
+		return Arbitraries.of(true, false);
 	}
 }

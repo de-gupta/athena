@@ -1,45 +1,36 @@
 package de.gupta.commons.utility.math.algebra.structure.lattice;
 
-import org.junit.jupiter.api.DynamicTest;
-
-import java.util.stream.Stream;
+import net.jqwik.api.ForAll;
+import net.jqwik.api.Property;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public record BoundedLatticeStructureLaws<E>(BoundedLatticeStructure<E> subject, E a, E b, E c)
+public interface BoundedLatticeStructureLaws<E> extends LatticeStructureLaws<E>
 {
-	public Stream<DynamicTest> tests()
+	@Property
+	default void topIsIdentityForMeet(@ForAll("elements") E a)
 	{
-		return Stream.concat(
-				new LatticeStructureLaws<>(subject, a, b, c).tests(),
-				Stream.of(
-						dynamicTest("meet(a, top()) == a (top is identity for meet)", this::topIdentityForMeet),
-						dynamicTest("join(a, bottom()) == a (bottom is identity for join)",
-								this::bottomIdentityForJoin),
-						dynamicTest("meet(a, bottom()) == bottom() (bottom absorbs meet)", this::bottomAbsorbsMeet),
-						dynamicTest("join(a, top()) == top() (top absorbs join)", this::topAbsorbsJoin)
-				)
-		);
+		assertThat(subject().meet(a, subject().top())).as("meet(a, top())").isEqualTo(a);
 	}
 
-	private void topIdentityForMeet()
+	@Override
+	BoundedLatticeStructure<E> subject();
+
+	@Property
+	default void bottomIsIdentityForJoin(@ForAll("elements") E a)
 	{
-		assertThat(subject.meet(a, subject.top())).as("meet(a, top())").isEqualTo(a);
+		assertThat(subject().join(a, subject().bottom())).as("join(a, bottom())").isEqualTo(a);
 	}
 
-	private void bottomIdentityForJoin()
+	@Property
+	default void bottomAbsorbsMeet(@ForAll("elements") E a)
 	{
-		assertThat(subject.join(a, subject.bottom())).as("join(a, bottom())").isEqualTo(a);
+		assertThat(subject().meet(a, subject().bottom())).as("meet(a, bottom())").isEqualTo(subject().bottom());
 	}
 
-	private void bottomAbsorbsMeet()
+	@Property
+	default void topAbsorbsJoin(@ForAll("elements") E a)
 	{
-		assertThat(subject.meet(a, subject.bottom())).as("meet(a, bottom())").isEqualTo(subject.bottom());
-	}
-
-	private void topAbsorbsJoin()
-	{
-		assertThat(subject.join(a, subject.top())).as("join(a, top())").isEqualTo(subject.top());
+		assertThat(subject().join(a, subject().top())).as("join(a, top())").isEqualTo(subject().top());
 	}
 }

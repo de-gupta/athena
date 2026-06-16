@@ -1,22 +1,21 @@
 package de.gupta.commons.utility.math.algebra.element.lattice;
 
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.Provide;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
-import java.util.stream.Stream;
 
 @DisplayName("BooleanAlgebra")
-final class BooleanAlgebraTest
+final class BooleanAlgebraTest implements BooleanAlgebraLaws<BooleanAlgebraTest.Bit>
 {
-	@TestFactory
-	@DisplayName("Bit satisfies all Boolean algebra laws")
-	Stream<DynamicTest> bitSatisfiesAllBooleanAlgebraLaws()
+	@Override
+	@Provide
+	public Arbitrary<Bit> elements()
 	{
-		return new BooleanAlgebraLaws<>(Bit.TRUE, Bit.FALSE, Bit.TRUE).tests();
+		return Arbitraries.of(Bit.class);
 	}
 
-	private enum Bit implements BooleanAlgebra<Bit>
+	enum Bit implements BooleanAlgebra<Bit>
 	{
 		FALSE, TRUE;
 

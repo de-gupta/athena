@@ -1,35 +1,31 @@
 package de.gupta.commons.utility.math.algebra.element.lattice;
 
-import org.junit.jupiter.api.DynamicTest;
-
-import java.util.stream.Stream;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.ForAll;
+import net.jqwik.api.Property;
+import net.jqwik.api.Provide;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public record JoinSemilatticeLaws<E extends JoinSemilattice<E>>(E a, E b, E c)
+public interface JoinSemilatticeLaws<E extends JoinSemilattice<E>>
 {
-	public Stream<DynamicTest> tests()
-	{
-		return Stream.of(
-				dynamicTest("a.join(a) == a (idempotence)", this::idempotence),
-				dynamicTest("a.join(b) == b.join(a) (commutativity)", this::commutativity),
-				dynamicTest("a.join(b).join(c) == a.join(b.join(c)) (associativity)", this::associativity)
-		);
-	}
+	@Provide
+	Arbitrary<E> elements();
 
-	private void idempotence()
+	@Property
+	default void joinIsIdempotent(@ForAll("elements") E a)
 	{
 		assertThat(a.join(a)).as("a.join(a)").isEqualTo(a);
-		assertThat(b.join(b)).as("b.join(b)").isEqualTo(b);
 	}
 
-	private void commutativity()
+	@Property
+	default void joinIsCommutative(@ForAll("elements") E a, @ForAll("elements") E b)
 	{
 		assertThat(a.join(b)).as("a.join(b)").isEqualTo(b.join(a));
 	}
 
-	private void associativity()
+	@Property
+	default void joinIsAssociative(@ForAll("elements") E a, @ForAll("elements") E b, @ForAll("elements") E c)
 	{
 		assertThat(a.join(b).join(c)).as("a.join(b).join(c)").isEqualTo(a.join(b.join(c)));
 	}
