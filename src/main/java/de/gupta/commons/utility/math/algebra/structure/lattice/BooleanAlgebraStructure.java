@@ -8,4 +8,9 @@ public interface BooleanAlgebraStructure<E> extends DistributiveLatticeStructure
 	}
 
 	E complement(E element);
+
+	default E not(final E element)
+	{
+		return complement(element);
+	}
 }

@@ -8,4 +8,9 @@ public interface BooleanAlgebra<E extends BooleanAlgebra<E>> extends Distributiv
 	}
 
 	E complement();
+
+	default E not()
+	{
+		return complement();
+	}
 }
