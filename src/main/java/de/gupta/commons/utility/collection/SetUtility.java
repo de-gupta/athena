@@ -30,6 +30,11 @@ public final class SetUtility
 		                .decree(ExceptionHelper.iaeFrom("Input set cannot be null"));
 	}
 
+	public static <T> Set<T> unionOf(final Set<T> left, final Set<T> right)
+	{
+		return unionOf(Set.of(left, right));
+	}
+
 	public static <T> Set<T> unionOf(final Collection<Set<T>> sets)
 	{
 		return sets.stream()
