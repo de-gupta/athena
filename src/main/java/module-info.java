@@ -53,5 +53,7 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.structure.binary.notation.additive;
 	exports de.gupta.commons.utility.math.algebra.element.binary.notation.additive;
 
+	exports de.gupta.commons.utility.exception;
+
 	requires de.gupta.aletheia;
 }
