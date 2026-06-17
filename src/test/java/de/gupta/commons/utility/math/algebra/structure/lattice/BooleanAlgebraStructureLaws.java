@@ -12,7 +12,7 @@ public interface BooleanAlgebraStructureLaws<E> extends DistributiveLatticeStruc
 	{
 		assertThat(subject().meet(a, subject().complement(a)))
 				.as("meet(a, complement(a))")
-				.isEqualTo(subject().bottom());
+				.isEqualTo(subject().infimum());
 	}
 
 	@Override
@@ -23,13 +23,13 @@ public interface BooleanAlgebraStructureLaws<E> extends DistributiveLatticeStruc
 	{
 		assertThat(subject().join(a, subject().complement(a)))
 				.as("join(a, complement(a))")
-				.isEqualTo(subject().top());
+				.isEqualTo(subject().supremum());
 	}
 
 	@Property
 	default void selfXorIsBottom(@ForAll("elements") E a)
 	{
-		assertThat(subject().xor(a, a)).as("xor(a, a)").isEqualTo(subject().bottom());
+		assertThat(subject().xor(a, a)).as("xor(a, a)").isEqualTo(subject().infimum());
 	}
 
 	@Property
@@ -37,6 +37,6 @@ public interface BooleanAlgebraStructureLaws<E> extends DistributiveLatticeStruc
 	{
 		assertThat(subject().xor(a, subject().complement(a)))
 				.as("xor(a, complement(a))")
-				.isEqualTo(subject().top());
+				.isEqualTo(subject().supremum());
 	}
 }

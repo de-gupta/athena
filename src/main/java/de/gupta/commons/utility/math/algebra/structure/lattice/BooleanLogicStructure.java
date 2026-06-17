@@ -23,13 +23,13 @@ public enum BooleanLogicStructure implements BooleanAlgebraStructure<Boolean>
 	}
 
 	@Override
-	public Boolean top()
+	public Boolean supremum()
 	{
 		return true;
 	}
 
 	@Override
-	public Boolean bottom()
+	public Boolean infimum()
 	{
 		return false;
 	}

@@ -10,7 +10,7 @@ public interface BoundedLatticeStructureLaws<E> extends LatticeStructureLaws<E>
 	@Property
 	default void supremumIsIdentityForMeet(@ForAll("elements") E a)
 	{
-		assertThat(subject().meet(a, subject().top())).as("meet(a, top())").isEqualTo(a);
+		assertThat(subject().meet(a, subject().supremum())).as("meet(a, top())").isEqualTo(a);
 	}
 
 	@Override
@@ -19,18 +19,18 @@ public interface BoundedLatticeStructureLaws<E> extends LatticeStructureLaws<E>
 	@Property
 	default void infimumIsIdentityForJoin(@ForAll("elements") E a)
 	{
-		assertThat(subject().join(a, subject().bottom())).as("join(a, bottom())").isEqualTo(a);
+		assertThat(subject().join(a, subject().infimum())).as("join(a, bottom())").isEqualTo(a);
 	}
 
 	@Property
 	default void infimumAbsorbsMeet(@ForAll("elements") E a)
 	{
-		assertThat(subject().meet(a, subject().bottom())).as("meet(a, bottom())").isEqualTo(subject().bottom());
+		assertThat(subject().meet(a, subject().infimum())).as("meet(a, bottom())").isEqualTo(subject().infimum());
 	}
 
 	@Property
 	default void supremumAbsorbsJoin(@ForAll("elements") E a)
 	{
-		assertThat(subject().join(a, subject().top())).as("join(a, top())").isEqualTo(subject().top());
+		assertThat(subject().join(a, subject().supremum())).as("join(a, top())").isEqualTo(subject().supremum());
 	}
 }
