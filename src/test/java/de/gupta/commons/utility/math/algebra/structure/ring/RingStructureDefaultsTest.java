@@ -14,6 +14,12 @@ class RingStructureDefaultsTest
 	private static final RingStructure<Integer> INTEGER_RING = new RingStructure<>()
 	{
 		@Override
+		public Integer negate(final Integer element)
+		{
+			return -element;
+		}
+
+		@Override
 		public Integer additiveInverse(final Integer element)
 		{
 			return -element;
@@ -32,20 +38,26 @@ class RingStructureDefaultsTest
 		}
 
 		@Override
-		public Integer add(final Integer left, final Integer right)
-		{
-			return left + right;
-		}
-
-		@Override
 		public Integer multiply(final Integer left, final Integer right)
 		{
 			return left * right;
+		}
+
+		@Override
+		public Integer add(final Integer left, final Integer right)
+		{
+			return left + right;
 		}
 	};
 
 	private static final FieldStructure<Double> RATIONAL_LIKE_FIELD = new FieldStructure<>()
 	{
+		@Override
+		public Double negate(final Double element)
+		{
+			return -element;
+		}
+
 		@Override
 		public Double multiplicativeInverse(final Double element)
 		{
@@ -71,20 +83,26 @@ class RingStructureDefaultsTest
 		}
 
 		@Override
-		public Double add(final Double left, final Double right)
-		{
-			return left + right;
-		}
-
-		@Override
 		public Double multiply(final Double left, final Double right)
 		{
 			return left * right;
+		}
+
+		@Override
+		public Double add(final Double left, final Double right)
+		{
+			return left + right;
 		}
 	};
 
 	private static final EuclideanDomainStructure<Integer> INTEGER_EUCLIDEAN_DOMAIN = new EuclideanDomainStructure<>()
 	{
+		@Override
+		public Integer negate(final Integer element)
+		{
+			return -element;
+		}
+
 		@Override
 		public DivisionResult<Integer> divideWithRemainder(final Integer dividend, final Integer divisor)
 		{
@@ -122,15 +140,15 @@ class RingStructureDefaultsTest
 		}
 
 		@Override
-		public Integer add(final Integer left, final Integer right)
-		{
-			return left + right;
-		}
-
-		@Override
 		public Integer multiply(final Integer left, final Integer right)
 		{
 			return left * right;
+		}
+
+		@Override
+		public Integer add(final Integer left, final Integer right)
+		{
+			return left + right;
 		}
 	};
 

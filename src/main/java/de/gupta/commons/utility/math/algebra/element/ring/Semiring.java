@@ -1,30 +1,13 @@
 package de.gupta.commons.utility.math.algebra.element.ring;
 
 import de.gupta.aletheia.collection.folding.Loom;
-import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveSemigroup;
+import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveMonoid;
 
 import java.util.Objects;
-import java.util.stream.StreamSupport;
 
-public interface Semiring<E extends Semiring<E>> extends AdditiveSemigroup<E>
+public interface Semiring<E extends Semiring<E>> extends AdditiveMonoid<E>
 {
-	E zero();
-
 	E one();
-
-	default E sumAll(final Iterable<? extends E> others)
-	{
-		Objects.requireNonNull(others, "others");
-		return StreamSupport.stream(others.spliterator(), false)
-		                    .map(other -> (E) other)
-		                    .reduce(self(), Semiring::add, Semiring::add);
-	}
-
-	@SuppressWarnings("unchecked")
-	private E self()
-	{
-		return (E) this;
-	}
 
 	default E multiplyAll(final Iterable<? extends E> others)
 	{
@@ -36,6 +19,12 @@ public interface Semiring<E extends Semiring<E>> extends AdditiveSemigroup<E>
 	{
 		Objects.requireNonNull(others, "others");
 		return others.weave(self(), Semiring::multiply);
+	}
+
+	@SuppressWarnings("unchecked")
+	private E self()
+	{
+		return (E) this;
 	}
 
 	E multiply(E other);

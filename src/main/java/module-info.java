@@ -37,24 +37,26 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.structure.binary;
 	exports de.gupta.commons.utility.math.algebra.structure.module;
 	exports de.gupta.commons.utility.math.algebra.structure.ring;
+	exports de.gupta.commons.utility.math.algebra.structure.ring.concrete;
 	exports de.gupta.commons.utility.math.algebra.structure.morphism;
+	exports de.gupta.commons.utility.math.algebra.structure.binary.action;
+	exports de.gupta.commons.utility.math.algebra.structure.lattice;
+	exports de.gupta.commons.utility.math.algebra.structure.binary.notation.additive;
+	exports de.gupta.commons.utility.math.algebra.element.binary.notation.additive;
+
 	exports de.gupta.commons.utility.math.algebra.element.binary;
 	exports de.gupta.commons.utility.math.algebra.element.ring;
 	exports de.gupta.commons.utility.math.algebra.element.adapter;
 	exports de.gupta.commons.utility.math.algebra.element.binary.action;
 	exports de.gupta.commons.utility.math.algebra.element.module;
 	exports de.gupta.commons.utility.math.algebra.element.ring.concrete;
-	exports de.gupta.commons.utility.math.algebra.structure.ring.concrete;
 	exports de.gupta.commons.utility.math.algebra.element.lattice;
-	exports de.gupta.commons.utility.math.algebra.structure.binary.action;
-	exports de.gupta.commons.utility.math.algebra.structure.lattice;
+
 	exports de.gupta.commons.utility.math.algebra.laws.lattice;
 	exports de.gupta.commons.utility.math.algebra.laws.binary;
 	exports de.gupta.commons.utility.math.algebra.laws.action;
 	exports de.gupta.commons.utility.math.algebra.laws.ring;
 	exports de.gupta.commons.utility.math.algebra.free.abelian;
-	exports de.gupta.commons.utility.math.algebra.structure.binary.notation.additive;
-	exports de.gupta.commons.utility.math.algebra.element.binary.notation.additive;
 
 	exports de.gupta.commons.utility.exception;
 

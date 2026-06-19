@@ -34,20 +34,27 @@ public record ElementBackedRingStructure<E extends Ring<E>>(Supplier<E> zeroSupp
 	}
 
 	@Override
-	public E add(final E left, final E right)
-	{
-		return left.add(right);
-	}
-
-	@Override
 	public E multiply(final E left, final E right)
 	{
 		return left.multiply(right);
 	}
 
 	@Override
+	public E add(final E left, final E right)
+	{
+		return left.add(right);
+	}
+
+	@Override
 	public E additiveInverse(final E element)
 	{
 		return element.negate();
+	}
+
+	@Override
+	public E negate(final E element)
+	{
+		// TODO
+		return null;
 	}
 }
