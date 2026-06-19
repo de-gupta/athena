@@ -23,7 +23,7 @@ final class IntegerEuclideanDomainTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("addsTwoValuesCorrectlyCases")
 		@DisplayName("adds two values correctly")
-		void addsTwoValuesCorrectly(final String as, final int left, final int right, final int expected)
+		void addsTwoValuesCorrectly(final String as, final long left, final long right, final long expected)
 		{
 			assertThat(IntegerEuclideanDomain.of(left).add(IntegerEuclideanDomain.of(right)))
 					.as(as)
@@ -33,7 +33,7 @@ final class IntegerEuclideanDomainTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("throwsOnOverflowCases")
 		@DisplayName("throws ArithmeticException on overflow")
-		void throwsOnOverflow(final String as, final int left, final int right)
+		void throwsOnOverflow(final String as, final long left, final long right)
 		{
 			assertThatThrownBy(() -> IntegerEuclideanDomain.of(left).add(IntegerEuclideanDomain.of(right)))
 					.as(as)
@@ -46,15 +46,15 @@ final class IntegerEuclideanDomainTest
 					Arguments.of("3 + 4 = 7", 3, 4, 7),
 					Arguments.of("-3 + 4 = 1", -3, 4, 1),
 					Arguments.of("0 + 5 = 5", 0, 5, 5),
-					Arguments.of("MAX_VALUE + 0 = MAX", Integer.MAX_VALUE, 0, Integer.MAX_VALUE)
+					Arguments.of("MAX_VALUE + 0 = MAX", Long.MAX_VALUE, 0, Long.MAX_VALUE)
 			);
 		}
 
 		private static Stream<Arguments> throwsOnOverflowCases()
 		{
 			return Stream.of(
-					Arguments.of("MAX_VALUE + 1 overflows", Integer.MAX_VALUE, 1),
-					Arguments.of("MIN_VALUE - 1 underflows", Integer.MIN_VALUE, -1)
+					Arguments.of("MAX_VALUE + 1 overflows", Long.MAX_VALUE, 1),
+					Arguments.of("MIN_VALUE - 1 underflows", Long.MIN_VALUE, -1)
 			);
 		}
 	}
@@ -66,7 +66,7 @@ final class IntegerEuclideanDomainTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("multipliesTwoValuesCorrectlyCases")
 		@DisplayName("multiplies two values correctly")
-		void multipliesTwoValuesCorrectly(final String as, final int left, final int right, final int expected)
+		void multipliesTwoValuesCorrectly(final String as, final long left, final long right, final long expected)
 		{
 			assertThat(IntegerEuclideanDomain.of(left).multiply(IntegerEuclideanDomain.of(right)))
 					.as(as)
@@ -76,7 +76,7 @@ final class IntegerEuclideanDomainTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("throwsOnOverflowCases")
 		@DisplayName("throws ArithmeticException on overflow")
-		void throwsOnOverflow(final String as, final int left, final int right)
+		void throwsOnOverflow(final String as, final long left, final long right)
 		{
 			assertThatThrownBy(() -> IntegerEuclideanDomain.of(left).multiply(IntegerEuclideanDomain.of(right)))
 					.as(as)
@@ -96,9 +96,9 @@ final class IntegerEuclideanDomainTest
 		private static Stream<Arguments> throwsOnOverflowCases()
 		{
 			return Stream.of(
-					Arguments.of("MAX_VALUE * 2 overflows", Integer.MAX_VALUE, 2),
-					Arguments.of("MIN_VALUE * 2 overflows", Integer.MIN_VALUE, 2),
-					Arguments.of("MIN_VALUE * -1 overflows", Integer.MIN_VALUE, -1)
+					Arguments.of("MAX_VALUE * 2 overflows", Long.MAX_VALUE, 2),
+					Arguments.of("MIN_VALUE * 2 overflows", Long.MIN_VALUE, 2),
+					Arguments.of("MIN_VALUE * -1 overflows", Long.MIN_VALUE, -1)
 			);
 		}
 	}
@@ -110,7 +110,7 @@ final class IntegerEuclideanDomainTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("negatesValueCases")
 		@DisplayName("negates value")
-		void negatesValue(final String as, final int value, final int expected)
+		void negatesValue(final String as, final long value, final long expected)
 		{
 			assertThat(IntegerEuclideanDomain.of(value).negate())
 					.as(as)
@@ -121,7 +121,7 @@ final class IntegerEuclideanDomainTest
 		@DisplayName("throws ArithmeticException for MIN_VALUE")
 		void throwsForMinValue()
 		{
-			assertThatThrownBy(() -> IntegerEuclideanDomain.of(Integer.MIN_VALUE).negate())
+			assertThatThrownBy(() -> IntegerEuclideanDomain.of(Long.MIN_VALUE).negate())
 					.isInstanceOf(ArithmeticException.class);
 		}
 
@@ -131,7 +131,7 @@ final class IntegerEuclideanDomainTest
 					Arguments.of("negate 5 = -5", 5, -5),
 					Arguments.of("negate -3 = 3", -3, 3),
 					Arguments.of("negate 0 = 0", 0, 0),
-					Arguments.of("negate MAX_VALUE = MIN+1", Integer.MAX_VALUE, Integer.MIN_VALUE + 1)
+					Arguments.of("negate MAX_VALUE = MIN+1", Long.MAX_VALUE, Long.MIN_VALUE + 1)
 			);
 		}
 	}
@@ -144,8 +144,8 @@ final class IntegerEuclideanDomainTest
 		@MethodSource("producesMathematicallyCorrectQuotientAndRemainderCases")
 		@DisplayName("produces mathematically correct quotient and remainder")
 		void producesMathematicallyCorrectQuotientAndRemainder(
-				final String as, final int dividend, final int divisor,
-				final int expectedQuotient, final int expectedRemainder)
+				final String as, final long dividend, final long divisor,
+				final long expectedQuotient, final long expectedRemainder)
 		{
 			DivisionResult<IntegerEuclideanDomain> result = IntegerEuclideanDomain.of(dividend).divideWithRemainder(
 					IntegerEuclideanDomain.of(divisor));
@@ -196,7 +196,7 @@ final class IntegerEuclideanDomainTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("returnsAbsoluteValueCases")
 		@DisplayName("returns absolute value")
-		void returnsAbsoluteValue(final String as, final int value, final int expected)
+		void returnsAbsoluteValue(final String as, final long value, final long expected)
 		{
 			assertThat(IntegerEuclideanDomain.of(value).norm()).as(as).isEqualTo(expected);
 		}
@@ -205,7 +205,7 @@ final class IntegerEuclideanDomainTest
 		@DisplayName("throws ArithmeticException for MIN_VALUE")
 		void throwsForMinValue()
 		{
-			assertThatThrownBy(() -> IntegerEuclideanDomain.of(Integer.MIN_VALUE).norm())
+			assertThatThrownBy(() -> IntegerEuclideanDomain.of(Long.MIN_VALUE).norm())
 					.isInstanceOf(ArithmeticException.class);
 		}
 
@@ -226,7 +226,7 @@ final class IntegerEuclideanDomainTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("computesGcdCorrectlyCases")
 		@DisplayName("computes gcd correctly")
-		void computesGcdCorrectly(final String as, final int a, final int b, final int expected)
+		void computesGcdCorrectly(final String as, final long a, final long b, final long expected)
 		{
 			assertThat(IntegerEuclideanDomain.of(a).gcd(IntegerEuclideanDomain.of(b)))
 					.as(as)
