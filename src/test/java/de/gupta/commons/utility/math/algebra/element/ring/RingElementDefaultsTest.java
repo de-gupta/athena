@@ -185,7 +185,7 @@ class RingElementDefaultsTest
 		}
 
 		@Override
-		public int norm()
+		public long norm()
 		{
 			return Math.abs(value);
 		}

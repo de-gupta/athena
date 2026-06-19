@@ -4,19 +4,14 @@ import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 
 public interface EuclideanDomain<E extends EuclideanDomain<E>> extends IntegralDomain<E>
 {
-	DivisionResult<E> divideWithRemainder(E divisor);
-
-	int norm();
+	long norm();
 
 	default E quotient(final E divisor)
 	{
 		return divideWithRemainder(divisor).quotient();
 	}
 
-	default E remainder(final E divisor)
-	{
-		return divideWithRemainder(divisor).remainder();
-	}
+	DivisionResult<E> divideWithRemainder(E divisor);
 
 	default E gcd(final E other)
 	{
@@ -35,5 +30,10 @@ public interface EuclideanDomain<E extends EuclideanDomain<E>> extends IntegralD
 	private E self()
 	{
 		return (E) this;
+	}
+
+	default E remainder(final E divisor)
+	{
+		return divideWithRemainder(divisor).remainder();
 	}
 }

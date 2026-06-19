@@ -47,7 +47,7 @@ public record IntegerRing(int value) implements EuclideanDomain<IntegerRing>
 	}
 
 	@Override
-	public int norm()
+	public long norm()
 	{
 		return Math.absExact(value);
 	}
