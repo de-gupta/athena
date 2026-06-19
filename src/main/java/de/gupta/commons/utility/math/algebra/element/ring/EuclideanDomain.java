@@ -6,7 +6,7 @@ public interface EuclideanDomain<E extends EuclideanDomain<E>> extends IntegralD
 {
 	DivisionResult<E> divideWithRemainder(E divisor);
 
-	E norm();
+	int norm();
 
 	default E quotient(final E divisor)
 	{

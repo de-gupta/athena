@@ -42,7 +42,7 @@ class RingElementDefaultsTest
 		assertThat(dividend.quotient(divisor)).isEqualTo(new IntEuclidean(3));
 		assertThat(dividend.remainder(divisor)).isEqualTo(new IntEuclidean(2));
 		assertThat(new IntEuclidean(84).gcd(new IntEuclidean(30))).isEqualTo(new IntEuclidean(6));
-		assertThat(new IntEuclidean(-9).norm()).isEqualTo(new IntEuclidean(9));
+		assertThat(new IntEuclidean(-9).norm()).isEqualTo(9);
 	}
 
 	private record IntRing(int value) implements Ring<IntRing>
@@ -185,9 +185,9 @@ class RingElementDefaultsTest
 		}
 
 		@Override
-		public IntEuclidean norm()
+		public int norm()
 		{
-			return new IntEuclidean(Math.abs(value));
+			return Math.abs(value);
 		}
 	}
 }
