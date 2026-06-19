@@ -49,12 +49,6 @@ public record ElementBackedRingStructure<E extends Ring<E>>(Supplier<E> zeroSupp
 	}
 
 	@Override
-	public E additiveInverse(final E element)
-	{
-		return element.negate();
-	}
-
-	@Override
 	public E negate(final E element)
 	{
 		return negateFunction.apply(element, element);

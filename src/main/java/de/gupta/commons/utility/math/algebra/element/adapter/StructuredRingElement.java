@@ -11,16 +11,20 @@ public abstract class StructuredRingElement<E extends StructuredRingElement<E>> 
 		return structure().zero();
 	}
 
-	@Override
-	public final E one()
-	{
-		return structure().one();
-	}
+	protected abstract RingStructure<E> structure();
 
 	@Override
 	public final E add(final E other)
 	{
 		return structure().add(self(), other);
+	}
+
+	protected abstract E self();
+
+	@Override
+	public final E one()
+	{
+		return structure().one();
 	}
 
 	@Override
@@ -32,10 +36,6 @@ public abstract class StructuredRingElement<E extends StructuredRingElement<E>> 
 	@Override
 	public final E negate()
 	{
-		return structure().additiveInverse(self());
+		return structure().negate(self());
 	}
-
-	protected abstract RingStructure<E> structure();
-
-	protected abstract E self();
 }

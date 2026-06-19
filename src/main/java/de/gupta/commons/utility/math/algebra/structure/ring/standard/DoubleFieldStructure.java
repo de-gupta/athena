@@ -31,12 +31,6 @@ public enum DoubleFieldStructure implements FieldStructure<Double>
 	}
 
 	@Override
-	public Double additiveInverse(final Double element)
-	{
-		return -element;
-	}
-
-	@Override
 	public Double multiplicativeInverse(final Double element)
 	{
 		return 1.0 / element;

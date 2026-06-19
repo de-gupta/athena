@@ -34,12 +34,6 @@ public enum BigDecimalFieldStructure implements FieldStructure<BigDecimal>
 	}
 
 	@Override
-	public BigDecimal additiveInverse(final BigDecimal element)
-	{
-		return element.negate();
-	}
-
-	@Override
 	public BigDecimal multiplicativeInverse(final BigDecimal element)
 	{
 		return BigDecimal.ONE.divide(element, MathContext.DECIMAL128).stripTrailingZeros();
