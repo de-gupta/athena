@@ -43,7 +43,7 @@ public record IntegerRing(int value) implements EuclideanDomain<IntegerRing>
 	@Override
 	public DivisionResult<IntegerRing> divideWithRemainder(final IntegerRing divisor)
 	{
-		return DivisionResult.of(of(value / divisor.value), of(value % divisor.value));
+		return DivisionResult.of(of(Math.floorDiv(value, divisor.value)), of(Math.floorMod(value, divisor.value)));
 	}
 
 	@Override
