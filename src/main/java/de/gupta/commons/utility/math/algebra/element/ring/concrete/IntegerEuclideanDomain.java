@@ -3,7 +3,7 @@ package de.gupta.commons.utility.math.algebra.element.ring.concrete;
 import de.gupta.commons.utility.math.algebra.element.ring.EuclideanDomain;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 
-public record IntegerEuclideanDomain(int value) implements EuclideanDomain<IntegerEuclideanDomain>
+public record IntegerEuclideanDomain(long value) implements EuclideanDomain<IntegerEuclideanDomain>
 {
 	@Override
 	public IntegerEuclideanDomain negate()
@@ -11,7 +11,7 @@ public record IntegerEuclideanDomain(int value) implements EuclideanDomain<Integ
 		return of(Math.negateExact(value));
 	}
 
-	public static IntegerEuclideanDomain of(final int value)
+	public static IntegerEuclideanDomain of(final long value)
 	{
 		return new IntegerEuclideanDomain(value);
 	}

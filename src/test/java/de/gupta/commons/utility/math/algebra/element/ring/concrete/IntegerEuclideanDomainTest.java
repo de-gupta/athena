@@ -165,7 +165,7 @@ final class IntegerEuclideanDomainTest
 			DivisionResult<IntegerEuclideanDomain> result = IntegerEuclideanDomain.of(dividend).divideWithRemainder(
 					IntegerEuclideanDomain.of(divisor));
 
-			int reconstructed = result.quotient().value() * divisor + result.remainder().value();
+			long reconstructed = result.quotient().value() * divisor + result.remainder().value();
 			assertThat(reconstructed).as("q * d + r must equal dividend").isEqualTo(dividend);
 		}
 
