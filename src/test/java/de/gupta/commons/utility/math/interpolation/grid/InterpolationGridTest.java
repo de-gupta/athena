@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.interpolation.grid;
 
+import de.gupta.commons.utility.math.algebra.structure.module.standard.DoubleVectorSpaceStructure;
 import de.gupta.commons.utility.math.analysis.space.standard.DoubleInterpolatableSpace;
-import de.gupta.commons.utility.math.analysis.space.standard.DoubleVectorSpaceStructure;
 import de.gupta.commons.utility.math.interpolation.ExtrapolationPolicy;
 import de.gupta.commons.utility.math.interpolation.InterpolationMethod;
 import de.gupta.commons.utility.math.interpolation.data.GridSample;
@@ -30,15 +30,6 @@ final class InterpolationGridTest
 			MonotoneCubicMethod.of(DoubleInterpolatableSpace.LINEAR, DoubleVectorSpaceStructure.INSTANCE,
 					d -> d, f -> f, ExtrapolationPolicy.FLAT);
 
-	private static List<GridSample<Double, Double, Double>> linearGrid()
-	{
-		return List.of(
-				new GridSample<>(0.0, 0.0, 0.0), new GridSample<>(0.0, 1.0, 1.0), new GridSample<>(0.0, 2.0, 2.0),
-				new GridSample<>(1.0, 0.0, 1.0), new GridSample<>(1.0, 1.0, 2.0), new GridSample<>(1.0, 2.0, 3.0),
-				new GridSample<>(2.0, 0.0, 2.0), new GridSample<>(2.0, 1.0, 3.0), new GridSample<>(2.0, 2.0, 4.0)
-		);
-	}
-
 	private static InterpolationGrid<Double, Double, Double> linearLinearGrid()
 	{
 		return InterpolationGrid.<Double, Double, Double>builder()
@@ -46,6 +37,15 @@ final class InterpolationGridTest
 		                        .dimension1(DoubleInterpolatableSpace.LINEAR, LINEAR_FLAT)
 		                        .dimension2(DoubleInterpolatableSpace.LINEAR, LINEAR_FLAT)
 		                        .build();
+	}
+
+	private static List<GridSample<Double, Double, Double>> linearGrid()
+	{
+		return List.of(
+				new GridSample<>(0.0, 0.0, 0.0), new GridSample<>(0.0, 1.0, 1.0), new GridSample<>(0.0, 2.0, 2.0),
+				new GridSample<>(1.0, 0.0, 1.0), new GridSample<>(1.0, 1.0, 2.0), new GridSample<>(1.0, 2.0, 3.0),
+				new GridSample<>(2.0, 0.0, 2.0), new GridSample<>(2.0, 1.0, 3.0), new GridSample<>(2.0, 2.0, 4.0)
+		);
 	}
 
 	@Nested

@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.interpolation.method;
 
+import de.gupta.commons.utility.math.algebra.structure.module.standard.DoubleVectorSpaceStructure;
 import de.gupta.commons.utility.math.analysis.space.standard.DoubleInterpolatableSpace;
-import de.gupta.commons.utility.math.analysis.space.standard.DoubleVectorSpaceStructure;
 import de.gupta.commons.utility.math.interpolation.TieBreakingPolicy;
 import de.gupta.commons.utility.math.interpolation.data.InterpolationData;
 import de.gupta.commons.utility.math.interpolation.data.Sample;

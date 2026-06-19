@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.algebra.element.ring.concrete;
+package de.gupta.commons.utility.math.algebra.element.ring.standard;
 
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import org.junit.jupiter.api.DisplayName;

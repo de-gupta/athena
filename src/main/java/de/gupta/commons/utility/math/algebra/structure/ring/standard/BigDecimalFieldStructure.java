@@ -1,11 +1,11 @@
-package de.gupta.commons.utility.math.analysis.space.standard;
+package de.gupta.commons.utility.math.algebra.structure.ring.standard;
 
 import de.gupta.commons.utility.math.algebra.structure.ring.FieldStructure;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-enum BigDecimalFieldStructure implements FieldStructure<BigDecimal>
+public enum BigDecimalFieldStructure implements FieldStructure<BigDecimal>
 {
 	INSTANCE;
 
@@ -22,15 +22,15 @@ enum BigDecimalFieldStructure implements FieldStructure<BigDecimal>
 	}
 
 	@Override
-	public BigDecimal add(final BigDecimal left, final BigDecimal right)
-	{
-		return left.add(right).stripTrailingZeros();
-	}
-
-	@Override
 	public BigDecimal multiply(final BigDecimal left, final BigDecimal right)
 	{
 		return left.multiply(right, MathContext.DECIMAL128).stripTrailingZeros();
+	}
+
+	@Override
+	public BigDecimal add(final BigDecimal left, final BigDecimal right)
+	{
+		return left.add(right).stripTrailingZeros();
 	}
 
 	@Override
@@ -43,5 +43,11 @@ enum BigDecimalFieldStructure implements FieldStructure<BigDecimal>
 	public BigDecimal multiplicativeInverse(final BigDecimal element)
 	{
 		return BigDecimal.ONE.divide(element, MathContext.DECIMAL128).stripTrailingZeros();
+	}
+
+	@Override
+	public BigDecimal negate(final BigDecimal element)
+	{
+		return element.negate();
 	}
 }

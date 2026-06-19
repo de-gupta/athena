@@ -1,7 +1,8 @@
-package de.gupta.commons.utility.math.analysis.space.standard;
+package de.gupta.commons.utility.math.algebra.structure.module.standard;
 
 import de.gupta.commons.utility.math.algebra.structure.module.VectorSpaceStructure;
 import de.gupta.commons.utility.math.algebra.structure.ring.FieldStructure;
+import de.gupta.commons.utility.math.algebra.structure.ring.standard.BigDecimalFieldStructure;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

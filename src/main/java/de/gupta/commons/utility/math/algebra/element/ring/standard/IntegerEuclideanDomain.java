@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.algebra.element.ring.concrete;
+package de.gupta.commons.utility.math.algebra.element.ring.standard;
 
 import de.gupta.commons.utility.math.algebra.element.ring.EuclideanDomain;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
@@ -29,15 +29,15 @@ public record IntegerEuclideanDomain(long value) implements EuclideanDomain<Inte
 	}
 
 	@Override
-	public IntegerEuclideanDomain add(final IntegerEuclideanDomain other)
-	{
-		return of(Math.addExact(value, other.value));
-	}
-
-	@Override
 	public IntegerEuclideanDomain multiply(final IntegerEuclideanDomain other)
 	{
 		return of(Math.multiplyExact(value, other.value));
+	}
+
+	@Override
+	public IntegerEuclideanDomain add(final IntegerEuclideanDomain other)
+	{
+		return of(Math.addExact(value, other.value));
 	}
 
 	@Override

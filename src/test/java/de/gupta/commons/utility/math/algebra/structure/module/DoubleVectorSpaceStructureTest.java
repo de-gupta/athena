@@ -1,6 +1,6 @@
 package de.gupta.commons.utility.math.algebra.structure.module;
 
-import de.gupta.commons.utility.math.analysis.space.standard.DoubleVectorSpaceStructure;
+import de.gupta.commons.utility.math.algebra.structure.module.standard.DoubleVectorSpaceStructure;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;

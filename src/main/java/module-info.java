@@ -37,7 +37,7 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.structure.binary;
 	exports de.gupta.commons.utility.math.algebra.structure.module;
 	exports de.gupta.commons.utility.math.algebra.structure.ring;
-	exports de.gupta.commons.utility.math.algebra.structure.ring.concrete;
+	exports de.gupta.commons.utility.math.algebra.structure.ring.standard;
 	exports de.gupta.commons.utility.math.algebra.structure.morphism;
 	exports de.gupta.commons.utility.math.algebra.structure.binary.action;
 	exports de.gupta.commons.utility.math.algebra.structure.lattice;
@@ -49,7 +49,7 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.element.adapter;
 	exports de.gupta.commons.utility.math.algebra.element.binary.action;
 	exports de.gupta.commons.utility.math.algebra.element.module;
-	exports de.gupta.commons.utility.math.algebra.element.ring.concrete;
+	exports de.gupta.commons.utility.math.algebra.element.ring.standard;
 	exports de.gupta.commons.utility.math.algebra.element.lattice;
 
 	exports de.gupta.commons.utility.math.algebra.laws.lattice;
@@ -59,6 +59,7 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.free.abelian;
 
 	exports de.gupta.commons.utility.exception;
+	exports de.gupta.commons.utility.math.algebra.structure.module.standard;
 
 	requires de.gupta.aletheia;
 }
