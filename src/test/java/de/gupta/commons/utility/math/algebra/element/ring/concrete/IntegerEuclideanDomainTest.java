@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("IntegerRing")
-final class IntegerRingTest
+@DisplayName("IntegerEuclideanDomain")
+final class IntegerEuclideanDomainTest
 {
 	@Nested
 	@DisplayName("when adding")
@@ -25,9 +25,9 @@ final class IntegerRingTest
 		@DisplayName("adds two values correctly")
 		void addsTwoValuesCorrectly(final String as, final int left, final int right, final int expected)
 		{
-			assertThat(IntegerRing.of(left).add(IntegerRing.of(right)))
+			assertThat(IntegerEuclideanDomain.of(left).add(IntegerEuclideanDomain.of(right)))
 					.as(as)
-					.isEqualTo(IntegerRing.of(expected));
+					.isEqualTo(IntegerEuclideanDomain.of(expected));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -35,7 +35,7 @@ final class IntegerRingTest
 		@DisplayName("throws ArithmeticException on overflow")
 		void throwsOnOverflow(final String as, final int left, final int right)
 		{
-			assertThatThrownBy(() -> IntegerRing.of(left).add(IntegerRing.of(right)))
+			assertThatThrownBy(() -> IntegerEuclideanDomain.of(left).add(IntegerEuclideanDomain.of(right)))
 					.as(as)
 					.isInstanceOf(ArithmeticException.class);
 		}
@@ -68,9 +68,9 @@ final class IntegerRingTest
 		@DisplayName("multiplies two values correctly")
 		void multipliesTwoValuesCorrectly(final String as, final int left, final int right, final int expected)
 		{
-			assertThat(IntegerRing.of(left).multiply(IntegerRing.of(right)))
+			assertThat(IntegerEuclideanDomain.of(left).multiply(IntegerEuclideanDomain.of(right)))
 					.as(as)
-					.isEqualTo(IntegerRing.of(expected));
+					.isEqualTo(IntegerEuclideanDomain.of(expected));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -78,7 +78,7 @@ final class IntegerRingTest
 		@DisplayName("throws ArithmeticException on overflow")
 		void throwsOnOverflow(final String as, final int left, final int right)
 		{
-			assertThatThrownBy(() -> IntegerRing.of(left).multiply(IntegerRing.of(right)))
+			assertThatThrownBy(() -> IntegerEuclideanDomain.of(left).multiply(IntegerEuclideanDomain.of(right)))
 					.as(as)
 					.isInstanceOf(ArithmeticException.class);
 		}
@@ -112,16 +112,16 @@ final class IntegerRingTest
 		@DisplayName("negates value")
 		void negatesValue(final String as, final int value, final int expected)
 		{
-			assertThat(IntegerRing.of(value).negate())
+			assertThat(IntegerEuclideanDomain.of(value).negate())
 					.as(as)
-					.isEqualTo(IntegerRing.of(expected));
+					.isEqualTo(IntegerEuclideanDomain.of(expected));
 		}
 
 		@Test
 		@DisplayName("throws ArithmeticException for MIN_VALUE")
 		void throwsForMinValue()
 		{
-			assertThatThrownBy(() -> IntegerRing.of(Integer.MIN_VALUE).negate())
+			assertThatThrownBy(() -> IntegerEuclideanDomain.of(Integer.MIN_VALUE).negate())
 					.isInstanceOf(ArithmeticException.class);
 		}
 
@@ -147,10 +147,12 @@ final class IntegerRingTest
 				final String as, final int dividend, final int divisor,
 				final int expectedQuotient, final int expectedRemainder)
 		{
-			DivisionResult<IntegerRing> result = IntegerRing.of(dividend).divideWithRemainder(IntegerRing.of(divisor));
+			DivisionResult<IntegerEuclideanDomain> result = IntegerEuclideanDomain.of(dividend).divideWithRemainder(
+					IntegerEuclideanDomain.of(divisor));
 
-			assertThat(result.quotient()).as("%s: quotient", as).isEqualTo(IntegerRing.of(expectedQuotient));
-			assertThat(result.remainder()).as("%s: remainder", as).isEqualTo(IntegerRing.of(expectedRemainder));
+			assertThat(result.quotient()).as("%s: quotient", as).isEqualTo(IntegerEuclideanDomain.of(expectedQuotient));
+			assertThat(result.remainder()).as("%s: remainder", as)
+			                              .isEqualTo(IntegerEuclideanDomain.of(expectedRemainder));
 		}
 
 		@Test
@@ -160,7 +162,8 @@ final class IntegerRingTest
 			int dividend = -17;
 			int divisor = 5;
 
-			DivisionResult<IntegerRing> result = IntegerRing.of(dividend).divideWithRemainder(IntegerRing.of(divisor));
+			DivisionResult<IntegerEuclideanDomain> result = IntegerEuclideanDomain.of(dividend).divideWithRemainder(
+					IntegerEuclideanDomain.of(divisor));
 
 			int reconstructed = result.quotient().value() * divisor + result.remainder().value();
 			assertThat(reconstructed).as("q * d + r must equal dividend").isEqualTo(dividend);
@@ -170,7 +173,7 @@ final class IntegerRingTest
 		@DisplayName("throws ArithmeticException for division by zero")
 		void throwsForDivisionByZero()
 		{
-			assertThatThrownBy(() -> IntegerRing.of(7).divideWithRemainder(IntegerRing.of(0)))
+			assertThatThrownBy(() -> IntegerEuclideanDomain.of(7).divideWithRemainder(IntegerEuclideanDomain.of(0)))
 					.isInstanceOf(ArithmeticException.class);
 		}
 
@@ -195,14 +198,14 @@ final class IntegerRingTest
 		@DisplayName("returns absolute value")
 		void returnsAbsoluteValue(final String as, final int value, final int expected)
 		{
-			assertThat(IntegerRing.of(value).norm()).as(as).isEqualTo(expected);
+			assertThat(IntegerEuclideanDomain.of(value).norm()).as(as).isEqualTo(expected);
 		}
 
 		@Test
 		@DisplayName("throws ArithmeticException for MIN_VALUE")
 		void throwsForMinValue()
 		{
-			assertThatThrownBy(() -> IntegerRing.of(Integer.MIN_VALUE).norm())
+			assertThatThrownBy(() -> IntegerEuclideanDomain.of(Integer.MIN_VALUE).norm())
 					.isInstanceOf(ArithmeticException.class);
 		}
 
@@ -225,9 +228,9 @@ final class IntegerRingTest
 		@DisplayName("computes gcd correctly")
 		void computesGcdCorrectly(final String as, final int a, final int b, final int expected)
 		{
-			assertThat(IntegerRing.of(a).gcd(IntegerRing.of(b)))
+			assertThat(IntegerEuclideanDomain.of(a).gcd(IntegerEuclideanDomain.of(b)))
 					.as(as)
-					.isEqualTo(IntegerRing.of(expected));
+					.isEqualTo(IntegerEuclideanDomain.of(expected));
 		}
 
 		private static Stream<Arguments> computesGcdCorrectlyCases()
@@ -249,7 +252,7 @@ final class IntegerRingTest
 		@DisplayName("zero is additive identity")
 		void zeroIsAdditiveIdentity()
 		{
-			IntegerRing a = IntegerRing.of(42);
+			IntegerEuclideanDomain a = IntegerEuclideanDomain.of(42);
 
 			assertThat(a.add(a.zero())).as("a + 0").isEqualTo(a);
 			assertThat(a.zero().add(a)).as("0 + a").isEqualTo(a);
@@ -259,7 +262,7 @@ final class IntegerRingTest
 		@DisplayName("one is multiplicative identity")
 		void oneIsMultiplicativeIdentity()
 		{
-			IntegerRing a = IntegerRing.of(42);
+			IntegerEuclideanDomain a = IntegerEuclideanDomain.of(42);
 
 			assertThat(a.multiply(a.one())).as("a * 1").isEqualTo(a);
 			assertThat(a.one().multiply(a)).as("1 * a").isEqualTo(a);
@@ -269,9 +272,9 @@ final class IntegerRingTest
 		@DisplayName("isZero is true only for zero element")
 		void isZeroIsTrueOnlyForZeroElement()
 		{
-			assertThat(IntegerRing.of(0).isZero()).as("0 is zero").isEqualTo(true);
-			assertThat(IntegerRing.of(1).isZero()).as("1 is not zero").isEqualTo(false);
-			assertThat(IntegerRing.of(-1).isZero()).as("-1 is not zero").isEqualTo(false);
+			assertThat(IntegerEuclideanDomain.of(0).isZero()).as("0 is zero").isEqualTo(true);
+			assertThat(IntegerEuclideanDomain.of(1).isZero()).as("1 is not zero").isEqualTo(false);
+			assertThat(IntegerEuclideanDomain.of(-1).isZero()).as("-1 is not zero").isEqualTo(false);
 		}
 	}
 }

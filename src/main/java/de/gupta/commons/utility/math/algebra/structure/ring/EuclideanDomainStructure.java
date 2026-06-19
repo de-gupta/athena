@@ -6,7 +6,7 @@ public interface EuclideanDomainStructure<E> extends IntegralDomainStructure<E>
 {
 	DivisionResult<E> divideWithRemainder(E dividend, E divisor);
 
-	E norm(E element);
+	long norm(E element);
 
 	default E quotient(final E dividend, final E divisor)
 	{

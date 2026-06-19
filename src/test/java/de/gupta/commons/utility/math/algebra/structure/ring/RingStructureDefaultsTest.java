@@ -92,7 +92,7 @@ class RingStructureDefaultsTest
 		}
 
 		@Override
-		public Integer norm(final Integer element)
+		public long norm(final Integer element)
 		{
 			return Math.abs(element);
 		}
@@ -164,6 +164,6 @@ class RingStructureDefaultsTest
 		assertThat(INTEGER_EUCLIDEAN_DOMAIN.quotient(17, 5)).isEqualTo(3);
 		assertThat(INTEGER_EUCLIDEAN_DOMAIN.remainder(17, 5)).isEqualTo(2);
 		assertThat(INTEGER_EUCLIDEAN_DOMAIN.gcd(84, 30)).isEqualTo(6);
-		assertThat(INTEGER_EUCLIDEAN_DOMAIN.norm(-9)).isEqualTo(9);
+		assertThat(INTEGER_EUCLIDEAN_DOMAIN.norm(-9)).isEqualTo(9L);
 	}
 }
