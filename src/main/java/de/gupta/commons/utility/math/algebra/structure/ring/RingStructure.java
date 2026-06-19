@@ -4,5 +4,4 @@ import de.gupta.commons.utility.math.algebra.structure.binary.notation.additive.
 
 public interface RingStructure<E> extends SemiringStructure<E>, AdditiveGroupStructure<E>
 {
-	E additiveInverse(E element);
 }

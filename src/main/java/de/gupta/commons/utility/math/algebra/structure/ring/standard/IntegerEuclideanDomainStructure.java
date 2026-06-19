@@ -33,12 +33,6 @@ public enum IntegerEuclideanDomainStructure implements EuclideanDomainStructure<
 	}
 
 	@Override
-	public IntegerEuclideanDomain additiveInverse(final IntegerEuclideanDomain element)
-	{
-		return element.negate();
-	}
-
-	@Override
 	public boolean isZero(final IntegerEuclideanDomain element)
 	{
 		return element.isZero();

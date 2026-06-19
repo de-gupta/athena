@@ -20,12 +20,6 @@ class RingStructureDefaultsTest
 		}
 
 		@Override
-		public Integer additiveInverse(final Integer element)
-		{
-			return -element;
-		}
-
-		@Override
 		public Integer zero()
 		{
 			return 0;
@@ -62,12 +56,6 @@ class RingStructureDefaultsTest
 		public Double multiplicativeInverse(final Double element)
 		{
 			return 1.0 / element;
-		}
-
-		@Override
-		public Double additiveInverse(final Double element)
-		{
-			return -element;
 		}
 
 		@Override
@@ -119,12 +107,6 @@ class RingStructureDefaultsTest
 		public boolean isZero(final Integer element)
 		{
 			return element == 0;
-		}
-
-		@Override
-		public Integer additiveInverse(final Integer element)
-		{
-			return -element;
 		}
 
 		@Override
