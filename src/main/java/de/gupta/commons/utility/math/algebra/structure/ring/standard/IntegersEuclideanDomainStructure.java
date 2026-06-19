@@ -5,7 +5,7 @@ import de.gupta.commons.utility.math.algebra.structure.ring.EuclideanDomainStruc
 
 import java.util.Objects;
 
-public enum LongEuclideanDomainStructure implements EuclideanDomainStructure<Long>
+public enum IntegersEuclideanDomainStructure implements EuclideanDomainStructure<Long>
 {
 	INSTANCE;
 
