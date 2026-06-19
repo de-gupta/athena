@@ -19,9 +19,9 @@ class RingElementDefaultsTest
 		IntRing seed = new IntRing(5);
 
 		assertThat(seed.sumAll(List.of(new IntRing(2), new IntRing(3)))).isEqualTo(new IntRing(10));
-		assertThat(seed.productAll(Loom.thread(List.of(new IntRing(2), new IntRing(3)))))
+		assertThat(seed.multiplyAll(Loom.thread(List.of(new IntRing(2), new IntRing(3)))))
 				.isEqualTo(new IntRing(30));
-		assertThat(seed.productAll(List.of(new IntRing(2), new IntRing(3)))).isEqualTo(new IntRing(30));
+		assertThat(seed.multiplyAll(List.of(new IntRing(2), new IntRing(3)))).isEqualTo(new IntRing(30));
 		assertThat(seed.subtract(new IntRing(2))).isEqualTo(new IntRing(3));
 	}
 
@@ -60,15 +60,15 @@ class RingElementDefaultsTest
 		}
 
 		@Override
-		public IntRing add(final IntRing other)
-		{
-			return new IntRing(value + other.value);
-		}
-
-		@Override
 		public IntRing multiply(final IntRing other)
 		{
 			return new IntRing(value * other.value);
+		}
+
+		@Override
+		public IntRing add(final IntRing other)
+		{
+			return new IntRing(value + other.value);
 		}
 
 		@Override
@@ -93,16 +93,16 @@ class RingElementDefaultsTest
 		}
 
 		@Override
+		public Rational multiply(final Rational other)
+		{
+			return new Rational(numerator * other.numerator, denominator * other.denominator);
+		}
+
+		@Override
 		public Rational add(final Rational other)
 		{
 			return new Rational(numerator * other.denominator + other.numerator * denominator,
 					denominator * other.denominator);
-		}
-
-		@Override
-		public Rational multiply(final Rational other)
-		{
-			return new Rational(numerator * other.numerator, denominator * other.denominator);
 		}
 
 		@Override
@@ -155,15 +155,15 @@ class RingElementDefaultsTest
 		}
 
 		@Override
-		public IntEuclidean add(final IntEuclidean other)
-		{
-			return new IntEuclidean(value + other.value);
-		}
-
-		@Override
 		public IntEuclidean multiply(final IntEuclidean other)
 		{
 			return new IntEuclidean(value * other.value);
+		}
+
+		@Override
+		public IntEuclidean add(final IntEuclidean other)
+		{
+			return new IntEuclidean(value + other.value);
 		}
 
 		@Override
@@ -179,15 +179,15 @@ class RingElementDefaultsTest
 		}
 
 		@Override
-		public DivisionResult<IntEuclidean> divideWithRemainder(final IntEuclidean divisor)
-		{
-			return DivisionResult.of(new IntEuclidean(value / divisor.value), new IntEuclidean(value % divisor.value));
-		}
-
-		@Override
 		public long norm()
 		{
 			return Math.abs(value);
+		}
+
+		@Override
+		public DivisionResult<IntEuclidean> divideWithRemainder(final IntEuclidean divisor)
+		{
+			return DivisionResult.of(new IntEuclidean(value / divisor.value), new IntEuclidean(value % divisor.value));
 		}
 	}
 }

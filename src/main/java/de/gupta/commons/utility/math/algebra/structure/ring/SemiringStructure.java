@@ -1,27 +1,13 @@
 package de.gupta.commons.utility.math.algebra.structure.ring;
 
 import de.gupta.aletheia.collection.folding.Loom;
+import de.gupta.commons.utility.math.algebra.structure.binary.notation.additive.AdditiveSemigroupStructure;
 
 import java.util.Objects;
-import java.util.stream.StreamSupport;
 
-public interface SemiringStructure<E>
+public interface SemiringStructure<E> extends AdditiveSemigroupStructure<E>
 {
 	E zero();
-
-	E one();
-
-	E add(E left, E right);
-
-	E multiply(E left, E right);
-
-	default E addAll(final Iterable<? extends E> elements)
-	{
-		Objects.requireNonNull(elements, "elements");
-		return StreamSupport.stream(elements.spliterator(), false)
-							.map(element -> (E) element)
-							.reduce(zero(), this::add, this::add);
-	}
 
 	default E multiplyAll(final Iterable<? extends E> elements)
 	{
@@ -34,4 +20,8 @@ public interface SemiringStructure<E>
 		Objects.requireNonNull(elements, "elements");
 		return elements.weave(one(), this::multiply);
 	}
+
+	E one();
+
+	E multiply(E left, E right);
 }
