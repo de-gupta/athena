@@ -33,7 +33,7 @@ public record VectorSpaceStructureLaws<V, F>(VectorSpaceStructure<V, F> subject,
 
 	private void scaleByAdditiveInverseOfOneNegatesVector()
 	{
-		F negativeOne = subject.scalars().additiveInverse(subject.scalars().one());
+		F negativeOne = subject.scalars().negate(subject.scalars().one());
 		V scaledByNegativeOne = subject.scale(negativeOne, vector);
 		V negated = subject.negate(vector);
 
