@@ -118,7 +118,7 @@ final class EuclideanRoundingStrategyTest
 			IntegersAsEuclideanDomain d = element(dividend);
 			IntegersAsEuclideanDomain v = element(divisor);
 
-			for (EuclideanRoundingStrategy strategy : EuclideanRoundingStrategy.values())
+			for (EuclideanRoundingStrategy strategy : StandardEuclideanRoundingStrategy.values())
 			{
 				assertThat(d.euclideanQuotient(v, strategy))
 						.as("%s with %s — element side", as, strategy)
