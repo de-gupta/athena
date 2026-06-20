@@ -1,10 +1,11 @@
 package de.gupta.commons.utility.math.algebra.structure.ring.standard;
 
 import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.structure.ordered.OrderedEuclideanDomainStructure;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
-import de.gupta.commons.utility.math.algebra.structure.ring.EuclideanDomainStructure;
+import de.gupta.commons.utility.math.ordering.OrderRelation;
 
-public enum IntegerEuclideanDomainStructure implements EuclideanDomainStructure<IntegersAsEuclideanDomain>
+public enum IntegerEuclideanDomainStructure implements OrderedEuclideanDomainStructure<IntegersAsEuclideanDomain>
 {
 	INSTANCE;
 
@@ -56,5 +57,11 @@ public enum IntegerEuclideanDomainStructure implements EuclideanDomainStructure<
 	public IntegersAsEuclideanDomain negate(final IntegersAsEuclideanDomain element)
 	{
 		return element.negate();
+	}
+
+	@Override
+	public OrderRelation compare(final IntegersAsEuclideanDomain left, final IntegersAsEuclideanDomain right)
+	{
+		return left.compare(right);
 	}
 }
