@@ -12,7 +12,12 @@ public enum IntegersEuclideanDomainStructure implements EuclideanDomainStructure
 	@Override
 	public DivisionResult<Long> divideWithRemainder(final Long dividend, final Long divisor)
 	{
-		return DivisionResult.of(Math.floorDiv(dividend, divisor), (Math.floorMod(dividend, divisor)));
+		return divideFloor(dividend, divisor);
+	}
+
+	public DivisionResult<Long> divideFloor(final Long dividend, final Long divisor)
+	{
+		return DivisionResult.of(Math.floorDiv(dividend, divisor), Math.floorMod(dividend, divisor));
 	}
 
 	@Override

@@ -52,9 +52,9 @@ public record IntegersAsEuclideanDomain(long value) implements OrderedEuclideanD
 	}
 
 	@Override
-	public DivisionResult<IntegersAsEuclideanDomain> divideWithRemainder(final IntegersAsEuclideanDomain divisor)
+	public DivisionResult<IntegersAsEuclideanDomain> divideFloor(final IntegersAsEuclideanDomain divisor)
 	{
-		return canonicalStructure.divideWithRemainder(value, divisor.value()).map(IntegersAsEuclideanDomain::of);
+		return canonicalStructure.divideFloor(value, divisor.value()).map(IntegersAsEuclideanDomain::of);
 	}
 
 	@Override

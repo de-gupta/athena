@@ -41,10 +41,10 @@ public enum IntegerEuclideanDomainStructure implements OrderedEuclideanDomainStr
 	}
 
 	@Override
-	public DivisionResult<IntegersAsEuclideanDomain> divideWithRemainder(final IntegersAsEuclideanDomain dividend,
-	                                                                     final IntegersAsEuclideanDomain divisor)
+	public DivisionResult<IntegersAsEuclideanDomain> divideFloor(final IntegersAsEuclideanDomain dividend,
+	                                                             final IntegersAsEuclideanDomain divisor)
 	{
-		return dividend.divideWithRemainder(divisor);
+		return dividend.divideFloor(divisor);
 	}
 
 	@Override
