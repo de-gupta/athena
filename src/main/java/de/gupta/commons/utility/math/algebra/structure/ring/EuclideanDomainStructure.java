@@ -2,11 +2,9 @@ package de.gupta.commons.utility.math.algebra.structure.ring;
 
 import java.util.Objects;
 
-public interface EuclideanDomainStructure<E> extends IntegralDomainStructure<E>
+public interface EuclideanDomainStructure<E> extends IntegralDomainStructure<E>, NormedStructure<E>
 {
 	DivisionResult<E> divideWithRemainder(E dividend, E divisor);
-
-	long norm(E element);
 
 	default E quotient(final E dividend, final E divisor)
 	{
