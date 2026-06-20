@@ -1,5 +1,6 @@
 package de.gupta.commons.utility.comparison;
 
+@Deprecated
 public enum ComparisonResult
 {
 	LESS_THAN,
