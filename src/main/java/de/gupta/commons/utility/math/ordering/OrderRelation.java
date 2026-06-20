@@ -32,6 +32,17 @@ public enum OrderRelation
 		};
 	}
 
+	public Optional<Integer> signum()
+	{
+		return switch (this)
+		{
+			case LESS_THAN -> Optional.of(-1);
+			case EQUAL -> Optional.of(0);
+			case GREATER_THAN -> Optional.of(1);
+			case INCOMPARABLE -> Optional.empty();
+		};
+	}
+
 	public boolean isComparable()
 	{
 		return this != INCOMPARABLE;

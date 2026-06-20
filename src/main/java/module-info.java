@@ -49,6 +49,8 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.element.adapter;
 	exports de.gupta.commons.utility.math.algebra.element.binary.action;
 	exports de.gupta.commons.utility.math.algebra.element.module;
+	exports de.gupta.commons.utility.math.algebra.element.ordered;
+	exports de.gupta.commons.utility.math.algebra.structure.ordered;
 	exports de.gupta.commons.utility.math.algebra.element.ring.standard;
 	exports de.gupta.commons.utility.math.algebra.element.lattice;
 
