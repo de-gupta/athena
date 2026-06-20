@@ -10,4 +10,9 @@ public interface TotallyOrdered<E extends TotallyOrdered<E>> extends PartiallyOr
 		                     .orElseThrow(() -> new IllegalStateException(
 									 "Total order may not produce an incomparable result."));
 	}
+
+	default boolean isEqualTo(final E other)
+	{
+		return compare(other).isEqualTo();
+	}
 }
