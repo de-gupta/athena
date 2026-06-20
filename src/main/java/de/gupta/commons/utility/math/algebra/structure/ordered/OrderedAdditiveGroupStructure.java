@@ -1,7 +1,6 @@
 package de.gupta.commons.utility.math.algebra.structure.ordered;
 
 import de.gupta.commons.utility.math.algebra.structure.binary.notation.additive.AdditiveAbelianGroupStructure;
-import de.gupta.commons.utility.math.ordering.OrderRelation;
 import de.gupta.commons.utility.math.ordering.structure.TotalOrderStructure;
 
 public interface OrderedAdditiveGroupStructure<E>
@@ -34,7 +33,6 @@ public interface OrderedAdditiveGroupStructure<E>
 
 	default int signum(final E element)
 	{
-		OrderRelation r = compare(element, zero());
-		return r.isGreaterThan() ? 1 : r.isLessThan() ? -1 : 0;
+		return compare(element, zero()).signum();
 	}
 }

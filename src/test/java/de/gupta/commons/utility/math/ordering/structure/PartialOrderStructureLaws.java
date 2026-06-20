@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.ordering.structure;
 
 import de.gupta.commons.utility.math.ordering.OrderRelation;
+import de.gupta.commons.utility.math.ordering.Ordering;
 import org.junit.jupiter.api.DynamicTest;
 
 import java.util.stream.Stream;
@@ -48,10 +49,16 @@ public record PartialOrderStructureLaws<E>(PartialOrderStructure<E> subject, E a
 
 	private void defaultsConsistentWithCompare()
 	{
-		assertThat(subject.leq(a, b)).as("leq(a, b)").isEqualTo(subject.compare(a, b).isLessThanOrEqualTo());
-		assertThat(subject.lt(a, b)).as("lt(a, b)").isEqualTo(subject.compare(a, b).isLessThan());
-		assertThat(subject.geq(b, a)).as("geq(b, a)").isEqualTo(subject.compare(b, a).isGreaterThanOrEqualTo());
-		assertThat(subject.gt(b, a)).as("gt(b, a)").isEqualTo(subject.compare(b, a).isGreaterThan());
-		assertThat(subject.compare(a, b)).as("isComparable(a, b)").isNotEqualTo(OrderRelation.INCOMPARABLE);
+		Ordering ab = subject.compare(a, b);
+		Ordering ba = subject.compare(b, a);
+		assertThat(subject.leq(a, b)).as("leq(a, b)")
+		                             .isEqualTo(ab instanceof OrderRelation r && r.isLessThanOrEqualTo());
+		assertThat(subject.lt(a, b)).as("lt(a, b)")
+		                            .isEqualTo(ab instanceof OrderRelation r && r.isLessThan());
+		assertThat(subject.geq(b, a)).as("geq(b, a)")
+		                             .isEqualTo(ba instanceof OrderRelation r && r.isGreaterThanOrEqualTo());
+		assertThat(subject.gt(b, a)).as("gt(b, a)")
+		                            .isEqualTo(ba instanceof OrderRelation r && r.isGreaterThan());
+		assertThat(subject.compare(a, b)).as("isComparable(a, b)").isInstanceOf(OrderRelation.class);
 	}
 }

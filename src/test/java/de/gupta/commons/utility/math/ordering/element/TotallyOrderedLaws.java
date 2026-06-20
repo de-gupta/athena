@@ -16,7 +16,7 @@ public record TotallyOrderedLaws<E extends TotallyOrdered<E>>(E a, E b, E c)
 		return Stream.concat(
 				new PartiallyOrderedLaws<>(a, b, c).tests(),
 				Stream.of(
-						dynamicTest("all pairs are comparable (totality)", this::totality),
+						dynamicTest("all pairs produce OrderRelation (totality)", this::totality),
 						dynamicTest("toComparisonResult is consistent with compare", this::bridgeIsConsistent)
 				)
 		);
@@ -24,19 +24,19 @@ public record TotallyOrderedLaws<E extends TotallyOrdered<E>>(E a, E b, E c)
 
 	private void totality()
 	{
-		assertThat(a.compare(b)).as("a.compare(b)").isNotEqualTo(OrderRelation.INCOMPARABLE);
-		assertThat(b.compare(a)).as("b.compare(a)").isNotEqualTo(OrderRelation.INCOMPARABLE);
-		assertThat(a.compare(c)).as("a.compare(c)").isNotEqualTo(OrderRelation.INCOMPARABLE);
-		assertThat(b.compare(c)).as("b.compare(c)").isNotEqualTo(OrderRelation.INCOMPARABLE);
+		assertThat(a.compare(b)).as("a.compare(b)").isInstanceOf(OrderRelation.class);
+		assertThat(b.compare(a)).as("b.compare(a)").isInstanceOf(OrderRelation.class);
+		assertThat(a.compare(c)).as("a.compare(c)").isInstanceOf(OrderRelation.class);
+		assertThat(b.compare(c)).as("b.compare(c)").isInstanceOf(OrderRelation.class);
 	}
 
 	private void bridgeIsConsistent()
 	{
 		assertThat(a.toComparisonResult(b))
 				.as("a.toComparisonResult(b)")
-				.isEqualTo(a.compare(b).toComparisonResult().orElseThrow());
+				.isEqualTo(a.compare(b).toComparisonResult());
 		assertThat(b.toComparisonResult(c))
 				.as("b.toComparisonResult(c)")
-				.isEqualTo(b.compare(c).toComparisonResult().orElseThrow());
+				.isEqualTo(b.compare(c).toComparisonResult());
 	}
 }

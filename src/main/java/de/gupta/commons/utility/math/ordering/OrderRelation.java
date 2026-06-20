@@ -2,14 +2,11 @@ package de.gupta.commons.utility.math.ordering;
 
 import de.gupta.commons.utility.comparison.ComparisonResult;
 
-import java.util.Optional;
-
-public enum OrderRelation
+public enum OrderRelation implements Ordering
 {
 	LESS_THAN,
 	EQUAL,
-	GREATER_THAN,
-	INCOMPARABLE;
+	GREATER_THAN;
 
 	public static OrderRelation from(final ComparisonResult result)
 	{
@@ -32,35 +29,29 @@ public enum OrderRelation
 		};
 	}
 
-	public Optional<Integer> signum()
+	@Override
+	public boolean isComparable()
+	{
+		return true;
+	}
+
+	public ComparisonResult toComparisonResult()
 	{
 		return switch (this)
 		{
-			case LESS_THAN -> Optional.of(-1);
-			case EQUAL -> Optional.of(0);
-			case GREATER_THAN -> Optional.of(1);
-			case INCOMPARABLE -> Optional.empty();
+			case LESS_THAN -> ComparisonResult.LESS_THAN;
+			case EQUAL -> ComparisonResult.EQUAL;
+			case GREATER_THAN -> ComparisonResult.GREATER_THAN;
 		};
 	}
 
-	public boolean isComparable()
-	{
-		return this != INCOMPARABLE;
-	}
-
-	public boolean isIncomparable()
-	{
-		return this == INCOMPARABLE;
-	}
-
-	public Optional<ComparisonResult> toComparisonResult()
+	public int signum()
 	{
 		return switch (this)
 		{
-			case LESS_THAN -> Optional.of(ComparisonResult.LESS_THAN);
-			case EQUAL -> Optional.of(ComparisonResult.EQUAL);
-			case GREATER_THAN -> Optional.of(ComparisonResult.GREATER_THAN);
-			case INCOMPARABLE -> Optional.empty();
+			case LESS_THAN -> -1;
+			case EQUAL -> 0;
+			case GREATER_THAN -> 1;
 		};
 	}
 

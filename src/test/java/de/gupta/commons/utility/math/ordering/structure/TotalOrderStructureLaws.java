@@ -16,7 +16,7 @@ public record TotalOrderStructureLaws<E>(TotalOrderStructure<E> subject, E a, E 
 		return Stream.concat(
 				new PartialOrderStructureLaws<>(subject, a, b, c).tests(),
 				Stream.of(
-						dynamicTest("all pairs are comparable (totality)", this::totality),
+						dynamicTest("all pairs produce OrderRelation (totality)", this::totality),
 						dynamicTest("asDescriptivelyComparableStructure is consistent with compare",
 								this::bridgeIsConsistent)
 				)
@@ -25,10 +25,10 @@ public record TotalOrderStructureLaws<E>(TotalOrderStructure<E> subject, E a, E 
 
 	private void totality()
 	{
-		assertThat(subject.compare(a, b)).as("compare(a, b)").isNotEqualTo(OrderRelation.INCOMPARABLE);
-		assertThat(subject.compare(b, a)).as("compare(b, a)").isNotEqualTo(OrderRelation.INCOMPARABLE);
-		assertThat(subject.compare(a, c)).as("compare(a, c)").isNotEqualTo(OrderRelation.INCOMPARABLE);
-		assertThat(subject.compare(b, c)).as("compare(b, c)").isNotEqualTo(OrderRelation.INCOMPARABLE);
+		assertThat(subject.compare(a, b)).as("compare(a, b)").isInstanceOf(OrderRelation.class);
+		assertThat(subject.compare(b, a)).as("compare(b, a)").isInstanceOf(OrderRelation.class);
+		assertThat(subject.compare(a, c)).as("compare(a, c)").isInstanceOf(OrderRelation.class);
+		assertThat(subject.compare(b, c)).as("compare(b, c)").isInstanceOf(OrderRelation.class);
 	}
 
 	private void bridgeIsConsistent()
@@ -37,9 +37,9 @@ public record TotalOrderStructureLaws<E>(TotalOrderStructure<E> subject, E a, E 
 
 		assertThat(bridge.compare(a, b))
 				.as("bridge.compare(a, b)")
-				.isEqualTo(subject.compare(a, b).toComparisonResult().orElseThrow());
+				.isEqualTo(subject.compare(a, b).toComparisonResult());
 		assertThat(bridge.compare(b, c))
 				.as("bridge.compare(b, c)")
-				.isEqualTo(subject.compare(b, c).toComparisonResult().orElseThrow());
+				.isEqualTo(subject.compare(b, c).toComparisonResult());
 	}
 }

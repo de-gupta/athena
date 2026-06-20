@@ -1,8 +1,6 @@
 package de.gupta.commons.utility.math.algebra.element.ordered;
 
-import de.gupta.aletheia.functional.Unfolding;
 import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveAbelianGroup;
-import de.gupta.commons.utility.math.ordering.OrderRelation;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
 
 public interface OrderedAdditiveGroup<E extends OrderedAdditiveGroup<E>>
@@ -41,8 +39,6 @@ public interface OrderedAdditiveGroup<E extends OrderedAdditiveGroup<E>>
 
 	default int signum()
 	{
-		return Unfolding.beckon(compare(zero()))
-		                .coronate(OrderRelation::signum)
-		                .orElseThrow();
+		return compare(zero()).signum();
 	}
 }

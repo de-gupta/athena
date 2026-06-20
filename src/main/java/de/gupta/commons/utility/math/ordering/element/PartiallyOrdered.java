@@ -1,16 +1,22 @@
 package de.gupta.commons.utility.math.ordering.element;
 
+import de.gupta.commons.utility.math.ordering.Incomparable;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
+import de.gupta.commons.utility.math.ordering.Ordering;
 
 @FunctionalInterface
 public interface PartiallyOrdered<E extends PartiallyOrdered<E>>
 {
 	default boolean isEqualTo(E other)
 	{
-		return compare(other).isEqualTo();
+		return switch (compare(other))
+		{
+			case OrderRelation r -> r.isEqualTo();
+			case Incomparable ignored -> false;
+		};
 	}
 
-	OrderRelation compare(E other);
+	Ordering compare(E other);
 
 	default boolean leq(E other)
 	{
@@ -19,7 +25,11 @@ public interface PartiallyOrdered<E extends PartiallyOrdered<E>>
 
 	default boolean isLessThanOrEqualTo(E other)
 	{
-		return compare(other).isLessThanOrEqualTo();
+		return switch (compare(other))
+		{
+			case OrderRelation r -> r.isLessThanOrEqualTo();
+			case Incomparable _ -> false;
+		};
 	}
 
 	default boolean lt(E other)
@@ -29,7 +39,11 @@ public interface PartiallyOrdered<E extends PartiallyOrdered<E>>
 
 	default boolean isLessThan(E other)
 	{
-		return compare(other).isLessThan();
+		return switch (compare(other))
+		{
+			case OrderRelation r -> r.isLessThan();
+			case Incomparable _ -> false;
+		};
 	}
 
 	default boolean geq(E other)
@@ -39,7 +53,11 @@ public interface PartiallyOrdered<E extends PartiallyOrdered<E>>
 
 	default boolean isGreaterThanOrEqualTo(E other)
 	{
-		return compare(other).isGreaterThanOrEqualTo();
+		return switch (compare(other))
+		{
+			case OrderRelation r -> r.isGreaterThanOrEqualTo();
+			case Incomparable _ -> false;
+		};
 	}
 
 	default boolean gt(E other)
@@ -49,7 +67,11 @@ public interface PartiallyOrdered<E extends PartiallyOrdered<E>>
 
 	default boolean isGreaterThan(E other)
 	{
-		return compare(other).isGreaterThan();
+		return switch (compare(other))
+		{
+			case OrderRelation r -> r.isGreaterThan();
+			case Incomparable _ -> false;
+		};
 	}
 
 	default boolean isComparableTo(E other)
