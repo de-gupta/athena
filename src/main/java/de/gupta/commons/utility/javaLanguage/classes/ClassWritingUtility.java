@@ -25,7 +25,7 @@ public final class ClassWritingUtility
 	public static void writeClass(final String fileName, final String classContent, final String contentRootPath,
 								  boolean overwrite)
 	{
-		Unfolding.of(classContent)
+		Unfolding.beckon(classContent)
 				 .metamorphose(PackageExtractor::extractPackageName)
 				 .metamorphose(p -> p.split("\\."))
 				 .metamorphose(segments -> Paths.get(contentRootPath, segments))

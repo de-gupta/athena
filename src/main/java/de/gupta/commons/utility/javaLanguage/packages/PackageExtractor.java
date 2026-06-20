@@ -33,7 +33,7 @@ public final class PackageExtractor
 		final Pattern packagePattern = Pattern.compile("^\\s*package\\s+([\\w.]+)\\s*;.*$");
 
 		return Optional.ofNullable(classContent)
-					   .filter(StringSanitizationUtility::isStringNonEmpty)
+		               .filter(StringSanitizationUtility::isNonEmpty)
 					   .filter(s -> s.contains("package"))
 					   .map(String::trim)
 					   .map(CommentManager::removeBlockComments)

@@ -58,7 +58,7 @@ final class FileReaderUtilityTest
 	@DisplayName("Directory path with trailing slash should work correctly")
 	void directoryPathWithTrailingSlashShouldWorkCorrectly()
 	{
-		String content = FileReaderUtility.readFileContent(tempDir.toString() + "\\", TEST_FILE);
+		String content = FileReaderUtility.readFileContent(tempDir.toString() + "/", TEST_FILE);
 		assertThat(content)
 				.as("Directory path with trailing slash should work correctly")
 				.isEqualTo(EXPECTED_CONTENT);
@@ -125,13 +125,17 @@ final class FileReaderUtilityTest
 	}
 
 	@Test
-	@DisplayName("Whitespace filename should throw InvalidPathException")
-	void whitespaceFilenameShouldThrowInvalidPathException()
+	@DisplayName("Whitespace filename should throw an exception")
+	void whitespaceFilenameShouldThrowException()
 	{
 		assertThatThrownBy(() -> FileReaderUtility.readFileContent(tempDir.toString(), " "))
-				.as("Whitespace filename should throw InvalidPathException")
-				.isInstanceOf(InvalidPathException.class)
-				.hasMessageContaining("Trailing char < > at index");
+				.as("Whitespace filename should throw InvalidPathException (Windows) or IllegalArgumentException (Linux)")
+				.satisfiesAnyOf(
+						e -> assertThat(e).isInstanceOf(InvalidPathException.class)
+						                  .hasMessageContaining("Trailing char < > at index"),
+						e -> assertThat(e).isInstanceOf(IllegalArgumentException.class)
+						                  .hasMessageContaining("File not found:")
+				);
 	}
 
 	@Test

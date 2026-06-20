@@ -1,28 +1,31 @@
 package de.gupta.commons.utility.string;
 
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+
 public final class StringSanitizationUtility
 {
-	public static boolean isStringNonEmpty(final String input)
+	public static boolean isNonEmpty(final String input)
 	{
-		return !isStringEmpty(input);
+		return !isAbsentOrEmpty(input);
 	}
 
-	public static boolean isStringEmpty(final String input)
+	public static boolean isAbsentOrEmpty(final String input)
 	{
 		return input == null || input.isEmpty();
 	}
 
-	public static boolean isStringNonBlank(final String input)
+	public static boolean isNotBlank(final String input)
 	{
-		return !isStringBlank(input);
+		return !isAbsentOrBlank(input);
 	}
 
-	public static boolean isStringBlank(final String input)
+	public static boolean isAbsentOrBlank(final String input)
 	{
 		return input == null || input.isBlank();
 	}
 
-	public static boolean isStringTrimmed(final String input)
+	public static boolean isTrimmed(final String input)
 	{
 		return input != null && input.trim().equals(input);
 	}
@@ -35,6 +38,26 @@ public final class StringSanitizationUtility
 	public static String[] breakIntoLines(final String input, final String delimiter)
 	{
 		return input.split(delimiter, -1);
+	}
+
+	public static void requireNotBlank(final String input, final Supplier<RuntimeException> exceptionSupplier)
+	{
+		if (isAbsentOrBlank(input))
+		{
+			throw exceptionSupplier.get();
+		}
+	}
+
+	public static void requireNotBlank(final String input, final String message)
+	{
+		requireNotBlank(input, () -> new IllegalArgumentException(message));
+	}
+
+	public static String requireNotBlankAnd(final String input, final String message,
+	                                        final UnaryOperator<String> operation)
+	{
+		requireNotBlank(input, message);
+		return operation.apply(input);
 	}
 
 	private StringSanitizationUtility()

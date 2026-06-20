@@ -16,7 +16,7 @@ public final class PathUtility
 	public static Path convertToPath(final String path)
 	{
 		return Optional.ofNullable(path)
-					   .filter(StringSanitizationUtility::isStringNonBlank)
+		               .filter(StringSanitizationUtility::isNotBlank)
 					   .map(Path::of)
 					   .orElseThrow(() -> new IllegalArgumentException("Path cannot be null or blank"));
 	}

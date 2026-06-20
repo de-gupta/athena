@@ -1,0 +1,67 @@
+module de.gupta.athena
+{
+	exports de.gupta.commons.utility.collection;
+	exports de.gupta.commons.utility.comparison;
+
+	exports de.gupta.commons.utility.io.path;
+	exports de.gupta.commons.utility.io.read;
+	exports de.gupta.commons.utility.io.table;
+	exports de.gupta.commons.utility.io.write;
+
+	exports de.gupta.commons.utility.javaLanguage.classes;
+	exports de.gupta.commons.utility.javaLanguage.packages;
+	exports de.gupta.commons.utility.javaLanguage.code;
+	exports de.gupta.commons.utility.javaLanguage.comments;
+
+	exports de.gupta.commons.utility.map;
+	exports de.gupta.commons.utility.map.enumMap;
+
+	exports de.gupta.commons.utility.string;
+	exports de.gupta.commons.utility.security;
+
+	exports de.gupta.commons.utility.properties;
+
+	exports de.gupta.commons.utility.math.analysis.space;
+	exports de.gupta.commons.utility.math.analysis.space.standard;
+	exports de.gupta.commons.utility.math.interpolation;
+	exports de.gupta.commons.utility.math.interpolation.method;
+	exports de.gupta.commons.utility.math.interpolation.grid;
+	exports de.gupta.commons.utility.math.interpolation.data;
+
+	exports de.gupta.commons.utility.math.ordering;
+	exports de.gupta.commons.utility.math.ordering.element;
+	exports de.gupta.commons.utility.math.ordering.structure;
+	exports de.gupta.commons.utility.math.ordering.laws;
+
+	exports de.gupta.commons.utility.math.prefix;
+	exports de.gupta.commons.utility.math.algebra.structure.binary;
+	exports de.gupta.commons.utility.math.algebra.structure.module;
+	exports de.gupta.commons.utility.math.algebra.structure.ring;
+	exports de.gupta.commons.utility.math.algebra.structure.ring.standard;
+	exports de.gupta.commons.utility.math.algebra.structure.morphism;
+	exports de.gupta.commons.utility.math.algebra.structure.binary.action;
+	exports de.gupta.commons.utility.math.algebra.structure.lattice;
+	exports de.gupta.commons.utility.math.algebra.structure.binary.notation.additive;
+	exports de.gupta.commons.utility.math.algebra.element.binary.notation.additive;
+
+	exports de.gupta.commons.utility.math.algebra.element.binary;
+	exports de.gupta.commons.utility.math.algebra.element.ring;
+	exports de.gupta.commons.utility.math.algebra.element.adapter;
+	exports de.gupta.commons.utility.math.algebra.element.binary.action;
+	exports de.gupta.commons.utility.math.algebra.element.module;
+	exports de.gupta.commons.utility.math.algebra.element.ordered;
+	exports de.gupta.commons.utility.math.algebra.structure.ordered;
+	exports de.gupta.commons.utility.math.algebra.element.ring.standard;
+	exports de.gupta.commons.utility.math.algebra.element.lattice;
+
+	exports de.gupta.commons.utility.math.algebra.laws.lattice;
+	exports de.gupta.commons.utility.math.algebra.laws.binary;
+	exports de.gupta.commons.utility.math.algebra.laws.action;
+	exports de.gupta.commons.utility.math.algebra.laws.ring;
+	exports de.gupta.commons.utility.math.algebra.free.abelian;
+
+	exports de.gupta.commons.utility.exception;
+	exports de.gupta.commons.utility.math.algebra.structure.module.standard;
+
+	requires de.gupta.aletheia;
+}
