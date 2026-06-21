@@ -1,12 +1,13 @@
-package de.gupta.commons.utility.math.ordering.structure;
+package de.gupta.commons.utility.math.ordering.structure.interval;
 
 import de.gupta.commons.utility.math.ordering.element.interval.bound.Bound;
+import de.gupta.commons.utility.math.ordering.structure.TotalOrderStructure;
 
 import java.util.Optional;
 
 public record IntervalStructure<E>(TotalOrderStructure<E> order)
 {
-	// --- Bounded factories (throw on invalid) ---
+	// --- Bounded factories ---
 
 	public BoundedInterval<E> open(final E lower, final E upper)
 	{
@@ -17,11 +18,11 @@ public record IntervalStructure<E>(TotalOrderStructure<E> order)
 	{
 		return switch (order.compare(lower.value(), upper.value()))
 		{
-			case LESS_THAN -> new BoundedInterval<>(lower, upper);
+			case LESS_THAN -> BoundedIntervalImpl.of(lower, upper);
 			case GREATER_THAN -> throw new IllegalArgumentException("Lower bound must not exceed upper bound.");
 			case EQUAL ->
 			{
-				if (lower.isClosed() && upper.isClosed()) yield new BoundedInterval<>(lower, upper);
+				if (lower.isClosed() && upper.isClosed()) yield BoundedIntervalImpl.of(lower, upper);
 				throw new IllegalArgumentException("Open or half-open interval with equal bounds is empty.");
 			}
 		};
@@ -51,42 +52,42 @@ public record IntervalStructure<E>(TotalOrderStructure<E> order)
 
 	public UnboundedInterval<E> atLeast(final E lower)
 	{
-		return new UnboundedInterval<>(Optional.of(new Bound.Closed<>(lower)), Optional.empty());
+		return UnboundedIntervalImpl.of(Optional.of(new Bound.Closed<>(lower)), Optional.empty());
 	}
 
 	public UnboundedInterval<E> greaterThan(final E lower)
 	{
-		return new UnboundedInterval<>(Optional.of(new Bound.Open<>(lower)), Optional.empty());
+		return UnboundedIntervalImpl.of(Optional.of(new Bound.Open<>(lower)), Optional.empty());
 	}
 
 	public UnboundedInterval<E> atMost(final E upper)
 	{
-		return new UnboundedInterval<>(Optional.empty(), Optional.of(new Bound.Closed<>(upper)));
+		return UnboundedIntervalImpl.of(Optional.empty(), Optional.of(new Bound.Closed<>(upper)));
 	}
 
 	public UnboundedInterval<E> lessThan(final E upper)
 	{
-		return new UnboundedInterval<>(Optional.empty(), Optional.of(new Bound.Open<>(upper)));
+		return UnboundedIntervalImpl.of(Optional.empty(), Optional.of(new Bound.Open<>(upper)));
 	}
 
 	// --- Operations ---
 
 	public UnboundedInterval<E> all()
 	{
-		return new UnboundedInterval<>(Optional.empty(), Optional.empty());
+		return UnboundedIntervalImpl.of(Optional.empty(), Optional.empty());
 	}
 
 	public boolean contains(final Interval<E> interval, final E element)
 	{
 		return switch (interval)
 		{
-			case BoundedInterval<E> b -> lowerSatisfied(b.lower(), element) && upperSatisfied(b.upper(), element);
-			case UnboundedInterval<E> u -> u.lower().map(b -> lowerSatisfied(b, element)).orElse(true)
-					&& u.upper().map(b -> upperSatisfied(b, element)).orElse(true);
+			case BoundedInterval<E> b -> isAboveLower(b.lower(), element) && isBelowUpper(b.upper(), element);
+			case UnboundedInterval<E> u -> u.lower().map(b -> isAboveLower(b, element)).orElse(true)
+					&& u.upper().map(b -> isBelowUpper(b, element)).orElse(true);
 		};
 	}
 
-	private boolean lowerSatisfied(final Bound<E> bound, final E element)
+	private boolean isAboveLower(final Bound<E> bound, final E element)
 	{
 		return switch (bound)
 		{
@@ -95,7 +96,7 @@ public record IntervalStructure<E>(TotalOrderStructure<E> order)
 		};
 	}
 
-	private boolean upperSatisfied(final Bound<E> bound, final E element)
+	private boolean isBelowUpper(final Bound<E> bound, final E element)
 	{
 		return switch (bound)
 		{
@@ -110,41 +111,42 @@ public record IntervalStructure<E>(TotalOrderStructure<E> order)
 		{
 			case BoundedInterval<E> a -> switch (inner)
 			{
-				case BoundedInterval<E> b -> lowerAtMost(a.lower(), b.lower()) && upperAtLeast(a.upper(), b.upper());
+				case BoundedInterval<E> b ->
+						lowerCoversLower(a.lower(), b.lower()) && upperCoversUpper(a.upper(), b.upper());
 				case UnboundedInterval<E> ignored -> false;
 			};
 			case UnboundedInterval<E> u -> switch (inner)
 			{
-				case BoundedInterval<E> b -> u.lower().map(l -> lowerAtMost(l, b.lower())).orElse(true)
-						&& u.upper().map(ul -> upperAtLeast(ul, b.upper())).orElse(true);
+				case BoundedInterval<E> b -> u.lower().map(l -> lowerCoversLower(l, b.lower())).orElse(true)
+						&& u.upper().map(ul -> upperCoversUpper(ul, b.upper())).orElse(true);
 				case UnboundedInterval<E> ui ->
-						(u.lower().isEmpty() || (ui.lower().isPresent() && lowerAtMost(u.lower().get(),
-								ui.lower().get())))
-								&& (u.upper().isEmpty() || (ui.upper().isPresent() && upperAtLeast(u.upper().get(),
-								ui.upper().get())));
+						(u.lower().isEmpty() || ui.lower().isPresent() && lowerCoversLower(u.lower().get(),
+								ui.lower().get()))
+								&& (u.upper().isEmpty() || ui.upper().isPresent() && upperCoversUpper(u.upper().get(),
+								ui.upper().get()));
 			};
 		};
 	}
 
-	private boolean lowerAtMost(final Bound<E> a, final Bound<E> b)
+	private boolean lowerCoversLower(final Bound<E> outer, final Bound<E> inner)
 	{
-		return switch (order.compare(a.value(), b.value()))
+		return switch (order.compare(outer.value(), inner.value()))
 		{
 			case LESS_THAN -> true;
 			case GREATER_THAN -> false;
-			case EQUAL -> a.isClosed() || b.isOpen();
+			case EQUAL -> outer.isClosed() || inner.isOpen();
 		};
 	}
 
-	// --- Helpers ---
+	// --- Private helpers ---
 
-	private boolean upperAtLeast(final Bound<E> a, final Bound<E> b)
+	private boolean upperCoversUpper(final Bound<E> outer, final Bound<E> inner)
 	{
-		return switch (order.compare(a.value(), b.value()))
+		return switch (order.compare(outer.value(), inner.value()))
 		{
 			case GREATER_THAN -> true;
 			case LESS_THAN -> false;
-			case EQUAL -> a.isClosed() || b.isOpen();
+			case EQUAL -> outer.isClosed() || inner.isOpen();
 		};
 	}
 
@@ -158,12 +160,12 @@ public record IntervalStructure<E>(TotalOrderStructure<E> order)
 						!endsBefore(ba.upper(), bb.lower()) && !endsBefore(bb.upper(), ba.lower());
 				case UnboundedInterval<E> u ->
 				{
-					boolean beforeUnbounded = u.lower().isPresent() && endsBefore(ba.upper(), u.lower().get());
-					boolean afterUnbounded = u.upper().isPresent() && endsBefore(u.upper().get(), ba.lower());
-					yield !beforeUnbounded && !afterUnbounded;
+					boolean boundedBeforeUnbounded = u.lower().isPresent() && endsBefore(ba.upper(), u.lower().get());
+					boolean unboundedBeforeBounded = u.upper().isPresent() && endsBefore(u.upper().get(), ba.lower());
+					yield !boundedBeforeUnbounded && !unboundedBeforeBounded;
 				}
 			};
-			case UnboundedInterval<E> ua -> overlaps(b, a);
+			case UnboundedInterval<E> ignored -> overlaps(b, a);
 		};
 	}
 
@@ -171,7 +173,7 @@ public record IntervalStructure<E>(TotalOrderStructure<E> order)
 	{
 		Bound<E> newLower = maxLower(a.lower(), b.lower());
 		Bound<E> newUpper = minUpper(a.upper(), b.upper());
-		return isNonEmpty(newLower, newUpper) ? Optional.of(new BoundedInterval<>(newLower, newUpper)) :
+		return isNonEmpty(newLower, newUpper) ? Optional.of(BoundedIntervalImpl.of(newLower, newUpper)) :
 				Optional.empty();
 	}
 
@@ -215,7 +217,7 @@ public record IntervalStructure<E>(TotalOrderStructure<E> order)
 				case UnboundedInterval<E> u -> u.lower().map(l -> touchesAt(ba.upper(), l)).orElse(false)
 						|| u.upper().map(u2 -> touchesAt(u2, ba.lower())).orElse(false);
 			};
-			case UnboundedInterval<E> ua -> abuts(b, a);
+			case UnboundedInterval<E> ignored -> abuts(b, a);
 		};
 	}
 

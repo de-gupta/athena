@@ -3,6 +3,7 @@ package de.gupta.commons.utility.math.ordering.element.interval;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
 import de.gupta.commons.utility.math.ordering.element.interval.bound.Bound;
 
+// TODO: clean up duplication and method names
 final class IntervalUtility
 {
 	static <E extends TotallyOrdered<E>> Bound<E> minLower(final Bound<E> a, final Bound<E> b)
@@ -55,25 +56,25 @@ final class IntervalUtility
 		};
 	}
 
-	// TODO: bad method name and param names. which one is being checked and which one is the bound?
-	static <E extends TotallyOrdered<E>> boolean lowerAtMost(final Bound<E> a, final Bound<E> b)
+	// outer lower covers inner lower: outer admits all elements that inner admits at the lower end
+	static <E extends TotallyOrdered<E>> boolean lowerCoversLower(final Bound<E> outer, final Bound<E> inner)
 	{
-		return switch (a.value().compare(b.value()))
+		return switch (outer.value().compare(inner.value()))
 		{
 			case LESS_THAN -> true;
 			case GREATER_THAN -> false;
-			case EQUAL -> a.isClosed() || b.isOpen();
+			case EQUAL -> outer.isClosed() || inner.isOpen();
 		};
 	}
 
-	// TODO: bad method name and param names. which one is being checked and which one is the bound?
-	static <E extends TotallyOrdered<E>> boolean upperAtLeast(final Bound<E> a, final Bound<E> b)
+	// outer upper covers inner upper: outer admits all elements that inner admits at the upper end
+	static <E extends TotallyOrdered<E>> boolean upperCoversUpper(final Bound<E> outer, final Bound<E> inner)
 	{
-		return switch (a.value().compare(b.value()))
+		return switch (outer.value().compare(inner.value()))
 		{
 			case GREATER_THAN -> true;
 			case LESS_THAN -> false;
-			case EQUAL -> a.isClosed() || b.isOpen();
+			case EQUAL -> outer.isClosed() || inner.isOpen();
 		};
 	}
 

@@ -20,8 +20,8 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 	{
 		return switch (other)
 		{
-			case BoundedInterval<E> bounded -> IntervalUtility.lowerAtMost(lower,
-					bounded.lower()) && IntervalUtility.upperAtLeast(upper, bounded.upper());
+			case BoundedInterval<E> bounded -> IntervalUtility.lowerCoversLower(lower,
+					bounded.lower()) && IntervalUtility.upperCoversUpper(upper, bounded.upper());
 			case UnboundedInterval<E> _ -> false;
 		};
 	}
@@ -44,7 +44,7 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 	@Override
 	public boolean contains(final E element)
 	{
-		return lowerSatisfied(element) && upperSatisfied(element);
+		return isAboveLower(element) && isBelowUpper(element);
 	}
 
 	@Override
@@ -107,8 +107,8 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 		return Optional.of(upper);
 	}
 
-	// TODO: egregious method name
-	private boolean lowerSatisfied(final E element)
+
+	private boolean isAboveLower(final E element)
 	{
 		return switch (lower)
 		{
@@ -117,8 +117,8 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 		};
 	}
 
-	// TODO: egregious method name
-	private boolean upperSatisfied(final E element)
+
+	private boolean isBelowUpper(final E element)
 	{
 		return switch (upper)
 		{
