@@ -1,17 +1,11 @@
 package de.gupta.commons.utility.math.ordering.structure;
 
-import de.gupta.commons.utility.math.ordering.Bound;
+import de.gupta.commons.utility.math.ordering.element.interval.bound.Bound;
 
 import java.util.Optional;
 
 public record BoundedInterval<E>(Bound<E> lower, Bound<E> upper) implements Interval<E>
 {
-	@Override
-	public boolean isEmpty()
-	{
-		return false;
-	}
-
 	@Override
 	public Optional<Bound<E>> lowerBound()
 	{

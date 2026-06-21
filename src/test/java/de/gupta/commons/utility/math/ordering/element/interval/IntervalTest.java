@@ -1,0 +1,264 @@
+package de.gupta.commons.utility.math.ordering.element.interval;
+
+import de.gupta.commons.utility.math.ordering.OrderRelation;
+import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@DisplayName("Interval")
+final class IntervalTest
+{
+	private static BoundedInterval<IntElement> closed(final int a, final int b)
+	{
+		return Intervals.closed(e(a), e(b));
+	}
+
+	private static IntElement e(final int value)
+	{
+		return new IntElement(value);
+	}
+
+	private static BoundedInterval<IntElement> open(final int a, final int b)
+	{
+		return Intervals.open(e(a), e(b));
+	}
+
+	private static BoundedInterval<IntElement> closedOpen(final int a, final int b)
+	{
+		return Intervals.closedOpen(e(a), e(b));
+	}
+
+	private static BoundedInterval<IntElement> openClosed(final int a, final int b)
+	{
+		return Intervals.openClosed(e(a), e(b));
+	}
+
+	private record IntElement(int value) implements TotallyOrdered<IntElement>
+	{
+		@Override
+		public OrderRelation compare(final IntElement other)
+		{
+			int result = Integer.compare(value, other.value);
+			return result < 0 ? OrderRelation.LESS_THAN : result > 0 ? OrderRelation.GREATER_THAN : OrderRelation.EQUAL;
+		}
+	}
+
+	@Nested
+	@DisplayName("when constructing bounded")
+	final class WhenConstructingBounded
+	{
+		@Test
+		@DisplayName("throws when lower exceeds upper")
+		void throwsWhenLowerExceedsUpper()
+		{
+			assertThatThrownBy(() -> Intervals.closed(e(5), e(3))).isInstanceOf(IllegalArgumentException.class);
+			assertThatThrownBy(() -> Intervals.open(e(5), e(3))).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Test
+		@DisplayName("throws for open or half-open interval with equal bounds")
+		void throwsForOpenWithEqualBounds()
+		{
+			assertThatThrownBy(() -> Intervals.open(e(3), e(3))).isInstanceOf(IllegalArgumentException.class);
+			assertThatThrownBy(() -> Intervals.closedOpen(e(3), e(3))).isInstanceOf(IllegalArgumentException.class);
+			assertThatThrownBy(() -> Intervals.openClosed(e(3), e(3))).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Test
+		@DisplayName("closed interval with equal bounds is a point")
+		void closedIntervalWithEqualBoundsIsAPoint()
+		{
+			assertThat(closed(3, 3).isPoint()).isEqualTo(true);
+		}
+	}
+
+	@Nested
+	@DisplayName("when constructing unbounded")
+	final class WhenConstructingUnbounded
+	{
+		@Test
+		@DisplayName("atLeast produces lower-bounded interval containing all elements at or above")
+		void atLeastProducesLowerBoundedInterval()
+		{
+			UnboundedInterval<IntElement> interval = Intervals.atLeast(e(5));
+			assertThat(interval.contains(e(5))).isEqualTo(true);
+			assertThat(interval.contains(e(10))).isEqualTo(true);
+			assertThat(interval.contains(e(4))).isEqualTo(false);
+		}
+
+		@Test
+		@DisplayName("atMost produces upper-bounded interval containing all elements at or below")
+		void atMostProducesUpperBoundedInterval()
+		{
+			UnboundedInterval<IntElement> interval = Intervals.atMost(e(5));
+			assertThat(interval.contains(e(5))).isEqualTo(true);
+			assertThat(interval.contains(e(0))).isEqualTo(true);
+			assertThat(interval.contains(e(6))).isEqualTo(false);
+		}
+
+		@Test
+		@DisplayName("all contains every element")
+		void allContainsEveryElement()
+		{
+			UnboundedInterval<IntElement> interval = Intervals.all();
+			assertThat(interval.contains(e(Integer.MIN_VALUE))).isEqualTo(true);
+			assertThat(interval.contains(e(0))).isEqualTo(true);
+			assertThat(interval.contains(e(Integer.MAX_VALUE))).isEqualTo(true);
+		}
+	}
+
+	@Nested
+	@DisplayName("when checking contains(element)")
+	final class WhenCheckingContainsElement
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("containsElementCases")
+		@DisplayName("returns correct result based on bound types")
+		void returnsCorrectResultBasedOnBoundTypes(final String as, final Interval<IntElement> interval,
+		                                           final int element, final boolean expected)
+		{
+			assertThat(interval.contains(e(element))).as(as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> containsElementCases()
+		{
+			return Stream.of(
+					Arguments.of("[1,5] contains 1", closed(1, 5), 1, true),
+					Arguments.of("[1,5] contains 3", closed(1, 5), 3, true),
+					Arguments.of("[1,5] contains 5", closed(1, 5), 5, true),
+					Arguments.of("[1,5] excludes 0", closed(1, 5), 0, false),
+					Arguments.of("[1,5] excludes 6", closed(1, 5), 6, false),
+					Arguments.of("(1,5) excludes 1", open(1, 5), 1, false),
+					Arguments.of("(1,5) contains 2", open(1, 5), 2, true),
+					Arguments.of("(1,5) excludes 5", open(1, 5), 5, false),
+					Arguments.of("[1,5) excludes 5", closedOpen(1, 5), 5, false),
+					Arguments.of("[1,5) contains 4", closedOpen(1, 5), 4, true),
+					Arguments.of("(1,5] excludes 1", openClosed(1, 5), 1, false),
+					Arguments.of("(1,5] contains 5", openClosed(1, 5), 5, true),
+					Arguments.of("[3,∞) contains 10", Intervals.atLeast(e(3)), 10, true),
+					Arguments.of("[3,∞) excludes 2", Intervals.atLeast(e(3)), 2, false),
+					Arguments.of("(-∞,5) contains 4", Intervals.lessThan(e(5)), 4, true),
+					Arguments.of("(-∞,5) excludes 5", Intervals.lessThan(e(5)), 5, false),
+					Arguments.of("(-∞,∞) contains 0", Intervals.all(), 0, true)
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when intersecting bounded intervals")
+	final class WhenIntersectingBoundedIntervals
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("intersectCases")
+		@DisplayName("produces the correct intersection")
+		void producesTheCorrectIntersection(final String as, final BoundedIntervalImpl<IntElement> a,
+		                                    final BoundedIntervalImpl<IntElement> b,
+		                                    final Optional<BoundedInterval<IntElement>> expected)
+		{
+			assertThat(a.intersect(b)).as(as).isEqualTo(expected);
+			assertThat(b.intersect(a)).as("%s (symmetric)", as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> intersectCases()
+		{
+			return Stream.of(
+					Arguments.of("[1,5] ∩ [3,7] = [3,5]", closed(1, 5), closed(3, 7), Optional.of(closed(3, 5))),
+					Arguments.of("[1,5) ∩ [3,7] = [3,5)", closedOpen(1, 5), closed(3, 7),
+							Optional.of(closedOpen(3, 5))),
+					Arguments.of("[1,5] ∩ [5,7] = [5,5]", closed(1, 5), closed(5, 7), Optional.of(closed(5, 5))),
+					Arguments.of("[1,5] ∩ (5,7] = empty", closed(1, 5), openClosed(5, 7), Optional.empty()),
+					Arguments.of("[1,3] ∩ [5,7] = empty", closed(1, 3), closed(5, 7), Optional.empty())
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when checking overlaps")
+	final class WhenCheckingOverlaps
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("overlapsCases")
+		@DisplayName("returns correct result")
+		void returnsCorrectResult(final String as, final Interval<IntElement> a, final Interval<IntElement> b,
+		                          final boolean expected)
+		{
+			assertThat(a.overlaps(b)).as(as).isEqualTo(expected);
+			assertThat(b.overlaps(a)).as("%s (symmetric)", as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> overlapsCases()
+		{
+			return Stream.of(
+					Arguments.of("[1,5] and [3,7] overlap", closed(1, 5), closed(3, 7), true),
+					Arguments.of("[1,5] and [5,7] overlap at 5", closed(1, 5), closed(5, 7), true),
+					Arguments.of("[1,5) and [5,7] disjoint at 5", closedOpen(1, 5), closed(5, 7), false),
+					Arguments.of("[1,3] and [5,7] disjoint", closed(1, 3), closed(5, 7), false),
+					Arguments.of("[1,5] and [3,∞) overlap", closed(1, 5), Intervals.atLeast(e(3)), true),
+					Arguments.of("[1,5] and [6,∞) disjoint", closed(1, 5), Intervals.atLeast(e(6)), false),
+					Arguments.of("[1,5] and (-∞,3] overlap", closed(1, 5), Intervals.atMost(e(3)), true),
+					Arguments.of("[1,5] and (-∞,0] disjoint", closed(1, 5), Intervals.atMost(e(0)), false),
+					Arguments.of("[1,5] and (-∞,∞) overlap", closed(1, 5), Intervals.all(), true)
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when computing span")
+	final class WhenComputingSpan
+	{
+		@Test
+		@DisplayName("span of two bounded intervals is the smallest containing interval")
+		void spanOfTwoBoundedIntervalsIsSmallestContainingInterval()
+		{
+			assertThat(closed(1, 3).span(closed(5, 7))).isEqualTo(closed(1, 7));
+			assertThat(closed(1, 5).span(closed(3, 7))).isEqualTo(closed(1, 7));
+			assertThat(closedOpen(1, 4).span(closed(2, 6))).isEqualTo(closed(1, 6));
+		}
+
+		@Test
+		@DisplayName("span with unbounded interval is unbounded")
+		void spanWithUnboundedIntervalIsUnbounded()
+		{
+			Interval<IntElement> result = closed(1, 5).span(Intervals.atLeast(e(3)));
+			assertThat(result).isInstanceOf(UnboundedInterval.class);
+			assertThat(result.lowerBound()).isPresent();
+			assertThat(result.upperBound()).isEmpty();
+		}
+	}
+
+	@Nested
+	@DisplayName("when checking abuts")
+	final class WhenCheckingAbuts
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("abutsCases")
+		@DisplayName("returns correct result")
+		void returnsCorrectResult(final String as, final Interval<IntElement> a, final Interval<IntElement> b,
+		                          final boolean expected)
+		{
+			assertThat(a.abuts(b)).as(as).isEqualTo(expected);
+			assertThat(b.abuts(a)).as("%s (symmetric)", as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> abutsCases()
+		{
+			return Stream.of(
+					Arguments.of("[1,3) abuts [3,5)", closedOpen(1, 3), closedOpen(3, 5), true),
+					Arguments.of("[1,3] abuts (3,5)", closed(1, 3), open(3, 5), true),
+					Arguments.of("[1,3] and [3,5] overlap not abut", closed(1, 3), closed(3, 5), false),
+					Arguments.of("[1,5) abuts [5,∞)", closedOpen(1, 5), Intervals.atLeast(e(5)), true),
+					Arguments.of("[1,5] does not abut [5,∞)", closed(1, 5), Intervals.atLeast(e(5)), false)
+			);
+		}
+	}
+}

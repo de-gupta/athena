@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.ordering;
+package de.gupta.commons.utility.math.ordering.element.interval.bound;
 
 public sealed interface Bound<E> permits Bound.Closed, Bound.Open
 {
