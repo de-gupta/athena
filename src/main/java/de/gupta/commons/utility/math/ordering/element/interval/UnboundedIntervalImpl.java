@@ -1,14 +1,14 @@
 package de.gupta.commons.utility.math.ordering.element.interval;
 
+import de.gupta.commons.utility.math.ordering.Bound;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
-import de.gupta.commons.utility.math.ordering.element.interval.bound.Bound;
+import de.gupta.commons.utility.math.ordering.structure.IntervalOrderStructure;
 
 import java.util.Optional;
 
 record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> lower, Optional<Bound<E>> upper)
 		implements UnboundedInterval<E>
 {
-
 	static <E extends TotallyOrdered<E>> UnboundedInterval<E> withLowerBound(final Bound<E> lowerBound)
 	{
 		return of(Optional.of(lowerBound), Optional.empty());
@@ -38,40 +38,24 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 	@Override
 	public boolean contains(final E element)
 	{
-		return lower.map(b -> lowerSatisfied(b, element)).orElse(true)
-				&& upper.map(b -> upperSatisfied(b, element)).orElse(true);
-	}
-
-	private static <E extends TotallyOrdered<E>> boolean lowerSatisfied(final Bound<E> bound, final E element)
-	{
-		return switch (bound)
-		{
-			case Bound.Closed<E> b -> element.compare(b.value()).isGreaterThanOrEqualTo();
-			case Bound.Open<E> b -> element.compare(b.value()).isGreaterThan();
-		};
-	}
-
-	private static <E extends TotallyOrdered<E>> boolean upperSatisfied(final Bound<E> bound, final E element)
-	{
-		return switch (bound)
-		{
-			case Bound.Closed<E> b -> element.compare(b.value()).isLessThanOrEqualTo();
-			case Bound.Open<E> b -> element.compare(b.value()).isLessThan();
-		};
+		var ios = ios();
+		return lower.map(b -> ios.boundHarboursElementFromBelow(b, element)).orElse(true)
+				&& upper.map(b -> ios.boundHarboursElementFromAbove(b, element)).orElse(true);
 	}
 
 	@Override
 	public boolean overlaps(final Interval<E> other)
 	{
+		var ios = ios();
 		return switch (other)
 		{
 			case BoundedIntervalImpl<E> b -> b.overlaps(this);
 			case UnboundedInterval<E> u ->
 			{
 				boolean myUpperBeforeTheirLower = upper.isPresent() && u.lower().isPresent()
-						&& IntervalUtility.endsBefore(upper.get(), u.lower().get());
+						&& ios.endsBefore(upper.get(), u.lower().get());
 				boolean theirUpperBeforeMyLower = u.upper().isPresent() && lower.isPresent()
-						&& IntervalUtility.endsBefore(u.upper().get(), lower.get());
+						&& ios.endsBefore(u.upper().get(), lower.get());
 				yield !myUpperBeforeTheirLower && !theirUpperBeforeMyLower;
 			}
 		};
@@ -80,15 +64,16 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 	@Override
 	public boolean abuts(final Interval<E> other)
 	{
+		var ios = ios();
 		return switch (other)
 		{
 			case BoundedIntervalImpl<E> b -> b.abuts(this);
 			case UnboundedInterval<E> u ->
 			{
 				boolean myUpperTouchesTheirLower = upper.isPresent() && u.lower().isPresent()
-						&& IntervalUtility.touchesAt(upper.get(), u.lower().get());
+						&& ios.touchesAt(upper.get(), u.lower().get());
 				boolean theirUpperTouchesMyLower = u.upper().isPresent() && lower.isPresent()
-						&& IntervalUtility.touchesAt(u.upper().get(), lower.get());
+						&& ios.touchesAt(u.upper().get(), lower.get());
 				yield myUpperTouchesTheirLower || theirUpperTouchesMyLower;
 			}
 		};
@@ -97,29 +82,26 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 	@Override
 	public Interval<E> span(final Interval<E> other)
 	{
+		var ios = ios();
 		return switch (other)
 		{
 			case BoundedIntervalImpl<E> b ->
 			{
-				Optional<Bound<E>> newLower = lower.map(l -> IntervalUtility.minLower(l, b.lower()))
-				                                   .or(() -> Optional.of(b.lower()));
-				Optional<Bound<E>> newUpper = upper.map(u -> IntervalUtility.maxUpper(u, b.upper()))
-				                                   .or(() -> Optional.of(b.upper()));
-				yield newLower.isPresent() && newUpper.isPresent()
-						? BoundedIntervalImpl.of(newLower.get(), newUpper.get())
-						: UnboundedIntervalImpl.of(newLower, newUpper);
+				Optional<Bound<E>> newLower =
+						lower.map(l -> ios.minLower(l, b.lower())).or(() -> Optional.of(b.lower()));
+				Optional<Bound<E>> newUpper =
+						upper.map(u -> ios.maxUpper(u, b.upper())).or(() -> Optional.of(b.upper()));
+				yield BoundedIntervalImpl.of(newLower.get(), newUpper.get());
 			}
 			case UnboundedInterval<E> u ->
 			{
 				Optional<Bound<E>> newLower = lower.isPresent() && u.lower().isPresent()
-						? Optional.of(IntervalUtility.minLower(lower.get(), u.lower().get()))
-						: Optional.empty();
+						? Optional.of(ios.minLower(lower.get(), u.lower().get())) : Optional.empty();
 				Optional<Bound<E>> newUpper = upper.isPresent() && u.upper().isPresent()
-						? Optional.of(IntervalUtility.maxUpper(upper.get(), u.upper().get()))
-						: Optional.empty();
+						? Optional.of(ios.maxUpper(upper.get(), u.upper().get())) : Optional.empty();
 				yield newLower.isPresent() && newUpper.isPresent()
 						? BoundedIntervalImpl.of(newLower.get(), newUpper.get())
-						: UnboundedIntervalImpl.of(newLower, newUpper);
+						: of(newLower, newUpper);
 			}
 		};
 	}
@@ -134,5 +116,10 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 	public Optional<Bound<E>> upperBound()
 	{
 		return upper;
+	}
+
+	private IntervalOrderStructure<E> ios()
+	{
+		return IntervalOrderStructure.forElements();
 	}
 }

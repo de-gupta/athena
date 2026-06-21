@@ -1,6 +1,6 @@
 package de.gupta.commons.utility.math.ordering.structure.interval;
 
-import de.gupta.commons.utility.math.ordering.element.interval.bound.Bound;
+import de.gupta.commons.utility.math.ordering.Bound;
 
 import java.util.Optional;
 

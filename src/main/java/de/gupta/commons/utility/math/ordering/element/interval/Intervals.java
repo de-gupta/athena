@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.ordering.element.interval;
 
+import de.gupta.commons.utility.math.ordering.Bound;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
-import de.gupta.commons.utility.math.ordering.element.interval.bound.Bound;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ public final class Intervals
 		{
 			case LESS_THAN -> BoundedIntervalImpl.of(lower, upper);
 			case GREATER_THAN -> throw new IllegalArgumentException(
-					"Lower bound must not exceed upper bound: " + lower.value() + " > " + upper.value());
+					"Lower bound may not exceed upper bound: " + lower.value() + " > " + upper.value());
 			case EQUAL ->
 			{
 				if (lower.isClosed() && upper.isClosed()) yield BoundedIntervalImpl.of(lower, upper);
