@@ -5,12 +5,11 @@ import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.algebra.structure.ring.standard.IntegerEuclideanDomainStructure;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +17,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("ScalarDivisible")
 final class ScalarDivisibleTest
 {
+	private static Stream<StrategyArg> strategyArgs()
+	{
+		return Stream.of(
+				new StrategyArg("FLOOR", RoundingStrategies.floor()),
+				new StrategyArg("CEILING", RoundingStrategies.ceiling()),
+				new StrategyArg("TRUNCATE", RoundingStrategies.truncate())
+		);
+	}
+
 	private void assertBothSides(final long dividend, final long scalar,
 	                             final RoundingStrategy<IntegersAsEuclideanDomain> strategy,
 	                             final long expectedQ, final long expectedR)
@@ -35,6 +43,10 @@ final class ScalarDivisibleTest
 	private static IntegersAsEuclideanDomain e(final long value)
 	{
 		return IntegersAsEuclideanDomain.of(value);
+	}
+
+	private record StrategyArg(String name, RoundingStrategy<IntegersAsEuclideanDomain> strategy)
+	{
 	}
 
 	@Nested
@@ -119,25 +131,29 @@ final class ScalarDivisibleTest
 	@DisplayName("when division is exact")
 	final class WhenDivisionIsExact
 	{
-		@ParameterizedTest(name = "{0}")
-		@MethodSource("allStrategiesProduceZeroRemainderCases")
+		@ParameterizedTest(name = "{0} — {4}")
+		@MethodSource("allStrategiesProduceZeroRemainderAndTheSameQuotientCases")
 		@DisplayName("all strategies produce zero remainder and the same quotient")
 		void allStrategiesProduceZeroRemainderAndTheSameQuotient(final String as, final long dividend,
-		                                                         final long scalar, final long expectedQ)
+		                                                         final long scalar, final long expectedQ,
+		                                                         final String strategyName,
+		                                                         final RoundingStrategy<IntegersAsEuclideanDomain> strategy)
 		{
-			for (RoundingStrategy<IntegersAsEuclideanDomain> strategy : List.<RoundingStrategy<IntegersAsEuclideanDomain>>of(
-					RoundingStrategies.floor(), RoundingStrategies.ceiling(), RoundingStrategies.truncate()))
-				assertBothSides(dividend, scalar, strategy, expectedQ, 0L);
+			assertBothSides(dividend, scalar, strategy, expectedQ, 0L);
 		}
 
-		private static Stream<Arguments> allStrategiesProduceZeroRemainderCases()
+		private static Stream<Arguments> allStrategiesProduceZeroRemainderAndTheSameQuotientCases()
 		{
+			record ExactCase(String as, long dividend, long scalar, long expectedQ)
+			{
+			}
 			return Stream.of(
-					Arguments.of("420 ÷ 20 (SMA average)", 420L, 20L, 21L),
-					Arguments.of("100 ÷ 10", 100L, 10L, 10L),
-					Arguments.of("-60 ÷ 3", -60L, 3L, -20L),
-					Arguments.of("0 ÷ 7", 0L, 7L, 0L)
-			);
+					new ExactCase("420 ÷ 20 (SMA average)", 420L, 20L, 21L),
+					new ExactCase("100 ÷ 10", 100L, 10L, 10L),
+					new ExactCase("-60 ÷ 3", -60L, 3L, -20L),
+					new ExactCase("0 ÷ 7", 0L, 7L, 0L)
+			).flatMap(tc -> strategyArgs().map(sa ->
+					Arguments.of(tc.as(), tc.dividend(), tc.scalar(), tc.expectedQ(), sa.name(), sa.strategy())));
 		}
 	}
 
@@ -145,23 +161,28 @@ final class ScalarDivisibleTest
 	@DisplayName("division identity")
 	final class DivisionIdentity
 	{
-		@Test
-		@DisplayName("dividend = quotient * scalar + remainder for all strategies and sign combinations")
-		void dividendEqualsQuotientTimesScalarPlusRemainderForAllStrategiesAndSignCombinations()
+		@ParameterizedTest(name = "{0} ÷ {1} — {2}")
+		@MethodSource("dividendEqualsQuotientTimesScalarPlusRemainderForAllStrategiesAndSignCombinationsCases")
+		@DisplayName("dividend = quotient * scalar + remainder")
+		void dividendEqualsQuotientTimesScalarPlusRemainderForAllStrategiesAndSignCombinations(
+				final long dividend, final long scalar, final String strategyName,
+				final RoundingStrategy<IntegersAsEuclideanDomain> strategy)
+		{
+			DivisionResult<IntegersAsEuclideanDomain> result = e(dividend).divide(scalar, strategy);
+			assertThat(result.quotient().multiply(e(scalar)).add(result.remainder()))
+					.as("dividend=%d, scalar=%d — %s: q*s+r must equal dividend", dividend, scalar, strategyName)
+					.isEqualTo(e(dividend));
+		}
+
+		private static Stream<Arguments> dividendEqualsQuotientTimesScalarPlusRemainderForAllStrategiesAndSignCombinationsCases()
 		{
 			long[] dividends = {7L, -7L, 100L, -100L, 420L, 1_000_000_001L};
 			long[] scalars = {3L, 7L, 20L, 63L};
-
-			for (long dividend : dividends)
-				for (long scalar : scalars)
-					for (RoundingStrategy<IntegersAsEuclideanDomain> strategy : List.<RoundingStrategy<IntegersAsEuclideanDomain>>of(
-							RoundingStrategies.floor(), RoundingStrategies.ceiling(), RoundingStrategies.truncate()))
-					{
-						DivisionResult<IntegersAsEuclideanDomain> result = e(dividend).divide(scalar, strategy);
-						assertThat(result.quotient().multiply(e(scalar)).add(result.remainder()))
-								.as("dividend=%d, scalar=%d: q*s+r must equal dividend", dividend, scalar)
-								.isEqualTo(e(dividend));
-					}
+			return Arrays.stream(dividends).boxed()
+			             .flatMap(dividend -> Arrays.stream(scalars).boxed()
+			                                        .flatMap(scalar -> strategyArgs()
+															.map(sa -> Arguments.of(dividend, scalar, sa.name(),
+							                                        sa.strategy()))));
 		}
 	}
 }

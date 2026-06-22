@@ -4,16 +4,16 @@ import de.gupta.commons.utility.math.algebra.element.ring.Ring;
 import de.gupta.commons.utility.math.algebra.structure.ring.RingStructure;
 
 import java.util.Objects;
-import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 public record ElementBackedRingStructure<E extends Ring<E>>(Supplier<E> zeroSupplier, Supplier<E> oneSupplier,
-                                                            BinaryOperator<E> negateFunction)
+                                                            UnaryOperator<E> negateFunction)
 		implements RingStructure<E>
 {
 	public static <E extends Ring<E>> ElementBackedRingStructure<E> of(final Supplier<E> zeroSupplier,
 	                                                                   final Supplier<E> oneSupplier,
-	                                                                   final BinaryOperator<E> negateFunction)
+	                                                                   final UnaryOperator<E> negateFunction)
 	{
 		return new ElementBackedRingStructure<>(zeroSupplier, oneSupplier, negateFunction);
 	}
@@ -51,6 +51,6 @@ public record ElementBackedRingStructure<E extends Ring<E>>(Supplier<E> zeroSupp
 	@Override
 	public E negate(final E element)
 	{
-		return negateFunction.apply(element, element);
+		return negateFunction.apply(element);
 	}
 }

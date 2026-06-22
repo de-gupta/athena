@@ -10,15 +10,15 @@ public record IntegersAsEuclideanDomain(long value) implements OrderedEuclideanD
 	private final static IntegersEuclideanDomainStructure canonicalStructure =
 			IntegersEuclideanDomainStructure.INSTANCE;
 
+	public static IntegersAsEuclideanDomain of(final long value)
+	{
+		return new IntegersAsEuclideanDomain(value);
+	}
+
 	@Override
 	public IntegersAsEuclideanDomain negate()
 	{
 		return of(canonicalStructure.negate(value));
-	}
-
-	public static IntegersAsEuclideanDomain of(final long value)
-	{
-		return new IntegersAsEuclideanDomain(value);
 	}
 
 	@Override

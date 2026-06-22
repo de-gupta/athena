@@ -161,8 +161,8 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("remainder satisfies dividend = quotient * divisor + remainder")
 		void remainderSatisfiesDivisionIdentity()
 		{
-			int dividend = -17;
-			int divisor = 5;
+			long dividend = -17L;
+			long divisor = 5L;
 
 			DivisionResult<IntegersAsEuclideanDomain> result =
 					IntegersAsEuclideanDomain.of(dividend).divideWithRemainder(
