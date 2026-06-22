@@ -306,6 +306,32 @@ final class IntervalTest
 			assertThat(result.upperBound()).isEmpty();
 		}
 
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("spanOfUnboundedWithBoundedPreservesUnboundednessCases")
+		@DisplayName("span of unbounded with bounded preserves unboundedness")
+		void spanOfUnboundedWithBoundedPreservesUnboundedness(final String as,
+		                                                      final Interval<IntElement> left,
+		                                                      final Interval<IntElement> right,
+		                                                      final Optional<IntElement> expectedLowerBoundValue,
+		                                                      final Optional<IntElement> expectedUpperBoundValue)
+		{
+			Interval<IntElement> result = left.span(right);
+
+			assertThat(result).as("%s: result type", as).isInstanceOf(UnboundedInterval.class);
+			assertThat(result.lowerBound().isPresent()).as("%s: lowerBound presence", as)
+			                                           .isEqualTo(expectedLowerBoundValue.isPresent());
+			assertThat(result.upperBound().isPresent()).as("%s: upperBound presence", as)
+			                                           .isEqualTo(expectedUpperBoundValue.isPresent());
+
+			expectedLowerBoundValue.ifPresent(expected -> assertThat(result.lowerBound().get().value())
+					.as("%s: lowerBound value", as)
+					.isEqualTo(expected));
+
+			expectedUpperBoundValue.ifPresent(expected -> assertThat(result.upperBound().get().value())
+					.as("%s: upperBound value", as)
+					.isEqualTo(expected));
+		}
+
 		@Test
 		@DisplayName("span of two opposite unbounded intervals is all")
 		void spanOfTwoOppositeUnboundedIntervalsIsAll()
@@ -324,6 +350,16 @@ final class IntervalTest
 			assertThat(result.lowerBound()).isPresent();
 			assertThat(result.lowerBound().get().value()).isEqualTo(e(3));
 			assertThat(result.upperBound()).isEmpty();
+		}
+
+		private static Stream<Arguments> spanOfUnboundedWithBoundedPreservesUnboundednessCases()
+		{
+			return Stream.of(
+					Arguments.of("[3,∞) span [1,5] = [1,∞)", Intervals.atLeast(e(3)), closed(1, 5),
+							Optional.of(e(1)), Optional.empty()),
+					Arguments.of("(-∞,3] span [1,5] = (-∞,5]", Intervals.atMost(e(3)), closed(1, 5),
+							Optional.empty(), Optional.of(e(5)))
+			);
 		}
 	}
 

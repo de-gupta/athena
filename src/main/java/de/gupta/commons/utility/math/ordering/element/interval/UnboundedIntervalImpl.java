@@ -87,11 +87,9 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 		{
 			case BoundedIntervalImpl<E> b ->
 			{
-				Optional<Bound<E>> newLower =
-						lower.map(l -> ios.loosestLowerBound(l, b.lower())).or(() -> Optional.of(b.lower()));
-				Optional<Bound<E>> newUpper =
-						upper.map(u -> ios.loosestUpperBound(u, b.upper())).or(() -> Optional.of(b.upper()));
-				yield BoundedIntervalImpl.of(newLower.get(), newUpper.get());
+				Optional<Bound<E>> newLower = lower.map(l -> ios.loosestLowerBound(l, b.lower()));
+				Optional<Bound<E>> newUpper = upper.map(u -> ios.loosestUpperBound(u, b.upper()));
+				yield of(newLower, newUpper);
 			}
 			case UnboundedInterval<E> u ->
 			{
@@ -121,5 +119,11 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 	private IntervalOrderStructure<E> ios()
 	{
 		return IntervalOrderStructure.forElements();
+	}
+
+	UnboundedIntervalImpl
+	{
+		if (lower.isPresent() && upper.isPresent())
+			throw new IllegalArgumentException("Use BoundedInterval when both bounds are present.");
 	}
 }

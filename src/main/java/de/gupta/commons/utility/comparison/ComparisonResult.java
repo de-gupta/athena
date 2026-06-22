@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.comparison;
 
 @Deprecated
+// use @OrderRelation instead
 public enum ComparisonResult
 {
 	LESS_THAN,
