@@ -1,5 +1,6 @@
 package de.gupta.commons.utility.math.ordering.element.interval;
 
+import de.gupta.commons.utility.math.ordering.bound.AlgebraicBounds;
 import de.gupta.commons.utility.math.ordering.bound.Bound;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
 import de.gupta.commons.utility.math.ordering.structure.IntervalOrderStructure;
@@ -114,6 +115,13 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 	public Optional<Bound<E>> upperBound()
 	{
 		return upper;
+	}
+
+	@Override
+	public boolean contains(final Interval<E> other)
+	{
+		return lower.map(l -> AlgebraicBounds.subsumesFromBelow(l, other.lowerBound())).orElse(true)
+				&& upper.map(u -> AlgebraicBounds.subsumesFromAbove(u, other.upperBound())).orElse(true);
 	}
 
 	private IntervalOrderStructure<E> ios()

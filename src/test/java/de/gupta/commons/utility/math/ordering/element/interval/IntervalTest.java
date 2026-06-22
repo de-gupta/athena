@@ -221,6 +221,58 @@ final class IntervalTest
 	}
 
 	@Nested
+	@DisplayName("when checking contains(interval) on unbounded interval")
+	final class WhenCheckingContainsIntervalOnUnboundedInterval
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("containsIntervalOnUnboundedIntervalCases")
+		@DisplayName("returns correct containment result")
+		void returnsCorrectContainmentResult(final String as, final Interval<IntElement> outer,
+		                                     final Interval<IntElement> inner, final boolean expected)
+		{
+			assertThat(outer).as("%s: outer type", as).isInstanceOf(UnboundedInterval.class);
+			assertThat(outer.contains(inner)).as(as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> containsIntervalOnUnboundedIntervalCases()
+		{
+			return Stream.of(
+					Arguments.of("(-∞,∞) contains [1,5]", Intervals.all(), closed(1, 5), true),
+					Arguments.of("(-∞,∞) contains [3,∞)", Intervals.all(), Intervals.atLeast(e(3)), true),
+					Arguments.of("(-∞,∞) contains (3,∞)", Intervals.all(), Intervals.greaterThan(e(3)), true),
+					Arguments.of("(-∞,∞) contains (-∞,3]", Intervals.all(), Intervals.atMost(e(3)), true),
+					Arguments.of("(-∞,∞) contains (-∞,3)", Intervals.all(), Intervals.lessThan(e(3)), true),
+
+					Arguments.of("[3,∞) contains [5,7]", Intervals.atLeast(e(3)), closed(5, 7), true),
+					Arguments.of("[3,∞) contains [3,7]", Intervals.atLeast(e(3)), closed(3, 7), true),
+					Arguments.of("[3,∞) contains (3,∞)", Intervals.atLeast(e(3)), Intervals.greaterThan(e(3)), true),
+					Arguments.of("[3,∞) contains [3,∞)", Intervals.atLeast(e(3)), Intervals.atLeast(e(3)), true),
+					Arguments.of("[3,∞) does not contain [1,5]", Intervals.atLeast(e(3)), closed(1, 5), false),
+					Arguments.of("[3,∞) contains [5,∞)", Intervals.atLeast(e(3)), Intervals.atLeast(e(5)), true),
+					Arguments.of("[3,∞) does not contain (-∞,5]", Intervals.atLeast(e(3)), Intervals.atMost(e(5)),
+							false),
+					Arguments.of("[3,∞) does not contain (-∞,∞)", Intervals.atLeast(e(3)), Intervals.all(), false),
+
+					Arguments.of("(3,∞) does not contain [3,7]", Intervals.greaterThan(e(3)), closed(3, 7), false),
+					Arguments.of("(3,∞) contains [4,7]", Intervals.greaterThan(e(3)), closed(4, 7), true),
+					Arguments.of("(3,∞) contains [4,∞)", Intervals.greaterThan(e(3)), Intervals.atLeast(e(4)), true),
+					Arguments.of("(3,∞) contains (3,∞)", Intervals.greaterThan(e(3)), Intervals.greaterThan(e(3)),
+							true),
+					Arguments.of("(3,∞) does not contain [3,∞)", Intervals.greaterThan(e(3)), Intervals.atLeast(e(3)),
+							false),
+
+					Arguments.of("(-∞,5] contains [1,5]", Intervals.atMost(e(5)), closed(1, 5), true),
+					Arguments.of("(-∞,5] does not contain [1,7]", Intervals.atMost(e(5)), closed(1, 7), false),
+					Arguments.of("(-∞,5] contains (-∞,3]", Intervals.atMost(e(5)), Intervals.atMost(e(3)), true),
+					Arguments.of("(-∞,5] contains (-∞,5)", Intervals.atMost(e(5)), Intervals.lessThan(e(5)), true),
+					Arguments.of("(-∞,5) does not contain (-∞,5]", Intervals.lessThan(e(5)), Intervals.atMost(e(5)),
+							false),
+					Arguments.of("(-∞,5] does not contain (-∞,∞)", Intervals.atMost(e(5)), Intervals.all(), false)
+			);
+		}
+	}
+
+	@Nested
 	@DisplayName("when intersecting bounded intervals")
 	final class WhenIntersectingBoundedIntervals
 	{

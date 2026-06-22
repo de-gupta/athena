@@ -13,7 +13,5 @@ public sealed interface BoundedInterval<E extends TotallyOrdered<E>> extends Int
 
 	boolean isPoint();
 
-	boolean contains(final Interval<E> other);
-
 	Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other);
 }
