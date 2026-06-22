@@ -63,8 +63,8 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.exception;
 	exports de.gupta.commons.utility.math.algebra.structure.module.standard;
 	exports de.gupta.commons.utility.math.ordering.element.interval;
-	exports de.gupta.commons.utility.math.ordering.element.interval.bound;
 	exports de.gupta.commons.utility.math.ordering.structure.interval;
+	exports de.gupta.commons.utility.math.ordering.bound;
 
 	requires de.gupta.aletheia;
 }
