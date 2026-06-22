@@ -3,7 +3,7 @@ package de.gupta.commons.utility.math.ordering.element.interval;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedAdditiveGroup;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedEuclideanDomain;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
-import de.gupta.commons.utility.math.ordering.Bound;
+import de.gupta.commons.utility.math.ordering.bound.Bound;
 
 public final class AlgebraicIntervals
 {

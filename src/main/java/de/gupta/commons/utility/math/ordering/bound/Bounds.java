@@ -1,6 +1,5 @@
-package de.gupta.commons.utility.math.ordering.element.interval.bound;
+package de.gupta.commons.utility.math.ordering.bound;
 
-import de.gupta.commons.utility.math.ordering.Bound;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
 
 public final class Bounds

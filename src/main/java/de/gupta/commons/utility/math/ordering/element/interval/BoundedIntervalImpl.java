@@ -1,8 +1,8 @@
 package de.gupta.commons.utility.math.ordering.element.interval;
 
-import de.gupta.commons.utility.math.ordering.Bound;
+import de.gupta.commons.utility.math.ordering.bound.Bound;
+import de.gupta.commons.utility.math.ordering.bound.Bounds;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
-import de.gupta.commons.utility.math.ordering.element.interval.bound.Bounds;
 import de.gupta.commons.utility.math.ordering.structure.IntervalOrderStructure;
 
 import java.util.Optional;
