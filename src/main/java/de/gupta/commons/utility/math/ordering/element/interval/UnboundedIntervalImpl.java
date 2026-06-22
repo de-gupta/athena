@@ -53,9 +53,9 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 			case UnboundedInterval<E> u ->
 			{
 				boolean myUpperBeforeTheirLower = upper.isPresent() && u.lower().isPresent()
-						&& ios.endsBefore(upper.get(), u.lower().get());
+						&& ios.endPrecedesStart(upper.get(), u.lower().get());
 				boolean theirUpperBeforeMyLower = u.upper().isPresent() && lower.isPresent()
-						&& ios.endsBefore(u.upper().get(), lower.get());
+						&& ios.endPrecedesStart(u.upper().get(), lower.get());
 				yield !myUpperBeforeTheirLower && !theirUpperBeforeMyLower;
 			}
 		};
@@ -88,17 +88,17 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 			case BoundedIntervalImpl<E> b ->
 			{
 				Optional<Bound<E>> newLower =
-						lower.map(l -> ios.minLower(l, b.lower())).or(() -> Optional.of(b.lower()));
+						lower.map(l -> ios.loosestLowerBound(l, b.lower())).or(() -> Optional.of(b.lower()));
 				Optional<Bound<E>> newUpper =
-						upper.map(u -> ios.maxUpper(u, b.upper())).or(() -> Optional.of(b.upper()));
+						upper.map(u -> ios.loosestUpperBound(u, b.upper())).or(() -> Optional.of(b.upper()));
 				yield BoundedIntervalImpl.of(newLower.get(), newUpper.get());
 			}
 			case UnboundedInterval<E> u ->
 			{
 				Optional<Bound<E>> newLower = lower.isPresent() && u.lower().isPresent()
-						? Optional.of(ios.minLower(lower.get(), u.lower().get())) : Optional.empty();
+						? Optional.of(ios.loosestLowerBound(lower.get(), u.lower().get())) : Optional.empty();
 				Optional<Bound<E>> newUpper = upper.isPresent() && u.upper().isPresent()
-						? Optional.of(ios.maxUpper(upper.get(), u.upper().get())) : Optional.empty();
+						? Optional.of(ios.loosestUpperBound(upper.get(), u.upper().get())) : Optional.empty();
 				yield newLower.isPresent() && newUpper.isPresent()
 						? BoundedIntervalImpl.of(newLower.get(), newUpper.get())
 						: of(newLower, newUpper);

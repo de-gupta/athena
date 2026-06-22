@@ -21,7 +21,7 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 		return switch (other)
 		{
 			case BoundedInterval<E> b ->
-					ios().lowerCoversLower(lower, b.lower()) && ios().upperCoversUpper(upper, b.upper());
+					ios().enclosesLowerBound(lower, b.lower()) && ios().enclosesUpperBound(upper, b.upper());
 			case UnboundedInterval<E> _ -> false;
 		};
 	}
@@ -30,8 +30,8 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 	public Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other)
 	{
 		var ios = ios();
-		Bound<E> newLower = ios.maxLower(lower, other.lower());
-		Bound<E> newUpper = ios.minUpper(upper, other.upper());
+		Bound<E> newLower = ios.tightestLowerBound(lower, other.lower());
+		Bound<E> newUpper = ios.tightestUpperBound(upper, other.upper());
 		return ios.isNonEmpty(newLower, newUpper) ? Optional.of(of(newLower, newUpper)) : Optional.empty();
 	}
 
@@ -58,11 +58,12 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 		var ios = ios();
 		return switch (other)
 		{
-			case BoundedIntervalImpl<E> b -> !ios.endsBefore(upper, b.lower) && !ios.endsBefore(b.upper, lower);
+			case BoundedIntervalImpl<E> b ->
+					!ios.endPrecedesStart(upper, b.lower) && !ios.endPrecedesStart(b.upper, lower);
 			case UnboundedInterval<E> u ->
 			{
-				boolean beforeUnbounded = u.lower().isPresent() && ios.endsBefore(upper, u.lower().get());
-				boolean afterUnbounded = u.upper().isPresent() && ios.endsBefore(u.upper().get(), lower);
+				boolean beforeUnbounded = u.lower().isPresent() && ios.endPrecedesStart(upper, u.lower().get());
+				boolean afterUnbounded = u.upper().isPresent() && ios.endPrecedesStart(u.upper().get(), lower);
 				yield !beforeUnbounded && !afterUnbounded;
 			}
 		};
@@ -86,11 +87,12 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 		var ios = ios();
 		return switch (other)
 		{
-			case BoundedIntervalImpl<E> b -> of(ios.minLower(lower, b.lower), ios.maxUpper(upper, b.upper));
+			case BoundedIntervalImpl<E> b ->
+					of(ios.loosestLowerBound(lower, b.lower), ios.loosestUpperBound(upper, b.upper));
 			case UnboundedInterval<E> u ->
 			{
-				Optional<Bound<E>> newLower = u.lower().map(l -> ios.minLower(lower, l));
-				Optional<Bound<E>> newUpper = u.upper().map(u2 -> ios.maxUpper(upper, u2));
+				Optional<Bound<E>> newLower = u.lower().map(l -> ios.loosestLowerBound(lower, l));
+				Optional<Bound<E>> newUpper = u.upper().map(u2 -> ios.loosestUpperBound(upper, u2));
 				yield newLower.isPresent() && newUpper.isPresent()
 						? of(newLower.get(), newUpper.get())
 						: UnboundedIntervalImpl.of(newLower, newUpper);

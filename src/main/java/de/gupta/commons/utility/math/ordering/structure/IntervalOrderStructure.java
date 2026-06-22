@@ -34,30 +34,30 @@ public interface IntervalOrderStructure<E> extends TotalOrderStructure<E>
 		};
 	}
 
-	// TODO: rename
-	default boolean lowerCoversLower(final Bound<E> outer, final Bound<E> inner)
+	// Does the container's lower bound admit everything the enclosed's lower bound admits?
+	default boolean enclosesLowerBound(final Bound<E> container, final Bound<E> enclosed)
 	{
-		return switch (compare(outer.value(), inner.value()))
+		return switch (compare(container.value(), enclosed.value()))
 		{
 			case LESS_THAN -> true;
 			case GREATER_THAN -> false;
-			case EQUAL -> outer.isClosed() || inner.isOpen();
+			case EQUAL -> container.isClosed() || enclosed.isOpen();
 		};
 	}
 
-	// TODO: rename
-	default boolean upperCoversUpper(final Bound<E> outer, final Bound<E> inner)
+	// Does the container's upper bound admit everything the enclosed's upper bound admits?
+	default boolean enclosesUpperBound(final Bound<E> container, final Bound<E> enclosed)
 	{
-		return switch (compare(outer.value(), inner.value()))
+		return switch (compare(container.value(), enclosed.value()))
 		{
 			case GREATER_THAN -> true;
 			case LESS_THAN -> false;
-			case EQUAL -> outer.isClosed() || inner.isOpen();
+			case EQUAL -> container.isClosed() || enclosed.isOpen();
 		};
 	}
 
-	// TODO: rename
-	default boolean endsBefore(final Bound<E> end, final Bound<E> start)
+	// Is the end of one interval strictly before the start of another (no overlap, no touching)?
+	default boolean endPrecedesStart(final Bound<E> end, final Bound<E> start)
 	{
 		return switch (compare(end.value(), start.value()))
 		{
@@ -82,45 +82,45 @@ public interface IntervalOrderStructure<E> extends TotalOrderStructure<E>
 		};
 	}
 
-	// TODO: duplicate logic as minUpper, also rename and move to utility somewhere
-	default Bound<E> maxLower(final Bound<E> a, final Bound<E> b)
+	// Intersection selects the tightest bounds — used in intersect()
+	default Bound<E> tightestLowerBound(final Bound<E> a, final Bound<E> b)
+	{
+		return tighterBound(a, b, true);
+	}
+
+	private Bound<E> tighterBound(final Bound<E> a, final Bound<E> b, final boolean greaterIsTighter)
 	{
 		return switch (compare(a.value(), b.value()))
 		{
-			case GREATER_THAN -> a;
-			case LESS_THAN -> b;
+			case GREATER_THAN -> greaterIsTighter ? a : b;
+			case LESS_THAN -> greaterIsTighter ? b : a;
 			case EQUAL -> (a.isOpen() || b.isOpen()) ? new Bound.Open<>(a.value()) : a;
 		};
 	}
 
-	default Bound<E> minUpper(final Bound<E> a, final Bound<E> b)
+	default Bound<E> tightestUpperBound(final Bound<E> a, final Bound<E> b)
 	{
-		return switch (compare(a.value(), b.value()))
-		{
-			case LESS_THAN -> a;
-			case GREATER_THAN -> b;
-			case EQUAL -> (a.isOpen() || b.isOpen()) ? new Bound.Open<>(a.value()) : a;
-		};
+		return tighterBound(a, b, false);
 	}
 
-	// TODO: duplicate logic as maxUpper, also rename and move to utility somewhere
-	default Bound<E> minLower(final Bound<E> a, final Bound<E> b)
+	// Span/hull selects the loosest bounds — used in span()
+	default Bound<E> loosestLowerBound(final Bound<E> a, final Bound<E> b)
+	{
+		return looserBound(a, b, false);
+	}
+
+	private Bound<E> looserBound(final Bound<E> a, final Bound<E> b, final boolean greaterIsLooser)
 	{
 		return switch (compare(a.value(), b.value()))
 		{
-			case LESS_THAN -> a;
-			case GREATER_THAN -> b;
+			case GREATER_THAN -> greaterIsLooser ? a : b;
+			case LESS_THAN -> greaterIsLooser ? b : a;
 			case EQUAL -> (a.isClosed() || b.isClosed()) ? new Bound.Closed<>(a.value()) : a;
 		};
 	}
 
-	default Bound<E> maxUpper(final Bound<E> a, final Bound<E> b)
+	default Bound<E> loosestUpperBound(final Bound<E> a, final Bound<E> b)
 	{
-		return switch (compare(a.value(), b.value()))
-		{
-			case GREATER_THAN -> a;
-			case LESS_THAN -> b;
-			case EQUAL -> (a.isClosed() || b.isClosed()) ? new Bound.Closed<>(a.value()) : a;
-		};
+		return looserBound(a, b, true);
 	}
 }

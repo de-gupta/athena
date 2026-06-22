@@ -97,6 +97,15 @@ final class IntervalTest
 		}
 
 		@Test
+		@DisplayName("greaterThan produces strictly lower-bounded interval excluding the bound")
+		void greaterThanProducesStrictlyLowerBoundedInterval()
+		{
+			UnboundedInterval<IntElement> interval = Intervals.greaterThan(e(5));
+			assertThat(interval.contains(e(5))).isEqualTo(false);
+			assertThat(interval.contains(e(6))).isEqualTo(true);
+		}
+
+		@Test
 		@DisplayName("atMost produces upper-bounded interval containing all elements at or below")
 		void atMostProducesUpperBoundedInterval()
 		{
@@ -104,6 +113,15 @@ final class IntervalTest
 			assertThat(interval.contains(e(5))).isEqualTo(true);
 			assertThat(interval.contains(e(0))).isEqualTo(true);
 			assertThat(interval.contains(e(6))).isEqualTo(false);
+		}
+
+		@Test
+		@DisplayName("lessThan produces strictly upper-bounded interval excluding the bound")
+		void lessThanProducesStrictlyUpperBoundedInterval()
+		{
+			UnboundedInterval<IntElement> interval = Intervals.lessThan(e(5));
+			assertThat(interval.contains(e(5))).isEqualTo(false);
+			assertThat(interval.contains(e(4))).isEqualTo(true);
 		}
 
 		@Test
@@ -150,6 +168,54 @@ final class IntervalTest
 					Arguments.of("(-∞,5) contains 4", Intervals.lessThan(e(5)), 4, true),
 					Arguments.of("(-∞,5) excludes 5", Intervals.lessThan(e(5)), 5, false),
 					Arguments.of("(-∞,∞) contains 0", Intervals.all(), 0, true)
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when checking isPoint")
+	final class WhenCheckingIsPoint
+	{
+		@Test
+		@DisplayName("closed interval with equal bounds is a point")
+		void closedIntervalWithEqualBoundsIsAPoint()
+		{
+			assertThat(closed(3, 3).isPoint()).isEqualTo(true);
+			assertThat(Intervals.point(e(7)).isPoint()).isEqualTo(true);
+		}
+
+		@Test
+		@DisplayName("interval with different bounds is not a point")
+		void intervalWithDifferentBoundsIsNotAPoint()
+		{
+			assertThat(closed(1, 5).isPoint()).isEqualTo(false);
+		}
+	}
+
+	@Nested
+	@DisplayName("when checking contains(interval)")
+	final class WhenCheckingContainsInterval
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("containsIntervalCases")
+		@DisplayName("returns correct containment result")
+		void returnsCorrectContainmentResult(final String as, final BoundedInterval<IntElement> outer,
+		                                     final Interval<IntElement> inner, final boolean expected)
+		{
+			assertThat(outer.contains(inner)).as(as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> containsIntervalCases()
+		{
+			return Stream.of(
+					Arguments.of("[1,7] contains [3,5]", closed(1, 7), closed(3, 5), true),
+					Arguments.of("[1,7] contains itself", closed(1, 7), closed(1, 7), true),
+					Arguments.of("[1,7] contains (1,7)", closed(1, 7), open(1, 7), true),
+					Arguments.of("(1,7) does not contain [1,7]", open(1, 7), closed(1, 7), false),
+					Arguments.of("[1,5] does not contain [3,7]", closed(1, 5), closed(3, 7), false),
+					Arguments.of("[1,7] does not contain [1,∞)", closed(1, 7), Intervals.atLeast(e(1)), false),
+					Arguments.of("[1,7] does not contain (-∞,7]", closed(1, 7), Intervals.atMost(e(7)), false),
+					Arguments.of("[1,7] contains [5,7]", closed(1, 7), closed(5, 7), true)
 			);
 		}
 	}
@@ -207,7 +273,12 @@ final class IntervalTest
 					Arguments.of("[1,5] and [6,∞) disjoint", closed(1, 5), Intervals.atLeast(e(6)), false),
 					Arguments.of("[1,5] and (-∞,3] overlap", closed(1, 5), Intervals.atMost(e(3)), true),
 					Arguments.of("[1,5] and (-∞,0] disjoint", closed(1, 5), Intervals.atMost(e(0)), false),
-					Arguments.of("[1,5] and (-∞,∞) overlap", closed(1, 5), Intervals.all(), true)
+					Arguments.of("[1,5] and (-∞,∞) overlap", closed(1, 5), Intervals.all(), true),
+					Arguments.of("(-∞,5) and [3,∞) overlap", Intervals.lessThan(e(5)), Intervals.atLeast(e(3)), true),
+					Arguments.of("(-∞,5) and [5,∞) disjoint", Intervals.lessThan(e(5)), Intervals.atLeast(e(5)), false),
+					Arguments.of("(-∞,5] and [5,∞) overlap at 5", Intervals.atMost(e(5)), Intervals.atLeast(e(5)),
+							true),
+					Arguments.of("(-∞,∞) overlaps (-∞,∞)", Intervals.all(), Intervals.all(), true)
 			);
 		}
 	}
@@ -234,6 +305,26 @@ final class IntervalTest
 			assertThat(result.lowerBound()).isPresent();
 			assertThat(result.upperBound()).isEmpty();
 		}
+
+		@Test
+		@DisplayName("span of two opposite unbounded intervals is all")
+		void spanOfTwoOppositeUnboundedIntervalsIsAll()
+		{
+			Interval<IntElement> result = Intervals.atMost(e(5)).span(Intervals.atLeast(e(3)));
+			assertThat(result).isInstanceOf(UnboundedInterval.class);
+			assertThat(result.lowerBound()).isEmpty();
+			assertThat(result.upperBound()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("span of two same-side unbounded intervals takes the wider")
+		void spanOfTwoSameSideUnboundedIntervalsTakesTheWider()
+		{
+			Interval<IntElement> result = Intervals.atLeast(e(5)).span(Intervals.atLeast(e(3)));
+			assertThat(result.lowerBound()).isPresent();
+			assertThat(result.lowerBound().get().value()).isEqualTo(e(3));
+			assertThat(result.upperBound()).isEmpty();
+		}
 	}
 
 	@Nested
@@ -257,7 +348,12 @@ final class IntervalTest
 					Arguments.of("[1,3] abuts (3,5)", closed(1, 3), open(3, 5), true),
 					Arguments.of("[1,3] and [3,5] overlap not abut", closed(1, 3), closed(3, 5), false),
 					Arguments.of("[1,5) abuts [5,∞)", closedOpen(1, 5), Intervals.atLeast(e(5)), true),
-					Arguments.of("[1,5] does not abut [5,∞)", closed(1, 5), Intervals.atLeast(e(5)), false)
+					Arguments.of("[1,5] does not abut [5,∞)", closed(1, 5), Intervals.atLeast(e(5)), false),
+					Arguments.of("(-∞,3) abuts [3,∞)", Intervals.lessThan(e(3)), Intervals.atLeast(e(3)), true),
+					Arguments.of("(-∞,3] abuts (3,∞)", Intervals.atMost(e(3)), Intervals.greaterThan(e(3)), true),
+					Arguments.of("(-∞,3) and (3,∞) gap not abut", Intervals.lessThan(e(3)), Intervals.greaterThan(e(3)),
+							false),
+					Arguments.of("(1,3) and (3,5) gap not abut", open(1, 3), open(3, 5), false)
 			);
 		}
 	}
