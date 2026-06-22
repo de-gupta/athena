@@ -124,6 +124,44 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 				&& upper.map(u -> AlgebraicBounds.subsumesFromAbove(u, other.upperBound())).orElse(true);
 	}
 
+	@Override
+	public Optional<Interval<E>> intersect(final Interval<E> other)
+	{
+		var ios = ios();
+		return switch (other)
+		{
+			case BoundedInterval<E> b -> intersect(b).map(i -> (Interval<E>) i);
+			case UnboundedInterval<E> u ->
+			{
+				Optional<Bound<E>> newLower = lower.isPresent() && u.lower().isPresent()
+						? Optional.of(ios.tightestLowerBound(lower.get(), u.lower().get()))
+						: lower.or(() -> u.lower());
+				Optional<Bound<E>> newUpper = upper.isPresent() && u.upper().isPresent()
+						? Optional.of(ios.tightestUpperBound(upper.get(), u.upper().get()))
+						: upper.or(() -> u.upper());
+
+				if (newLower.isPresent() && newUpper.isPresent())
+				{
+					yield ios.isNonEmpty(newLower.get(), newUpper.get())
+							? Optional.of(BoundedIntervalImpl.of(newLower.get(), newUpper.get()))
+							: Optional.empty();
+				}
+
+				yield Optional.of(of(newLower, newUpper));
+			}
+		};
+	}
+
+	@Override
+	public Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other)
+	{
+		var ios = ios();
+		Bound<E> newLower = lower.map(l -> ios.tightestLowerBound(l, other.lower())).orElse(other.lower());
+		Bound<E> newUpper = upper.map(u -> ios.tightestUpperBound(u, other.upper())).orElse(other.upper());
+		return ios.isNonEmpty(newLower, newUpper) ? Optional.of(BoundedIntervalImpl.of(newLower, newUpper))
+				: Optional.empty();
+	}
+
 	private IntervalOrderStructure<E> ios()
 	{
 		return IntervalOrderStructure.forElements();

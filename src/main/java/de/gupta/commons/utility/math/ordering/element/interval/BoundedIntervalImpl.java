@@ -10,42 +10,6 @@ import java.util.Optional;
 record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E> upper) implements BoundedInterval<E>
 {
 	@Override
-	public boolean isPoint()
-	{
-		return Bounds.areBothClosed(lower, upper) && Bounds.areValuesEqual(lower, upper);
-	}
-
-	@Override
-	public boolean contains(final Interval<E> other)
-	{
-		return switch (other)
-		{
-			case BoundedInterval<E> b ->
-					ios().enclosesLowerBound(lower, b.lower()) && ios().enclosesUpperBound(upper, b.upper());
-			case UnboundedInterval<E> _ -> false;
-		};
-	}
-
-	@Override
-	public Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other)
-	{
-		var ios = ios();
-		Bound<E> newLower = ios.tightestLowerBound(lower, other.lower());
-		Bound<E> newUpper = ios.tightestUpperBound(upper, other.upper());
-		return ios.isNonEmpty(newLower, newUpper) ? Optional.of(of(newLower, newUpper)) : Optional.empty();
-	}
-
-	static <E extends TotallyOrdered<E>> BoundedIntervalImpl<E> of(final Bound<E> lower, final Bound<E> upper)
-	{
-		return new BoundedIntervalImpl<>(lower, upper);
-	}
-
-	private IntervalOrderStructure<E> ios()
-	{
-		return IntervalOrderStructure.forElements();
-	}
-
-	@Override
 	public boolean contains(final E element)
 	{
 		return ios().boundHarboursElementFromBelow(lower, element) && ios().boundHarboursElementFromAbove(upper,
@@ -110,5 +74,58 @@ record BoundedIntervalImpl<E extends TotallyOrdered<E>>(Bound<E> lower, Bound<E>
 	public Optional<Bound<E>> upperBound()
 	{
 		return Optional.of(upper);
+	}
+
+	@Override
+	public boolean contains(final Interval<E> other)
+	{
+		return switch (other)
+		{
+			case BoundedInterval<E> b ->
+					ios().enclosesLowerBound(lower, b.lower()) && ios().enclosesUpperBound(upper, b.upper());
+			case UnboundedInterval<E> _ -> false;
+		};
+	}
+
+	@Override
+	public boolean isPoint()
+	{
+		return Bounds.areBothClosed(lower, upper) && Bounds.areValuesEqual(lower, upper);
+	}
+
+	@Override
+	public Optional<Interval<E>> intersect(final Interval<E> other)
+	{
+		var ios = ios();
+		return switch (other)
+		{
+			case BoundedInterval<E> b -> intersect(b).map(i -> (Interval<E>) i);
+			case UnboundedInterval<E> u ->
+			{
+				Bound<E> newLower = u.lower().map(l -> ios.tightestLowerBound(lower, l)).orElse(lower);
+				Bound<E> newUpper =
+						u.upper().map(upperBound -> ios.tightestUpperBound(upper, upperBound)).orElse(upper);
+				yield ios.isNonEmpty(newLower, newUpper) ? Optional.of(of(newLower, newUpper)) : Optional.empty();
+			}
+		};
+	}
+
+	@Override
+	public Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other)
+	{
+		var ios = ios();
+		Bound<E> newLower = ios.tightestLowerBound(lower, other.lower());
+		Bound<E> newUpper = ios.tightestUpperBound(upper, other.upper());
+		return ios.isNonEmpty(newLower, newUpper) ? Optional.of(of(newLower, newUpper)) : Optional.empty();
+	}
+
+	static <E extends TotallyOrdered<E>> BoundedIntervalImpl<E> of(final Bound<E> lower, final Bound<E> upper)
+	{
+		return new BoundedIntervalImpl<>(lower, upper);
+	}
+
+	private IntervalOrderStructure<E> ios()
+	{
+		return IntervalOrderStructure.forElements();
 	}
 }

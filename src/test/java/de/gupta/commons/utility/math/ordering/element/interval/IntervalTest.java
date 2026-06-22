@@ -301,6 +301,105 @@ final class IntervalTest
 	}
 
 	@Nested
+	@DisplayName("when intersecting intervals (general)")
+	final class WhenIntersectingIntervalsGeneral
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("returnsCorrectOptionalIntersectionCases")
+		@DisplayName("returns correct optional intersection")
+		void returnsCorrectOptionalIntersection(final String as, final Interval<IntElement> left,
+		                                        final Interval<IntElement> right,
+		                                        final Optional<Interval<IntElement>> expected)
+		{
+			assertThat(left.intersect(right)).as(as).isEqualTo(expected);
+			assertThat(right.intersect(left)).as("%s (symmetric)", as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> returnsCorrectOptionalIntersectionCases()
+		{
+			return Stream.of(
+					Arguments.of("[1,5] ∩ [3,7] = [3,5]", closed(1, 5), closed(3, 7),
+							Optional.of(closed(3, 5))),
+					Arguments.of("[1,5] ∩ [6,7] = empty", closed(1, 5), closed(6, 7),
+							Optional.empty()),
+
+					Arguments.of("[1,5] ∩ [3,∞) = [3,5]", closed(1, 5), Intervals.atLeast(e(3)),
+							Optional.of(closed(3, 5))),
+					Arguments.of("[1,5] ∩ (3,∞) = (3,5]", closed(1, 5), Intervals.greaterThan(e(3)),
+							Optional.of(openClosed(3, 5))),
+					Arguments.of("[1,5] ∩ (-∞,3] = [1,3]", closed(1, 5), Intervals.atMost(e(3)),
+							Optional.of(closed(1, 3))),
+					Arguments.of("[1,5] ∩ (-∞,3) = [1,3)", closed(1, 5), Intervals.lessThan(e(3)),
+							Optional.of(closedOpen(1, 3))),
+					Arguments.of("[1,5] ∩ (-∞,∞) = [1,5]", closed(1, 5), Intervals.all(),
+							Optional.of(closed(1, 5))),
+
+					Arguments.of("[3,∞) ∩ (-∞,5] = [3,5]", Intervals.atLeast(e(3)), Intervals.atMost(e(5)),
+							Optional.of(closed(3, 5))),
+					Arguments.of("(3,∞) ∩ (-∞,5] = (3,5]", Intervals.greaterThan(e(3)), Intervals.atMost(e(5)),
+							Optional.of(openClosed(3, 5))),
+					Arguments.of("[3,∞) ∩ (-∞,5) = [3,5)", Intervals.atLeast(e(3)), Intervals.lessThan(e(5)),
+							Optional.of(closedOpen(3, 5))),
+					Arguments.of("(3,∞) ∩ (-∞,5) = (3,5)", Intervals.greaterThan(e(3)), Intervals.lessThan(e(5)),
+							Optional.of(open(3, 5))),
+
+					Arguments.of("[3,∞) ∩ (-∞,2] = empty", Intervals.atLeast(e(3)), Intervals.atMost(e(2)),
+							Optional.empty()),
+					Arguments.of("(3,∞) ∩ (-∞,3] = empty", Intervals.greaterThan(e(3)), Intervals.atMost(e(3)),
+							Optional.empty()),
+
+					Arguments.of("[3,∞) ∩ (5,∞) = (5,∞)", Intervals.atLeast(e(3)), Intervals.greaterThan(e(5)),
+							Optional.of(Intervals.greaterThan(e(5)))),
+					Arguments.of("(3,∞) ∩ [3,∞) = (3,∞)", Intervals.greaterThan(e(3)), Intervals.atLeast(e(3)),
+							Optional.of(Intervals.greaterThan(e(3)))),
+
+					Arguments.of("(-∞,5] ∩ (-∞,5) = (-∞,5)", Intervals.atMost(e(5)), Intervals.lessThan(e(5)),
+							Optional.of(Intervals.lessThan(e(5)))),
+					Arguments.of("(-∞,5] ∩ (-∞,7] = (-∞,5]", Intervals.atMost(e(5)), Intervals.atMost(e(7)),
+							Optional.of(Intervals.atMost(e(5)))),
+
+					Arguments.of("(-∞,∞) ∩ (3,∞) = (3,∞)", Intervals.all(), Intervals.greaterThan(e(3)),
+							Optional.of(Intervals.greaterThan(e(3))))
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when intersecting unbounded with bounded interval")
+	final class WhenIntersectingUnboundedWithBoundedInterval
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("returnsCorrectOptionalBoundedIntersectionCases")
+		@DisplayName("returns correct optional bounded intersection")
+		void returnsCorrectOptionalBoundedIntersection(final String as, final UnboundedInterval<IntElement> unbounded,
+		                                               final BoundedInterval<IntElement> bounded,
+		                                               final Optional<BoundedInterval<IntElement>> expected)
+		{
+			assertThat(unbounded.intersect(bounded)).as(as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> returnsCorrectOptionalBoundedIntersectionCases()
+		{
+			return Stream.of(
+					Arguments.of("[3,∞) ∩ [1,5] = [3,5]", Intervals.atLeast(e(3)), closed(1, 5),
+							Optional.of(closed(3, 5))),
+					Arguments.of("(3,∞) ∩ [1,5] = (3,5]", Intervals.greaterThan(e(3)), closed(1, 5),
+							Optional.of(openClosed(3, 5))),
+					Arguments.of("(-∞,3] ∩ [1,5] = [1,3]", Intervals.atMost(e(3)), closed(1, 5),
+							Optional.of(closed(1, 3))),
+					Arguments.of("(-∞,3) ∩ [1,5] = [1,3)", Intervals.lessThan(e(3)), closed(1, 5),
+							Optional.of(closedOpen(1, 3))),
+					Arguments.of("[3,∞) ∩ [1,2] = empty", Intervals.atLeast(e(3)), closed(1, 2),
+							Optional.empty()),
+					Arguments.of("(-∞,3] ∩ [4,5] = empty", Intervals.atMost(e(3)), closed(4, 5),
+							Optional.empty()),
+					Arguments.of("(-∞,∞) ∩ [1,5] = [1,5]", Intervals.all(), closed(1, 5),
+							Optional.of(closed(1, 5)))
+			);
+		}
+	}
+
+	@Nested
 	@DisplayName("when checking overlaps")
 	final class WhenCheckingOverlaps
 	{

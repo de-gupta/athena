@@ -19,7 +19,11 @@ public sealed interface Interval<E extends TotallyOrdered<E>> permits BoundedInt
 
 	Optional<Bound<E>> upperBound();
 
-	boolean contains(Interval<E> other);
+	boolean contains(final Interval<E> other);
 
 	boolean isPoint();
+
+	Optional<Interval<E>> intersect(final Interval<E> other);
+
+	Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other);
 }
