@@ -2,8 +2,8 @@ package de.gupta.commons.utility.math.ordering.bound;
 
 import de.gupta.commons.utility.math.ordering.OrderRelation;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
-import de.gupta.commons.utility.math.ordering.element.interval.Interval;
-import de.gupta.commons.utility.math.ordering.element.interval.Intervals;
+import de.gupta.commons.utility.math.ordering.interval.Interval;
+import de.gupta.commons.utility.math.ordering.interval.Intervals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +33,7 @@ final class AlgebraicBoundsTest
 		return new Bound.Open<>(element(value));
 	}
 
-	private static de.gupta.commons.utility.math.ordering.element.interval.BoundedInterval<IntElement> closedInterval(
+	private static de.gupta.commons.utility.math.ordering.interval.BoundedInterval<IntElement> closedInterval(
 			final int lower, final int upper)
 	{
 		return Intervals.closed(element(lower), element(upper));

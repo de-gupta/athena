@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.ordering.element.interval;
+package de.gupta.commons.utility.math.ordering.interval;
 
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
@@ -55,7 +55,7 @@ final class AlgebraicIntervalsTest
 			assertThat(AlgebraicIntervals.shift(closed(1, 5), n(-2))).as("[1,5] - 2").isEqualTo(closed(-1, 3));
 			assertThat(AlgebraicIntervals.shift(Intervals.open(n(1), n(5)), n(2))).as("(1,5) + 2")
 			                                                                      .isEqualTo(
-					                                                                      Intervals.open(n(3), n(7)));
+																						  Intervals.open(n(3), n(7)));
 		}
 
 		@Test

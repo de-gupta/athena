@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.ordering.element.interval;
+package de.gupta.commons.utility.math.ordering.interval;
 
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedAdditiveGroup;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedEuclideanDomain;
@@ -16,7 +16,7 @@ public final class AlgebraicIntervals
 	{
 		return switch (interval)
 		{
-			case BoundedIntervalImpl<E> b -> shift(b, delta);
+			case BoundedInterval<E> b -> shift(b, delta);
 			case UnboundedInterval<E> u -> shift(u, delta);
 		};
 	}
@@ -24,15 +24,16 @@ public final class AlgebraicIntervals
 	public static <E extends OrderedAdditiveGroup<E>> BoundedInterval<E> shift(final BoundedInterval<E> interval,
 	                                                                           final E delta)
 	{
-		return BoundedIntervalImpl.of(shiftBound(interval.lower(), delta), shiftBound(interval.upper(), delta));
+		return ((BoundedIntervalImpl<E>) interval).withBounds(
+				shiftBound(interval.lower(), delta), shiftBound(interval.upper(), delta));
 	}
 
 	public static <E extends OrderedAdditiveGroup<E>> UnboundedInterval<E> shift(final UnboundedInterval<E> interval,
 	                                                                             final E delta)
 	{
-		return interval.isBoundedBelow() ?
-				UnboundedIntervalImpl.withLowerBound(interval.lower().map(b -> shiftBound(b, delta))) :
-				UnboundedIntervalImpl.withUpperBound(interval.upperBound().map(b -> shiftBound(b, delta)));
+		return ((UnboundedIntervalImpl<E>) interval).withBounds(
+				interval.lower().map(b -> shiftBound(b, delta)),
+				interval.upper().map(b -> shiftBound(b, delta)));
 	}
 
 	private static <E extends OrderedAdditiveGroup<E>> Bound<E> shiftBound(final Bound<E> bound, final E delta)

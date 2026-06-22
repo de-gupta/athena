@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.ordering.structure.interval;
+package de.gupta.commons.utility.math.ordering.interval;
 
 import de.gupta.commons.utility.math.ordering.bound.Bound;
 

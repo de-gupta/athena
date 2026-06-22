@@ -1,9 +1,9 @@
 package de.gupta.commons.utility.math.ordering.bound;
 
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
-import de.gupta.commons.utility.math.ordering.element.interval.BoundedInterval;
-import de.gupta.commons.utility.math.ordering.element.interval.Interval;
-import de.gupta.commons.utility.math.ordering.element.interval.UnboundedInterval;
+import de.gupta.commons.utility.math.ordering.interval.BoundedInterval;
+import de.gupta.commons.utility.math.ordering.interval.Interval;
+import de.gupta.commons.utility.math.ordering.interval.UnboundedInterval;
 
 import java.util.Optional;
 
