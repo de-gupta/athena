@@ -135,10 +135,10 @@ record UnboundedIntervalImpl<E extends TotallyOrdered<E>>(Optional<Bound<E>> low
 			{
 				Optional<Bound<E>> newLower = lower.isPresent() && u.lower().isPresent()
 						? Optional.of(ios.tightestLowerBound(lower.get(), u.lower().get()))
-						: lower.or(() -> u.lower());
+						: lower.or(u::lower);
 				Optional<Bound<E>> newUpper = upper.isPresent() && u.upper().isPresent()
 						? Optional.of(ios.tightestUpperBound(upper.get(), u.upper().get()))
-						: upper.or(() -> u.upper());
+						: upper.or(u::upper);
 
 				if (newLower.isPresent() && newUpper.isPresent())
 				{
