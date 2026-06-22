@@ -83,13 +83,13 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 	{
 		return switch (other)
 		{
-			case BoundedIntervalImpl<E> b ->
+			case BoundedInterval<E> b ->
 			{
 				Optional<Bound<E>> newLower = lower.map(bound -> ios.loosestLowerBound(bound, b.lower()));
 				Optional<Bound<E>> newUpper = upper.map(eBound -> ios.loosestUpperBound(eBound, b.upper()));
 				yield newLower.isPresent() && newUpper.isPresent()
-						? new BoundedIntervalImpl<>(newLower.get(), newUpper.get(), ios)
-						: new UnboundedIntervalImpl<>(newLower, newUpper, ios);
+						? BoundedIntervalImpl.of(newLower.get(), newUpper.get(), ios)
+						: UnboundedIntervalImpl.of(newLower, newUpper, ios);
 			}
 			case UnboundedInterval<E> u ->
 			{
@@ -104,6 +104,12 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 		};
 	}
 
+	static <E> UnboundedIntervalImpl<E> of(final Optional<Bound<E>> lower, final Optional<Bound<E>> upper,
+	                                       final IntervalOrderStructure<E> ios)
+	{
+		return new UnboundedIntervalImpl<>(lower, upper, ios);
+	}
+
 	@Override
 	public Optional<Bound<E>> lowerBound()
 	{
@@ -116,9 +122,25 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 		return upper;
 	}
 
+	@Override
+	public Optional<Interval<E>> intersect(final UnboundedInterval<E> other)
+	{
+		Optional<Bound<E>> newLower = lower.isPresent() && other.lower().isPresent()
+				? Optional.of(ios.tightestLowerBound(lower.get(), other.lower().get()))
+				: lower.isPresent() ? lower : other.lower();
+		Optional<Bound<E>> newUpper = upper.isPresent() && other.upper().isPresent()
+				? Optional.of(ios.tightestUpperBound(upper.get(), other.upper().get()))
+				: upper.isPresent() ? upper : other.upper();
+		if (newLower.isPresent() && newUpper.isPresent())
+			return ios.isNonEmpty(newLower.get(), newUpper.get())
+					? Optional.of(BoundedIntervalImpl.of(newLower.get(), newUpper.get(), ios))
+					: Optional.empty();
+		return Optional.of(UnboundedIntervalImpl.of(newLower, newUpper, ios));
+	}
+
 	UnboundedInterval<E> withBounds(final Optional<Bound<E>> newLower, final Optional<Bound<E>> newUpper)
 	{
-		return new UnboundedIntervalImpl<>(newLower, newUpper, ios);
+		return UnboundedIntervalImpl.of(newLower, newUpper, ios);
 	}
 
 	UnboundedIntervalImpl

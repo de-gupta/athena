@@ -13,4 +13,6 @@ public sealed interface BoundedInterval<E> extends Interval<E> permits BoundedIn
 	boolean isPoint();
 
 	Optional<BoundedInterval<E>> intersect(BoundedInterval<E> other);
+
+	Optional<BoundedInterval<E>> intersect(UnboundedInterval<E> other);
 }

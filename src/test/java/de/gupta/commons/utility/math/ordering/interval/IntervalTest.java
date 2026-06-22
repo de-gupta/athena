@@ -279,8 +279,8 @@ final class IntervalTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("intersectCases")
 		@DisplayName("produces the correct intersection")
-		void producesTheCorrectIntersection(final String as, final BoundedIntervalImpl<IntElement> a,
-		                                    final BoundedIntervalImpl<IntElement> b,
+		void producesTheCorrectIntersection(final String as, final BoundedInterval<IntElement> a,
+		                                    final BoundedInterval<IntElement> b,
 		                                    final Optional<BoundedInterval<IntElement>> expected)
 		{
 			assertThat(a.intersect(b)).as(as).isEqualTo(expected);
@@ -300,7 +300,86 @@ final class IntervalTest
 		}
 	}
 
-	// TODO: intersect(UnboundedInterval) and unbounded×unbounded intersection pending implementation
+	@Nested
+	@DisplayName("when intersecting bounded with unbounded interval")
+	final class WhenIntersectingBoundedWithUnbounded
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("intersectCases")
+		@DisplayName("produces the correct bounded intersection")
+		void producesTheCorrectBoundedIntersection(final String as, final BoundedInterval<IntElement> bounded,
+		                                           final UnboundedInterval<IntElement> unbounded,
+		                                           final Optional<BoundedInterval<IntElement>> expected)
+		{
+			assertThat(bounded.intersect(unbounded)).as(as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> intersectCases()
+		{
+			return Stream.of(
+					Arguments.of("[1,5] ∩ [3,∞) = [3,5]", closed(1, 5), Intervals.atLeast(e(3)),
+							Optional.of(closed(3, 5))),
+					Arguments.of("[1,5] ∩ (3,∞) = (3,5]", closed(1, 5), Intervals.greaterThan(e(3)),
+							Optional.of(openClosed(3, 5))),
+					Arguments.of("[1,5] ∩ [6,∞) = empty", closed(1, 5), Intervals.atLeast(e(6)),
+							Optional.empty()),
+					Arguments.of("[1,5] ∩ (-∞,3] = [1,3]", closed(1, 5), Intervals.atMost(e(3)),
+							Optional.of(closed(1, 3))),
+					Arguments.of("[1,5] ∩ (-∞,3) = [1,3)", closed(1, 5), Intervals.lessThan(e(3)),
+							Optional.of(closedOpen(1, 3))),
+					Arguments.of("[1,5] ∩ (-∞,0] = empty", closed(1, 5), Intervals.atMost(e(0)),
+							Optional.empty()),
+					Arguments.of("[1,5] ∩ (-∞,∞) = [1,5]", closed(1, 5), Intervals.all(),
+							Optional.of(closed(1, 5)))
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when intersecting unbounded intervals")
+	final class WhenIntersectingUnboundedIntervals
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("intersectCases")
+		@DisplayName("produces the correct intersection")
+		void producesTheCorrectIntersection(final String as, final UnboundedInterval<IntElement> a,
+		                                    final UnboundedInterval<IntElement> b,
+		                                    final Optional<Interval<IntElement>> expected)
+		{
+			assertThat(a.intersect(b)).as(as).isEqualTo(expected);
+			assertThat(b.intersect(a)).as("%s (symmetric)", as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> intersectCases()
+		{
+			return Stream.of(
+					Arguments.of("[3,∞) ∩ [5,∞) = [5,∞)", Intervals.atLeast(e(3)), Intervals.atLeast(e(5)),
+							unbounded(Intervals.atLeast(e(5)))),
+					Arguments.of("[3,∞) ∩ (5,∞) = (5,∞)", Intervals.atLeast(e(3)), Intervals.greaterThan(e(5)),
+							unbounded(Intervals.greaterThan(e(5)))),
+					Arguments.of("(-∞,5] ∩ (-∞,3] = (-∞,3]", Intervals.atMost(e(5)), Intervals.atMost(e(3)),
+							unbounded(Intervals.atMost(e(3)))),
+					Arguments.of("[3,∞) ∩ (-∞,7] = [3,7]", Intervals.atLeast(e(3)), Intervals.atMost(e(7)),
+							bounded(closed(3, 7))),
+					Arguments.of("[5,∞) ∩ (-∞,3] = empty", Intervals.atLeast(e(5)), Intervals.atMost(e(3)),
+							Optional.empty()),
+					Arguments.of("(-∞,∞) ∩ [3,∞) = [3,∞)", Intervals.all(), Intervals.atLeast(e(3)),
+							unbounded(Intervals.atLeast(e(3)))),
+					Arguments.of("(-∞,∞) ∩ (-∞,∞) = (-∞,∞)", Intervals.all(), Intervals.all(),
+							unbounded(Intervals.all()))
+			);
+		}
+
+		private static Optional<Interval<IntElement>> unbounded(final UnboundedInterval<IntElement> u)
+		{
+			return Optional.of(u);
+		}
+
+		private static Optional<Interval<IntElement>> bounded(final BoundedInterval<IntElement> b)
+		{
+			return Optional.of(b);
+		}
+	}
 
 	@Nested
 	@DisplayName("when intersecting intervals (general)")

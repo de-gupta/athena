@@ -7,9 +7,6 @@ import de.gupta.commons.utility.math.ordering.structure.TotalOrderStructure;
 
 import java.util.Optional;
 
-// TODO: again break down into smaller classes - factories separate from operations. does it make sense to have a
-//  factory for each type of order providing? element and structure side factory?
-// TODO: and never ever use new Class anywhere. always go via static factories
 public final class Intervals
 {
 	// --- Element-side factories: E carries its own ordering ---
@@ -56,25 +53,25 @@ public final class Intervals
 
 	public static <E extends TotallyOrdered<E>> UnboundedInterval<E> atLeast(final E lower)
 	{
-		return new UnboundedIntervalImpl<>(Optional.of(new Bound.Closed<>(lower)), Optional.empty(),
+		return UnboundedIntervalImpl.of(Optional.of(new Bound.Closed<>(lower)), Optional.empty(),
 				IntervalOrderStructure.forElements());
 	}
 
 	public static <E extends TotallyOrdered<E>> UnboundedInterval<E> greaterThan(final E lower)
 	{
-		return new UnboundedIntervalImpl<>(Optional.of(new Bound.Open<>(lower)), Optional.empty(),
+		return UnboundedIntervalImpl.of(Optional.of(new Bound.Open<>(lower)), Optional.empty(),
 				IntervalOrderStructure.forElements());
 	}
 
 	public static <E extends TotallyOrdered<E>> UnboundedInterval<E> atMost(final E upper)
 	{
-		return new UnboundedIntervalImpl<>(Optional.empty(), Optional.of(new Bound.Closed<>(upper)),
+		return UnboundedIntervalImpl.of(Optional.empty(), Optional.of(new Bound.Closed<>(upper)),
 				IntervalOrderStructure.forElements());
 	}
 
 	public static <E extends TotallyOrdered<E>> UnboundedInterval<E> lessThan(final E upper)
 	{
-		return new UnboundedIntervalImpl<>(Optional.empty(), Optional.of(new Bound.Open<>(upper)),
+		return UnboundedIntervalImpl.of(Optional.empty(), Optional.of(new Bound.Open<>(upper)),
 				IntervalOrderStructure.forElements());
 	}
 
@@ -82,7 +79,7 @@ public final class Intervals
 
 	public static <E extends TotallyOrdered<E>> UnboundedInterval<E> all()
 	{
-		return new UnboundedIntervalImpl<>(Optional.empty(), Optional.empty(), TotallyOrdered::compare);
+		return UnboundedIntervalImpl.of(Optional.empty(), Optional.empty(), TotallyOrdered::compare);
 	}
 
 	public static <E> ForOrder<E> over(final TotalOrderStructure<E> order)
@@ -125,28 +122,27 @@ public final class Intervals
 
 		public UnboundedInterval<E> atLeast(final E lower)
 		{
-			return new UnboundedIntervalImpl<>(Optional.of(new Bound.Closed<>(lower)), Optional.empty(), ios);
+			return UnboundedIntervalImpl.of(Optional.of(new Bound.Closed<>(lower)), Optional.empty(), ios);
 		}
 
 		public UnboundedInterval<E> greaterThan(final E lower)
 		{
-			return new UnboundedIntervalImpl<>(Optional.of(new Bound.Open<>(lower)), Optional.empty(), ios);
+			return UnboundedIntervalImpl.of(Optional.of(new Bound.Open<>(lower)), Optional.empty(), ios);
 		}
 
 		public UnboundedInterval<E> atMost(final E upper)
 		{
-			return new UnboundedIntervalImpl<>(Optional.empty(), Optional.of(new Bound.Closed<>(upper)), ios);
+			return UnboundedIntervalImpl.of(Optional.empty(), Optional.of(new Bound.Closed<>(upper)), ios);
 		}
 
 		public UnboundedInterval<E> lessThan(final E upper)
 		{
-			return new UnboundedIntervalImpl<>(Optional.empty(), Optional.of(new Bound.Open<>(upper)), ios);
+			return UnboundedIntervalImpl.of(Optional.empty(), Optional.of(new Bound.Open<>(upper)), ios);
 		}
 
 		public UnboundedInterval<E> all()
 		{
-			Optional<Bound<E>> empty = Optional.empty();
-			return new UnboundedIntervalImpl<>(empty, empty, ios);
+			return UnboundedIntervalImpl.of(Optional.empty(), Optional.empty(), ios);
 		}
 	}
 }

@@ -78,13 +78,12 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 		};
 	}
 
-	// TODO: in switch, switch over interfaces not impolementations - for all methodsd in this class
 	@Override
 	public boolean abuts(final Interval<E> other)
 	{
 		return switch (other)
 		{
-			case BoundedIntervalImpl<E> b -> ios.touchesAt(upper, b.lower) || ios.touchesAt(b.upper, lower);
+			case BoundedInterval<E> b -> ios.touchesAt(upper, b.lower()) || ios.touchesAt(b.upper(), lower);
 			case UnboundedInterval<E> u -> u.lower().map(l -> ios.touchesAt(upper, l)).orElse(false)
 					|| u.upper().map(u2 -> ios.touchesAt(u2, lower)).orElse(false);
 		};
@@ -95,17 +94,27 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 	{
 		return switch (other)
 		{
-			case BoundedIntervalImpl<E> b -> new BoundedIntervalImpl<>(ios.loosestLowerBound(lower, b.lower),
-					ios.loosestUpperBound(upper, b.upper), ios);
+			case BoundedInterval<E> b -> BoundedIntervalImpl.of(ios.loosestLowerBound(lower, b.lower()),
+					ios.loosestUpperBound(upper, b.upper()), ios);
 			case UnboundedInterval<E> u ->
 			{
 				Optional<Bound<E>> newLower = u.lower().map(l -> ios.loosestLowerBound(lower, l));
 				Optional<Bound<E>> newUpper = u.upper().map(u2 -> ios.loosestUpperBound(upper, u2));
 				yield newLower.isPresent() && newUpper.isPresent()
-						? new BoundedIntervalImpl<>(newLower.get(), newUpper.get(), ios)
-						: new UnboundedIntervalImpl<>(newLower, newUpper, ios);
+						? BoundedIntervalImpl.of(newLower.get(), newUpper.get(), ios)
+						: UnboundedIntervalImpl.of(newLower, newUpper, ios);
 			}
 		};
+	}
+
+	@Override
+	public Optional<BoundedInterval<E>> intersect(final UnboundedInterval<E> other)
+	{
+		Bound<E> newLower = other.lower().map(l -> ios.tightestLowerBound(lower, l)).orElse(lower);
+		Bound<E> newUpper = other.upper().map(u -> ios.tightestUpperBound(upper, u)).orElse(upper);
+		return ios.isNonEmpty(newLower, newUpper)
+				? Optional.of(BoundedIntervalImpl.of(newLower, newUpper, ios))
+				: Optional.empty();
 	}
 
 	@Override

@@ -19,4 +19,6 @@ public sealed interface UnboundedInterval<E> extends Interval<E> permits Unbound
 	}
 
 	Optional<Bound<E>> upper();
+
+	Optional<Interval<E>> intersect(UnboundedInterval<E> other);
 }
