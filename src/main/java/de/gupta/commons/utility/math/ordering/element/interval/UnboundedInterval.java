@@ -20,4 +20,10 @@ public sealed interface UnboundedInterval<E extends TotallyOrdered<E>> extends I
 	}
 
 	Optional<Bound<E>> upper();
+
+	@Override
+	default boolean isPoint()
+	{
+		return false;
+	}
 }
