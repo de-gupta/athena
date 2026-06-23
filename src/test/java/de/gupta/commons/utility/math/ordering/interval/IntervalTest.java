@@ -2,6 +2,8 @@ package de.gupta.commons.utility.math.ordering.interval;
 
 import de.gupta.commons.utility.math.ordering.OrderRelation;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
+import de.gupta.commons.utility.math.ordering.structure.IntegerNaturalOrder;
+import de.gupta.commons.utility.math.ordering.structure.TotalOrderStructure;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -554,6 +556,34 @@ final class IntervalTest
 							false),
 					Arguments.of("(1,3) and (3,5) gap not abut", open(1, 3), open(3, 5), false)
 			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when intervals are built over different orders")
+	final class WhenIntervalsAreBuiltOverDifferentOrders
+	{
+		@Test
+		@DisplayName("interval equality ignores the order structure and semantics can differ")
+		void intervalEqualityIgnoresOrderStructureAndSemanticsCanDiffer()
+		{
+			var natural = Intervals.over(IntegerNaturalOrder.INSTANCE).closed(1, 3);
+			var absoluteValue = Intervals.over(absoluteValueOrder()).closed(1, 3);
+
+			assertThat(natural).as("equality ignores ordering context").isEqualTo(absoluteValue);
+			assertThat(natural.contains(-2)).as("natural order: [-2] is below lower bound 1").isEqualTo(false);
+			assertThat(absoluteValue.contains(-2)).as("absolute-value order: [-2] lies between 1 and 3")
+			                                      .isEqualTo(true);
+		}
+
+		private static TotalOrderStructure<Integer> absoluteValueOrder()
+		{
+			return (left, right) ->
+			{
+				int absoluteComparison = Integer.compare(Math.abs(left), Math.abs(right));
+				if (absoluteComparison != 0) return OrderRelation.from(absoluteComparison);
+				return OrderRelation.from(Integer.compare(left, right));
+			};
 		}
 	}
 }
