@@ -61,6 +61,8 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.laws.ring;
 	exports de.gupta.commons.utility.math.algebra.free.abelian;
 
+	exports de.gupta.commons.utility.math.series;
+
 	exports de.gupta.commons.utility.exception;
 	exports de.gupta.commons.utility.math.algebra.structure.module.standard;
 
