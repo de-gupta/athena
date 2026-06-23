@@ -11,12 +11,25 @@ public sealed interface Bound<E> permits Bound.Closed, Bound.Open
 
 	boolean isClosed();
 
+	Bound<E> closure();
+
 	record Closed<E>(E value) implements Bound<E>
 	{
+		static <E> Closed<E> of(E value)
+		{
+			return new Closed<>(value);
+		}
+
 		@Override
 		public boolean isClosed()
 		{
 			return true;
+		}
+
+		@Override
+		public Bound<E> closure()
+		{
+			return this;
 		}
 	}
 
@@ -26,6 +39,12 @@ public sealed interface Bound<E> permits Bound.Closed, Bound.Open
 		public boolean isClosed()
 		{
 			return false;
+		}
+
+		@Override
+		public Bound<E> closure()
+		{
+			return Closed.of(value);
 		}
 	}
 }

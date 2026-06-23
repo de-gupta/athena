@@ -593,6 +593,57 @@ final class IntervalTest
 	}
 
 	@Nested
+	@DisplayName("when computing closure")
+	final class WhenComputingClosure
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("computesTheClosureOfBoundedIntervalsCases")
+		@DisplayName("computes the closure of bounded intervals")
+		void computesTheClosureOfBoundedIntervals(final String as, final Interval<IntElement> interval,
+		                                          final Interval<IntElement> expected)
+		{
+			assertThat(interval.closure()).as(as).isEqualTo(expected);
+			assertThat(interval.closure()).as("%s: closure is bounded", as).isInstanceOf(BoundedInterval.class);
+			assertThat(interval.closure().closure()).as("%s: closure is idempotent", as).isEqualTo(expected);
+		}
+
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("computesTheClosureOfUnboundedIntervalsCases")
+		@DisplayName("computes the closure of unbounded intervals")
+		void computesTheClosureOfUnboundedIntervals(final String as, final Interval<IntElement> interval,
+		                                            final Interval<IntElement> expected)
+		{
+			assertThat(interval.closure()).as(as).isEqualTo(expected);
+			assertThat(interval.closure()).as("%s: closure is unbounded", as).isInstanceOf(UnboundedInterval.class);
+			assertThat(interval.closure().closure()).as("%s: closure is idempotent", as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> computesTheClosureOfBoundedIntervalsCases()
+		{
+			return Stream.of(
+					Arguments.of("closed interval stays closed", closed(1, 5), closed(1, 5)),
+					Arguments.of("open interval closes both bounds", open(1, 5), closed(1, 5)),
+					Arguments.of("closed-open interval closes the upper bound", closedOpen(1, 5), closed(1, 5)),
+					Arguments.of("open-closed interval closes the lower bound", openClosed(1, 5), closed(1, 5)),
+					Arguments.of("point interval stays a point", closed(3, 3), closed(3, 3))
+			);
+		}
+
+		private static Stream<Arguments> computesTheClosureOfUnboundedIntervalsCases()
+		{
+			return Stream.of(
+					Arguments.of("[3,∞) stays lower-bounded and closed", Intervals.atLeast(e(3)),
+							Intervals.atLeast(e(3))),
+					Arguments.of("(3,∞) closes the lower bound", Intervals.greaterThan(e(3)), Intervals.atLeast(e(3))),
+					Arguments.of("(-∞,3] stays upper-bounded and closed", Intervals.atMost(e(3)),
+							Intervals.atMost(e(3))),
+					Arguments.of("(-∞,3) closes the upper bound", Intervals.lessThan(e(3)), Intervals.atMost(e(3))),
+					Arguments.of("(-∞,∞) stays unbounded", Intervals.all(), Intervals.all())
+			);
+		}
+	}
+
+	@Nested
 	@DisplayName("[educational:] when intervals are built over different orders")
 	@Tag("educational")
 	final class WhenIntervalsAreBuiltOverDifferentOrders

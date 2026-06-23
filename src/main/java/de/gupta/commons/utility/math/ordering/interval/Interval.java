@@ -23,4 +23,6 @@ public sealed interface Interval<E> permits BoundedInterval, UnboundedInterval
 	Optional<Bound<E>> lowerBound();
 
 	Optional<Bound<E>> upperBound();
+
+	Interval<E> closure();
 }

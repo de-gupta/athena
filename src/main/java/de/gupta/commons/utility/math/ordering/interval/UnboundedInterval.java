@@ -19,4 +19,14 @@ public sealed interface UnboundedInterval<E> extends Interval<E> permits Unbound
 	}
 
 	Optional<Bound<E>> upper();
+
+	default Optional<E> upperValue()
+	{
+		return upper().map(Bound::value);
+	}
+
+	default Optional<E> lowerValue()
+	{
+		return lower().map(Bound::value);
+	}
 }

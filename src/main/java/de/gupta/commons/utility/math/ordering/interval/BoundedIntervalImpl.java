@@ -129,6 +129,12 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 		return Optional.of(upper);
 	}
 
+	@Override
+	public Interval<E> closure()
+	{
+		return BoundedIntervalImpl.of(lower.closure(), upper.closure(), ios);
+	}
+
 	BoundedInterval<E> withBounds(final Bound<E> newLower, final Bound<E> newUpper)
 	{
 		return BoundedIntervalImpl.of(newLower, newUpper, ios);

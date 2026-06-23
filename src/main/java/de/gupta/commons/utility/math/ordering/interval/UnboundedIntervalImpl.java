@@ -148,6 +148,12 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 		return upper;
 	}
 
+	@Override
+	public Interval<E> closure()
+	{
+		return UnboundedIntervalImpl.of(lower.map(Bound::closure), upper.map(Bound::closure), ios);
+	}
+
 	UnboundedInterval<E> withBounds(final Optional<Bound<E>> newLower, final Optional<Bound<E>> newUpper)
 	{
 		return UnboundedIntervalImpl.of(newLower, newUpper, ios);
