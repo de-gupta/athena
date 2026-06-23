@@ -30,14 +30,13 @@ public final class AlgebraicIntervals
 	public static <E extends OrderedAdditiveGroup<E>> BoundedInterval<E> shift(final BoundedInterval<E> interval,
 	                                                                           final E delta)
 	{
-		return ((BoundedIntervalImpl<E>) interval).withBounds(
-				shiftBound(interval.lower(), delta), shiftBound(interval.upper(), delta));
+		return Intervals.withBounds(interval, shiftBound(interval.lower(), delta), shiftBound(interval.upper(), delta));
 	}
 
 	public static <E extends OrderedAdditiveGroup<E>> UnboundedInterval<E> shift(final UnboundedInterval<E> interval,
 	                                                                             final E delta)
 	{
-		return ((UnboundedIntervalImpl<E>) interval).withBounds(
+		return Intervals.withBounds(interval,
 				interval.lower().map(b -> shiftBound(b, delta)),
 				interval.upper().map(b -> shiftBound(b, delta)));
 	}
@@ -61,9 +60,7 @@ public final class AlgebraicIntervals
 	public static <E extends AffinelyOrdered<E, D>, D> BoundedInterval<E> shift(final BoundedInterval<E> interval,
 	                                                                            final D delta)
 	{
-		return ((BoundedIntervalImpl<E>) interval).withBounds(
-				shiftBound(interval.lower(), delta),
-				shiftBound(interval.upper(), delta));
+		return Intervals.withBounds(interval, shiftBound(interval.lower(), delta), shiftBound(interval.upper(), delta));
 	}
 
 	private static <E extends AffinelyOrdered<E, D>, D> Bound<E> shiftBound(final Bound<E> bound, final D delta)

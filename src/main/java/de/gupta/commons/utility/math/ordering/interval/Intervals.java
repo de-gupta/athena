@@ -80,11 +80,29 @@ public final class Intervals
 		return UnboundedIntervalImpl.of(Optional.empty(), Optional.empty(), TotallyOrdered::compare);
 	}
 
-	// --- Structure-side: ordering provided explicitly ---
-
 	public static <E> ForOrder<E> over(final TotalOrderStructure<E> order)
 	{
 		return new ForOrder<>(IntervalOrderStructure.of(order));
+	}
+
+	static <E> BoundedInterval<E> withBounds(final BoundedInterval<E> interval, final Bound<E> newLower,
+	                                         final Bound<E> newUpper)
+	{
+		return switch (interval)
+		{
+			case BoundedIntervalImpl<E> e -> e.withBounds(newLower, newUpper);
+		};
+	}
+
+	// --- Structure-side: ordering provided explicitly ---
+
+	static <E> UnboundedInterval<E> withBounds(final UnboundedInterval<E> interval, final Optional<Bound<E>> newLower,
+	                                           final Optional<Bound<E>> newUpper)
+	{
+		return switch (interval)
+		{
+			case UnboundedIntervalImpl<E> e -> e.withBounds(newLower, newUpper);
+		};
 	}
 
 	// --- Shared validation ---
