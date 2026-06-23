@@ -32,7 +32,7 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 	@Override
 	public boolean contains(final E element)
 	{
-		return ios.boundHarboursElementFromBelow(lower, element) && ios.boundHarboursElementFromAbove(upper, element);
+		return ios.containsElementAtLowerBound(lower, element) && ios.containsElementAtUpperBound(upper, element);
 	}
 
 	@Override

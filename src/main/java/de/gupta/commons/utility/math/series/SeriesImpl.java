@@ -51,13 +51,17 @@ final class SeriesImpl<T, E> implements Series<T, E>
 	@Override
 	public Optional<Map.Entry<T, E>> first()
 	{
-		return data.isEmpty() ? Optional.empty() : Optional.of(data.firstEntry());
+		if (data.isEmpty()) return Optional.empty();
+		final Map.Entry<T, E> entry = data.firstEntry();
+		return Optional.of(Map.entry(entry.getKey(), entry.getValue()));
 	}
 
 	@Override
 	public Optional<Map.Entry<T, E>> last()
 	{
-		return data.isEmpty() ? Optional.empty() : Optional.of(data.lastEntry());
+		if (data.isEmpty()) return Optional.empty();
+		final Map.Entry<T, E> entry = data.lastEntry();
+		return Optional.of(Map.entry(entry.getKey(), entry.getValue()));
 	}
 
 	@Override

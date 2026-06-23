@@ -26,8 +26,8 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 	@Override
 	public boolean contains(final E element)
 	{
-		return lower.map(b -> ios.boundHarboursElementFromBelow(b, element)).orElse(true)
-				&& upper.map(b -> ios.boundHarboursElementFromAbove(b, element)).orElse(true);
+		return lower.map(b -> ios.containsElementAtLowerBound(b, element)).orElse(true)
+				&& upper.map(b -> ios.containsElementAtUpperBound(b, element)).orElse(true);
 	}
 
 	@Override

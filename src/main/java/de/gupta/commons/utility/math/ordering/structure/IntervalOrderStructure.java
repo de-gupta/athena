@@ -16,18 +16,18 @@ public interface IntervalOrderStructure<E> extends TotalOrderStructure<E>
 		return TotallyOrdered::compare;
 	}
 
-	default boolean boundHarboursElementFromBelow(final Bound<E> bound, final E element)
+	default boolean containsElementAtLowerBound(final Bound<E> lowerBound, final E element)
 	{
-		return switch (bound)
+		return switch (lowerBound)
 		{
 			case Bound.Closed<E> b -> compare(element, b.value()).isGreaterThanOrEqualTo();
 			case Bound.Open<E> b -> compare(element, b.value()).isGreaterThan();
 		};
 	}
 
-	default boolean boundHarboursElementFromAbove(final Bound<E> bound, final E element)
+	default boolean containsElementAtUpperBound(final Bound<E> upperBound, final E element)
 	{
-		return switch (bound)
+		return switch (upperBound)
 		{
 			case Bound.Closed<E> b -> compare(element, b.value()).isLessThanOrEqualTo();
 			case Bound.Open<E> b -> compare(element, b.value()).isLessThan();

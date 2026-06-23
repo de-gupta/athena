@@ -94,7 +94,7 @@ final class IntervalOrderStructureTest
 		void reportsWhetherTheLowerBoundHarboursTheElement(final String as, final Bound<Integer> bound,
 		                                                   final int element, final boolean expected)
 		{
-			assertThat(SUBJECT.boundHarboursElementFromBelow(bound, element)).as(as).isEqualTo(expected);
+			assertThat(SUBJECT.containsElementAtLowerBound(bound, element)).as(as).isEqualTo(expected);
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -103,7 +103,7 @@ final class IntervalOrderStructureTest
 		void reportsWhetherTheUpperBoundHarboursTheElement(final String as, final Bound<Integer> bound,
 		                                                   final int element, final boolean expected)
 		{
-			assertThat(SUBJECT.boundHarboursElementFromAbove(bound, element)).as(as).isEqualTo(expected);
+			assertThat(SUBJECT.containsElementAtUpperBound(bound, element)).as(as).isEqualTo(expected);
 		}
 
 		private static Stream<Arguments> reportsWhetherTheLowerBoundHarboursTheElementCases()
