@@ -16,6 +16,10 @@ public sealed interface Interval<E> permits BoundedInterval, UnboundedInterval
 
 	Interval<E> span(Interval<E> other);
 
+	Optional<BoundedInterval<E>> intersect(BoundedInterval<E> other);
+
+	Optional<Interval<E>> intersect(UnboundedInterval<E> other);
+
 	Optional<Bound<E>> lowerBound();
 
 	Optional<Bound<E>> upperBound();

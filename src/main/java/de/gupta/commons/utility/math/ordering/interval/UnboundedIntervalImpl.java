@@ -98,8 +98,8 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 				Optional<Bound<E>> newUpper = upper.isPresent() && u.upper().isPresent()
 						? Optional.of(ios.loosestUpperBound(upper.get(), u.upper().get())) : Optional.empty();
 				yield newLower.isPresent() && newUpper.isPresent()
-						? new BoundedIntervalImpl<>(newLower.get(), newUpper.get(), ios)
-						: new UnboundedIntervalImpl<>(newLower, newUpper, ios);
+						? BoundedIntervalImpl.of(newLower.get(), newUpper.get(), ios)
+						: UnboundedIntervalImpl.of(newLower, newUpper, ios);
 			}
 		};
 	}
@@ -120,6 +120,16 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 	public Optional<Bound<E>> upperBound()
 	{
 		return upper;
+	}
+
+	@Override
+	public Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other)
+	{
+		Bound<E> newLower = lower.map(l -> ios.tightestLowerBound(l, other.lower())).orElse(other.lower());
+		Bound<E> newUpper = upper.map(u -> ios.tightestUpperBound(u, other.upper())).orElse(other.upper());
+		return ios.isNonEmpty(newLower, newUpper)
+				? Optional.of(BoundedIntervalImpl.of(newLower, newUpper, ios))
+				: Optional.empty();
 	}
 
 	@Override

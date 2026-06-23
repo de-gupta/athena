@@ -108,7 +108,7 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 	}
 
 	@Override
-	public Optional<BoundedInterval<E>> intersect(final UnboundedInterval<E> other)
+	public Optional<Interval<E>> intersect(final UnboundedInterval<E> other)
 	{
 		Bound<E> newLower = other.lower().map(l -> ios.tightestLowerBound(lower, l)).orElse(lower);
 		Bound<E> newUpper = other.upper().map(u -> ios.tightestUpperBound(upper, u)).orElse(upper);
