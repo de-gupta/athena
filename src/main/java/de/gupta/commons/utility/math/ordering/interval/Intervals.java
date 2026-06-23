@@ -75,12 +75,12 @@ public final class Intervals
 				IntervalOrderStructure.forElements());
 	}
 
-	// --- Structure-side: ordering provided explicitly ---
-
 	public static <E extends TotallyOrdered<E>> UnboundedInterval<E> all()
 	{
 		return UnboundedIntervalImpl.of(Optional.empty(), Optional.empty(), TotallyOrdered::compare);
 	}
+
+	// --- Structure-side: ordering provided explicitly ---
 
 	public static <E> ForOrder<E> over(final TotalOrderStructure<E> order)
 	{
