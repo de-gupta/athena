@@ -1,11 +1,23 @@
 package de.gupta.commons.utility.math.algebra.structure.ordered;
 
 import de.gupta.commons.utility.math.algebra.structure.binary.notation.additive.AdditiveAbelianGroupStructure;
-import de.gupta.commons.utility.math.ordering.structure.TotalOrderStructure;
+import de.gupta.commons.utility.math.ordering.structure.AffineOrderStructure;
 
 public interface OrderedAdditiveGroupStructure<E>
-		extends AdditiveAbelianGroupStructure<E>, TotalOrderStructure<E>
+		extends AdditiveAbelianGroupStructure<E>, AffineOrderStructure<E, E>
 {
+	@Override
+	default E between(final E from, final E to)
+	{
+		return subtract(to, from);
+	}
+
+	@Override
+	default E translate(final E point, final E displacement)
+	{
+		return add(point, displacement);
+	}
+
 	default boolean isPositive(final E element)
 	{
 		return compare(element, zero()).isGreaterThan();
