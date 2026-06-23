@@ -6,19 +6,19 @@ import java.util.Optional;
 
 public sealed interface Interval<E> permits BoundedInterval, UnboundedInterval
 {
-	boolean contains(E element);
+	boolean contains(final E element);
 
-	boolean contains(Interval<E> other);
+	boolean contains(final Interval<E> other);
 
-	boolean overlaps(Interval<E> other);
+	boolean overlaps(final Interval<E> other);
 
-	boolean abuts(Interval<E> other);
+	boolean abuts(final Interval<E> other);
 
-	Interval<E> span(Interval<E> other);
+	Interval<E> span(final Interval<E> other);
 
-	Optional<BoundedInterval<E>> intersect(BoundedInterval<E> other);
+	Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other);
 
-	Optional<Interval<E>> intersect(UnboundedInterval<E> other);
+	Optional<Interval<E>> intersect(final Interval<E> other);
 
 	Optional<Bound<E>> lowerBound();
 

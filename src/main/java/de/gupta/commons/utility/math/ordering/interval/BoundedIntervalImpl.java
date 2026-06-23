@@ -9,12 +9,6 @@ import java.util.Optional;
 record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStructure<E> ios)
 		implements BoundedInterval<E>
 {
-	static <E> BoundedIntervalImpl<E> of(final Bound<E> lower, final Bound<E> upper,
-	                                     final IntervalOrderStructure<E> ios)
-	{
-		return new BoundedIntervalImpl<>(lower, upper, ios);
-	}
-
 	@Override
 	public boolean equals(final Object obj)
 	{
@@ -33,16 +27,6 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 	public boolean isPoint()
 	{
 		return lower.isClosed() && upper.isClosed() && ios.compare(lower.value(), upper.value()).isEqualTo();
-	}
-
-	@Override
-	public Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other)
-	{
-		Bound<E> newLower = ios.tightestLowerBound(lower, other.lower());
-		Bound<E> newUpper = ios.tightestUpperBound(upper, other.upper());
-		return ios.isNonEmpty(newLower, newUpper)
-				? Optional.of(new BoundedIntervalImpl<>(newLower, newUpper, ios))
-				: Optional.empty();
 	}
 
 	@Override
@@ -107,11 +91,27 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 		};
 	}
 
-	@Override
-	public Optional<Interval<E>> intersect(final UnboundedInterval<E> other)
+	static <E> BoundedIntervalImpl<E> of(final Bound<E> lower, final Bound<E> upper,
+	                                     final IntervalOrderStructure<E> ios)
 	{
-		Bound<E> newLower = other.lower().map(l -> ios.tightestLowerBound(lower, l)).orElse(lower);
-		Bound<E> newUpper = other.upper().map(u -> ios.tightestUpperBound(upper, u)).orElse(upper);
+		return new BoundedIntervalImpl<>(lower, upper, ios);
+	}
+
+	@Override
+	public Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other)
+	{
+		Bound<E> newLower = ios.tightestLowerBound(lower, other.lower());
+		Bound<E> newUpper = ios.tightestUpperBound(upper, other.upper());
+		return ios.isNonEmpty(newLower, newUpper)
+				? Optional.of(new BoundedIntervalImpl<>(newLower, newUpper, ios))
+				: Optional.empty();
+	}
+
+	@Override
+	public Optional<Interval<E>> intersect(final Interval<E> other)
+	{
+		Bound<E> newLower = other.lowerBound().map(l -> ios.tightestLowerBound(lower, l)).orElse(lower);
+		Bound<E> newUpper = other.upperBound().map(u -> ios.tightestUpperBound(upper, u)).orElse(upper);
 		return ios.isNonEmpty(newLower, newUpper)
 				? Optional.of(BoundedIntervalImpl.of(newLower, newUpper, ios))
 				: Optional.empty();

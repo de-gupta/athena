@@ -111,18 +111,6 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 	}
 
 	@Override
-	public Optional<Bound<E>> lowerBound()
-	{
-		return lower;
-	}
-
-	@Override
-	public Optional<Bound<E>> upperBound()
-	{
-		return upper;
-	}
-
-	@Override
 	public Optional<BoundedInterval<E>> intersect(final BoundedInterval<E> other)
 	{
 		Bound<E> newLower = lower.map(l -> ios.tightestLowerBound(l, other.lower())).orElse(other.lower());
@@ -133,19 +121,31 @@ record UnboundedIntervalImpl<E>(Optional<Bound<E>> lower, Optional<Bound<E>> upp
 	}
 
 	@Override
-	public Optional<Interval<E>> intersect(final UnboundedInterval<E> other)
+	public Optional<Interval<E>> intersect(final Interval<E> other)
 	{
-		Optional<Bound<E>> newLower = lower.isPresent() && other.lower().isPresent()
-				? Optional.of(ios.tightestLowerBound(lower.get(), other.lower().get()))
-				: lower.isPresent() ? lower : other.lower();
-		Optional<Bound<E>> newUpper = upper.isPresent() && other.upper().isPresent()
-				? Optional.of(ios.tightestUpperBound(upper.get(), other.upper().get()))
-				: upper.isPresent() ? upper : other.upper();
+		Optional<Bound<E>> newLower = lower.isPresent() && other.lowerBound().isPresent()
+				? Optional.of(ios.tightestLowerBound(lower.get(), other.lowerBound().get()))
+				: lower.isPresent() ? lower : other.lowerBound();
+		Optional<Bound<E>> newUpper = upper.isPresent() && other.upperBound().isPresent()
+				? Optional.of(ios.tightestUpperBound(upper.get(), other.upperBound().get()))
+				: upper.isPresent() ? upper : other.upperBound();
 		if (newLower.isPresent() && newUpper.isPresent())
 			return ios.isNonEmpty(newLower.get(), newUpper.get())
 					? Optional.of(BoundedIntervalImpl.of(newLower.get(), newUpper.get(), ios))
 					: Optional.empty();
 		return Optional.of(UnboundedIntervalImpl.of(newLower, newUpper, ios));
+	}
+
+	@Override
+	public Optional<Bound<E>> lowerBound()
+	{
+		return lower;
+	}
+
+	@Override
+	public Optional<Bound<E>> upperBound()
+	{
+		return upper;
 	}
 
 	UnboundedInterval<E> withBounds(final Optional<Bound<E>> newLower, final Optional<Bound<E>> newUpper)
