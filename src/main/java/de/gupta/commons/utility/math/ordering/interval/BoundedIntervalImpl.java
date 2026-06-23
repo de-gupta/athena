@@ -103,7 +103,7 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 		Bound<E> newLower = ios.tightestLowerBound(lower, other.lower());
 		Bound<E> newUpper = ios.tightestUpperBound(upper, other.upper());
 		return ios.isNonEmpty(newLower, newUpper)
-				? Optional.of(new BoundedIntervalImpl<>(newLower, newUpper, ios))
+				? Optional.of(BoundedIntervalImpl.of(newLower, newUpper, ios))
 				: Optional.empty();
 	}
 
@@ -131,6 +131,6 @@ record BoundedIntervalImpl<E>(Bound<E> lower, Bound<E> upper, IntervalOrderStruc
 
 	BoundedInterval<E> withBounds(final Bound<E> newLower, final Bound<E> newUpper)
 	{
-		return new BoundedIntervalImpl<>(newLower, newUpper, ios);
+		return BoundedIntervalImpl.of(newLower, newUpper, ios);
 	}
 }
