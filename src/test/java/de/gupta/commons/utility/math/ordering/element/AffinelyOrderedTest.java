@@ -3,6 +3,7 @@ package de.gupta.commons.utility.math.ordering.element;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -101,6 +102,65 @@ final class AffinelyOrderedTest
 					Arguments.of("7 → 3", i(7), i(3)),
 					Arguments.of("0 → 0", i(0), i(0)),
 					Arguments.of("-5 → 5", i(-5), i(5))
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when verifying affine space laws")
+	final class WhenVerifyingAffineLaws
+	{
+		@Test
+		@DisplayName("translate by zero is identity")
+		void translateByZeroIsIdentity()
+		{
+			assertThat(i(5).translate(i(0))).isEqualTo(i(5));
+			assertThat(i(-3).translate(i(0))).isEqualTo(i(-3));
+			assertThat(i(0).translate(i(0))).isEqualTo(i(0));
+		}
+
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("orderCorrelationCases")
+		@DisplayName("displacement sign correlates with order: a < b iff displacement is positive")
+		void displacementSignCorrelatesWithOrder(final String as,
+		                                         final IntegersAsEuclideanDomain from,
+		                                         final IntegersAsEuclideanDomain to,
+		                                         final boolean expectedPositive,
+		                                         final boolean expectedNegative)
+		{
+			assertThat(from.displacementTo(to).isPositive()).as("%s: positive", as).isEqualTo(expectedPositive);
+			assertThat(from.displacementTo(to).isNegative()).as("%s: negative", as).isEqualTo(expectedNegative);
+		}
+
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("additivityCases")
+		@DisplayName("displacement is additive: between(a,c) = between(a,b) + between(b,c)")
+		void displacementIsAdditive(final String as,
+		                            final IntegersAsEuclideanDomain a,
+		                            final IntegersAsEuclideanDomain b,
+		                            final IntegersAsEuclideanDomain c)
+		{
+			assertThat(a.displacementTo(c)).as(as)
+			                               .isEqualTo(a.displacementTo(b).add(b.displacementTo(c)));
+		}
+
+		private static Stream<Arguments> orderCorrelationCases()
+		{
+			return Stream.of(
+					Arguments.of("3 < 7: positive displacement", i(3), i(7), true, false),
+					Arguments.of("7 > 3: negative displacement", i(7), i(3), false, true),
+					Arguments.of("-5 < 0: positive displacement", i(-5), i(0), true, false),
+					Arguments.of("0 > -5: negative displacement", i(0), i(-5), false, true)
+			);
+		}
+
+		private static Stream<Arguments> additivityCases()
+		{
+			return Stream.of(
+					Arguments.of("1→3→7: (1→7) = (1→3)+(3→7)", i(1), i(3), i(7)),
+					Arguments.of("7→3→1: (7→1) = (7→3)+(3→1)", i(7), i(3), i(1)),
+					Arguments.of("-5→0→5: (-5→5) = (-5→0)+(0→5)", i(-5), i(0), i(5)),
+					Arguments.of("equal points: all displacements zero", i(4), i(4), i(4))
 			);
 		}
 	}
