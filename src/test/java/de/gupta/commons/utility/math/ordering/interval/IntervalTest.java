@@ -6,6 +6,7 @@ import de.gupta.commons.utility.math.ordering.structure.IntegerNaturalOrder;
 import de.gupta.commons.utility.math.ordering.structure.TotalOrderStructure;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -560,7 +561,8 @@ final class IntervalTest
 	}
 
 	@Nested
-	@DisplayName("when intervals are built over different orders")
+	@DisplayName("[educational:] when intervals are built over different orders")
+	@Tag("Educational: interval equality and dependence on order")
 	final class WhenIntervalsAreBuiltOverDifferentOrders
 	{
 		@Test
