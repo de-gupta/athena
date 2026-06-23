@@ -1,11 +1,23 @@
 package de.gupta.commons.utility.math.algebra.element.ordered;
 
 import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveAbelianGroup;
-import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
+import de.gupta.commons.utility.math.ordering.element.AffinelyOrdered;
 
 public interface OrderedAdditiveGroup<E extends OrderedAdditiveGroup<E>>
-		extends AdditiveAbelianGroup<E>, TotallyOrdered<E>
+		extends AdditiveAbelianGroup<E>, AffinelyOrdered<E, E>
 {
+	@Override
+	default E displacementTo(final E other)
+	{
+		return other.subtract(self());
+	}
+
+	@Override
+	default E translate(final E displacement)
+	{
+		return add(displacement);
+	}
+
 	default boolean isPositive()
 	{
 		return compare(zero()).isGreaterThan();
