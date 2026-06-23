@@ -93,6 +93,7 @@ public final class Intervals
 	{
 	}
 
+	// Intervals from different ForOrder instances must not be mixed. See .specification/algebra/IntervalOrderEquality.md.
 	public record ForOrder<E>(IntervalOrderStructure<E> ios)
 	{
 		public BoundedInterval<E> open(final E lower, final E upper)
