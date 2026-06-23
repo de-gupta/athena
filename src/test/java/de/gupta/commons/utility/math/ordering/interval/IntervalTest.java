@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.ordering.interval;
 
 import de.gupta.commons.utility.math.ordering.OrderRelation;
+import de.gupta.commons.utility.math.ordering.bound.Bound;
 import de.gupta.commons.utility.math.ordering.element.TotallyOrdered;
 import de.gupta.commons.utility.math.ordering.structure.IntegerNaturalOrder;
 import de.gupta.commons.utility.math.ordering.structure.TotalOrderStructure;
@@ -135,6 +136,37 @@ final class IntervalTest
 			assertThat(interval.contains(e(Integer.MIN_VALUE))).isEqualTo(true);
 			assertThat(interval.contains(e(0))).isEqualTo(true);
 			assertThat(interval.contains(e(Integer.MAX_VALUE))).isEqualTo(true);
+		}
+
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("reportsBoundedSidesCases")
+		@DisplayName("reports whether each side is bounded")
+		void reportsWhetherEachSideIsBounded(final String as, final UnboundedInterval<IntElement> interval,
+		                                     final boolean expectedBoundedBelow, final boolean expectedBoundedAbove)
+		{
+			assertThat(interval.isBoundedBelow()).as("%s: isBoundedBelow", as).isEqualTo(expectedBoundedBelow);
+			assertThat(interval.isBoundedAbove()).as("%s: isBoundedAbove", as).isEqualTo(expectedBoundedAbove);
+		}
+
+		@Test
+		@DisplayName("throws when both bounds are present")
+		void throwsWhenBothBoundsArePresent()
+		{
+			assertThatThrownBy(() -> UnboundedIntervalImpl.of(Optional.of(new Bound.Closed<>(e(1))),
+					Optional.of(new Bound.Closed<>(e(5))), IntElement::compare))
+					.as("unbounded interval may not carry both bounds")
+					.isInstanceOf(IllegalArgumentException.class);
+		}
+
+		private static Stream<Arguments> reportsBoundedSidesCases()
+		{
+			return Stream.of(
+					Arguments.of("[3,inf) is bounded below only", Intervals.atLeast(e(3)), true, false),
+					Arguments.of("(3,inf) is bounded below only", Intervals.greaterThan(e(3)), true, false),
+					Arguments.of("(-inf,3] is bounded above only", Intervals.atMost(e(3)), false, true),
+					Arguments.of("(-inf,3) is bounded above only", Intervals.lessThan(e(3)), false, true),
+					Arguments.of("(-inf,inf) is unbounded on both sides", Intervals.all(), false, false)
+			);
 		}
 	}
 
@@ -562,7 +594,7 @@ final class IntervalTest
 
 	@Nested
 	@DisplayName("[educational:] when intervals are built over different orders")
-	@Tag("Educational: interval equality and dependence on order")
+	@Tag("educational")
 	final class WhenIntervalsAreBuiltOverDifferentOrders
 	{
 		@Test
@@ -586,6 +618,116 @@ final class IntervalTest
 				if (absoluteComparison != 0) return OrderRelation.from(absoluteComparison);
 				return OrderRelation.from(Integer.compare(left, right));
 			};
+		}
+	}
+
+	@Nested
+	@DisplayName("when comparing interval identity")
+	final class WhenComparingIntervalIdentity
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("boundedEqualityCases")
+		@DisplayName("bounded intervals implement equals consistently")
+		void boundedIntervalsImplementEqualsConsistently(final String as, final BoundedInterval<IntElement> left,
+		                                                 final Object right, final boolean expected)
+		{
+			assertThat(left.equals(right)).as(as).isEqualTo(expected);
+		}
+
+		@Test
+		@DisplayName("equal bounded intervals have the same hash code")
+		void equalBoundedIntervalsHaveTheSameHashCode()
+		{
+			var left = closed(1, 5);
+			var right = Intervals.over(IntElement::compare).closed(e(1), e(5));
+
+			assertThat(left).as("sanity").isEqualTo(right);
+			assertThat(left.hashCode()).as("equal bounded hashCode").isEqualTo(right.hashCode());
+			assertThat(left.lowerBound()).as("bounded lowerBound").hasValue(left.lower());
+			assertThat(left.upperBound()).as("bounded upperBound").hasValue(left.upper());
+		}
+
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("unboundedEqualityCases")
+		@DisplayName("unbounded intervals implement equals consistently")
+		void unboundedIntervalsImplementEqualsConsistently(final String as, final UnboundedInterval<IntElement> left,
+		                                                   final Object right, final boolean expected)
+		{
+			assertThat(left.equals(right)).as(as).isEqualTo(expected);
+		}
+
+		@Test
+		@DisplayName("equal unbounded intervals have the same hash code")
+		void equalUnboundedIntervalsHaveTheSameHashCode()
+		{
+			var left = Intervals.atLeast(e(3));
+			var right = Intervals.over(IntElement::compare).atLeast(e(3));
+
+			assertThat(left).as("sanity").isEqualTo(right);
+			assertThat(left.hashCode()).as("equal unbounded hashCode").isEqualTo(right.hashCode());
+			assertThat(left.lowerBound()).as("unbounded lowerBound").hasValue(left.lower().get());
+			assertThat(left.upperBound()).as("unbounded upperBound").isEmpty();
+		}
+
+		private static Stream<Arguments> boundedEqualityCases()
+		{
+			return Stream.of(
+					Arguments.of("bounded interval equals itself", closed(1, 5), closed(1, 5), true),
+					Arguments.of("bounded interval equals same bounds from explicit order", closed(1, 5),
+							Intervals.over(IntElement::compare).closed(e(1), e(5)), true),
+					Arguments.of("bounded interval does not equal different bounds", closed(1, 5), closed(1, 6), false),
+					Arguments.of("bounded interval does not equal null", closed(1, 5), null, false),
+					Arguments.of("bounded interval does not equal arbitrary object", closed(1, 5), "not an interval",
+							false)
+			);
+		}
+
+		private static Stream<Arguments> unboundedEqualityCases()
+		{
+			return Stream.of(
+					Arguments.of("unbounded interval equals itself", Intervals.atLeast(e(3)), Intervals.atLeast(e(3)),
+							true),
+					Arguments.of("unbounded interval equals same bounds from explicit order", Intervals.atLeast(e(3)),
+							Intervals.over(IntElement::compare).atLeast(e(3)), true),
+					Arguments.of("unbounded interval does not equal different openness", Intervals.atLeast(e(3)),
+							Intervals.greaterThan(e(3)), false),
+					Arguments.of("unbounded interval does not equal null", Intervals.atLeast(e(3)), null, false),
+					Arguments.of("unbounded interval does not equal arbitrary object", Intervals.atLeast(e(3)),
+							"not an interval", false)
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when constructing through Intervals.ForOrder")
+	final class WhenConstructingThroughForOrder
+	{
+		private static final Intervals.ForOrder<IntElement> FOR_ORDER = Intervals.over(IntElement::compare);
+
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("factoryCases")
+		@DisplayName("produces intervals with the same semantics as the element-side factories")
+		void producesIntervalsWithTheSameSemanticsAsTheElementSideFactories(final String as,
+		                                                                    final Interval<IntElement> actual,
+		                                                                    final Interval<IntElement> expected)
+		{
+			assertThat(actual).as(as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> factoryCases()
+		{
+			return Stream.of(
+					Arguments.of("open", FOR_ORDER.open(e(1), e(5)), Intervals.open(e(1), e(5))),
+					Arguments.of("closedOpen", FOR_ORDER.closedOpen(e(1), e(5)), Intervals.closedOpen(e(1), e(5))),
+					Arguments.of("openClosed", FOR_ORDER.openClosed(e(1), e(5)), Intervals.openClosed(e(1), e(5))),
+					Arguments.of("closed", FOR_ORDER.closed(e(1), e(5)), Intervals.closed(e(1), e(5))),
+					Arguments.of("point", FOR_ORDER.point(e(5)), Intervals.point(e(5))),
+					Arguments.of("atLeast", FOR_ORDER.atLeast(e(3)), Intervals.atLeast(e(3))),
+					Arguments.of("greaterThan", FOR_ORDER.greaterThan(e(3)), Intervals.greaterThan(e(3))),
+					Arguments.of("atMost", FOR_ORDER.atMost(e(3)), Intervals.atMost(e(3))),
+					Arguments.of("lessThan", FOR_ORDER.lessThan(e(3)), Intervals.lessThan(e(3))),
+					Arguments.of("all", FOR_ORDER.all(), Intervals.all())
+			);
 		}
 	}
 }

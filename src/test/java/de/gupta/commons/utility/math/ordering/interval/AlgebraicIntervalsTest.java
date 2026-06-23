@@ -5,6 +5,11 @@ import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuc
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +52,16 @@ final class AlgebraicIntervalsTest
 	@DisplayName("when shifting")
 	final class WhenShifting
 	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("shiftIntervalDispatchCases")
+		@DisplayName("shift(interval, delta) dispatches to bounded and unbounded implementations")
+		void shiftIntervalDispatchesToBoundedAndUnboundedImplementations(
+				final String as, final Interval<IntegersAsEuclideanDomain> interval,
+				final IntegersAsEuclideanDomain delta, final Interval<IntegersAsEuclideanDomain> expected)
+		{
+			assertThat(AlgebraicIntervals.shift(interval, delta)).as(as).isEqualTo(expected);
+		}
+
 		@Test
 		@DisplayName("shifts bounded interval by delta preserving bound types")
 		void shiftsBoundedIntervalByDeltaPreservingBoundTypes()
@@ -73,6 +88,21 @@ final class AlgebraicIntervalsTest
 			assertThat(result2.upperBound()).isPresent();
 			assertThat(result2.upperBound().get().value()).isEqualTo(n(5));
 			assertThat(result2.lowerBound()).isEmpty();
+		}
+
+		private static Stream<Arguments> shiftIntervalDispatchCases()
+		{
+			return Stream.of(
+					Arguments.of("bounded interval shifts through interval overload", closed(1, 5), n(2), closed(3, 7)),
+					Arguments.of("lower-bounded interval shifts through interval overload", Intervals.atLeast(n(1)),
+							n(2),
+							Intervals.atLeast(n(3))),
+					Arguments.of("upper-bounded interval shifts through interval overload", Intervals.atMost(n(5)),
+							n(-2),
+							Intervals.atMost(n(3))),
+					Arguments.of("fully unbounded interval remains fully unbounded", Intervals.all(), n(4),
+							Intervals.all())
+			);
 		}
 	}
 
