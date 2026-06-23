@@ -4,12 +4,18 @@ import de.gupta.commons.utility.math.algebra.element.ordered.OrderedAdditiveGrou
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedEuclideanDomain;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.ordering.bound.Bound;
+import de.gupta.commons.utility.math.ordering.element.AffinelyOrdered;
 
 public final class AlgebraicIntervals
 {
 	public static <E extends OrderedAdditiveGroup<E>> E length(final BoundedInterval<E> interval)
 	{
 		return interval.upper().value().subtract(interval.lower().value());
+	}
+
+	public static <E extends AffinelyOrdered<E, D>, D> D affineLength(final BoundedInterval<E> interval)
+	{
+		return interval.lowerValue().displacementTo(interval.upperValue());
 	}
 
 	public static <E extends OrderedAdditiveGroup<E>> Interval<E> shift(final Interval<E> interval, final E delta)
@@ -50,6 +56,24 @@ public final class AlgebraicIntervals
 	                                                               final RoundingStrategy<E> strategy)
 	{
 		return interval.lower().value().add(interval.upper().value()).divide(2L, strategy).quotient();
+	}
+
+	public static <E extends AffinelyOrdered<E, D>, D> BoundedInterval<E> shift(final BoundedInterval<E> interval,
+	                                                                            final D delta)
+	{
+		return ((BoundedIntervalImpl<E>) interval).withBounds(
+				shiftBound(interval.lower(), delta),
+				shiftBound(interval.upper(), delta));
+	}
+
+	private static <E extends AffinelyOrdered<E, D>, D> Bound<E> shiftBound(final Bound<E> bound, final D delta)
+	{
+		E shifted = bound.value().translate(delta);
+		return switch (bound)
+		{
+			case Bound.Closed<E> _ -> new Bound.Closed<>(shifted);
+			case Bound.Open<E> _ -> new Bound.Open<>(shifted);
+		};
 	}
 
 	private AlgebraicIntervals()
