@@ -38,6 +38,16 @@ public interface OrderedAdditiveGroup<E extends OrderedAdditiveGroup<E>>
 		return isNonNegative() ? self() : negate();
 	}
 
+	default E positivePart()
+	{
+		return isNonNegative() ? self() : zero();
+	}
+
+	default E negativePart()
+	{
+		return isNonPositive() ? negate() : zero();
+	}
+
 	default boolean isNonNegative()
 	{
 		return compare(zero()).isGreaterThanOrEqualTo();

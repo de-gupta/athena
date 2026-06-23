@@ -70,4 +70,52 @@ final class OrderedAdditiveGroupTest
 			);
 		}
 	}
+
+	@Nested
+	@DisplayName("when extracting the positive part")
+	final class WhenExtractingThePositivePart
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("returnsPositivePartCases")
+		@DisplayName("returns the value when non-negative and zero otherwise")
+		void returnsTheValueWhenNonNegativeAndZeroOtherwise(final String as,
+		                                                    final IntegersAsEuclideanDomain value,
+		                                                    final IntegersAsEuclideanDomain expected)
+		{
+			assertThat(value.positivePart()).as(as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> returnsPositivePartCases()
+		{
+			return Stream.of(
+					Arguments.of("positivePart(7) = 7", integer(7), integer(7)),
+					Arguments.of("positivePart(-7) = 0", integer(-7), integer(0)),
+					Arguments.of("positivePart(0) = 0", integer(0), integer(0))
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when extracting the negative part")
+	final class WhenExtractingTheNegativePart
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("returnsNegativePartCases")
+		@DisplayName("returns the magnitude when non-positive and zero otherwise")
+		void returnsTheMagnitudeWhenNonPositiveAndZeroOtherwise(final String as,
+		                                                        final IntegersAsEuclideanDomain value,
+		                                                        final IntegersAsEuclideanDomain expected)
+		{
+			assertThat(value.negativePart()).as(as).isEqualTo(expected);
+		}
+
+		private static Stream<Arguments> returnsNegativePartCases()
+		{
+			return Stream.of(
+					Arguments.of("negativePart(7) = 0", integer(7), integer(0)),
+					Arguments.of("negativePart(-7) = 7", integer(-7), integer(7)),
+					Arguments.of("negativePart(0) = 0", integer(0), integer(0))
+			);
+		}
+	}
 }
