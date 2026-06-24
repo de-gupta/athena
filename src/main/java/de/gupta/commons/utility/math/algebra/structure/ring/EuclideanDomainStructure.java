@@ -2,19 +2,14 @@ package de.gupta.commons.utility.math.algebra.structure.ring;
 
 import java.util.Objects;
 
-public interface EuclideanDomainStructure<E> extends IntegralDomainStructure<E>, NormedStructure<E>
+public interface EuclideanDomainStructure<E> extends IntegralDomainStructure<E>, NormedStructure<E, Long>
 {
-	DivisionResult<E> divideWithRemainder(E dividend, E divisor);
-
 	default E quotient(final E dividend, final E divisor)
 	{
 		return divideWithRemainder(dividend, divisor).quotient();
 	}
 
-	default E remainder(final E dividend, final E divisor)
-	{
-		return divideWithRemainder(dividend, divisor).remainder();
-	}
+	DivisionResult<E> divideWithRemainder(E dividend, E divisor);
 
 	default E gcd(final E left, final E right)
 	{
@@ -30,5 +25,10 @@ public interface EuclideanDomainStructure<E> extends IntegralDomainStructure<E>,
 			b = remainder;
 		}
 		return a;
+	}
+
+	default E remainder(final E dividend, final E divisor)
+	{
+		return divideWithRemainder(dividend, divisor).remainder();
 	}
 }

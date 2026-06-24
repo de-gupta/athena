@@ -49,7 +49,7 @@ public enum IntegerEuclideanDomainStructure implements OrderedEuclideanDomainStr
 	}
 
 	@Override
-	public long norm(final IntegralNumber element)
+	public Long norm(final IntegralNumber element)
 	{
 		return element.norm();
 	}

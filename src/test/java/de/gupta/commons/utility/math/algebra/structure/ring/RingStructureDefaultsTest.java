@@ -98,9 +98,9 @@ class RingStructureDefaultsTest
 		}
 
 		@Override
-		public long norm(final Integer element)
+		public Long norm(final Integer element)
 		{
-			return Math.abs(element);
+			return (long) Math.absExact(element);
 		}
 
 		@Override
