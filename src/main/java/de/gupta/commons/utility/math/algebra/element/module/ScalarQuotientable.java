@@ -1,7 +1,6 @@
 package de.gupta.commons.utility.math.algebra.element.module;
 
-@FunctionalInterface
-public interface ScalarQuotientable<E, S>
+public interface ScalarQuotientable<E extends ScalarQuotientable<E, S>, S>
 {
 	S ratio(final E denominator);
 }
