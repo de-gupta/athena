@@ -7,7 +7,7 @@ public interface OrderedAdditiveGroupStructure<E>
 		extends AdditiveAbelianGroupStructure<E>, AffineOrderStructure<E, E>
 {
 	@Override
-	default E between(final E from, final E to)
+	default E displacement(final E from, final E to)
 	{
 		return subtract(to, from);
 	}

@@ -221,9 +221,9 @@ final class RationalNumberStructureTest
 		@DisplayName("between returns signed displacement")
 		void betweenReturnsSignedDisplacement()
 		{
-			assertThat(S.between(r(1, 4), r(3, 4))).isEqualTo(r(1, 2));
-			assertThat(S.between(r(3, 4), r(1, 4))).isEqualTo(r(-1, 2));
-			assertThat(S.between(r(1, 3), r(1, 3))).isEqualTo(r(0, 1));
+			assertThat(S.displacement(r(1, 4), r(3, 4))).isEqualTo(r(1, 2));
+			assertThat(S.displacement(r(3, 4), r(1, 4))).isEqualTo(r(-1, 2));
+			assertThat(S.displacement(r(1, 3), r(1, 3))).isEqualTo(r(0, 1));
 		}
 
 		@Test
@@ -240,7 +240,7 @@ final class RationalNumberStructureTest
 		{
 			final RationalNumber from = r(1, 6);
 			final RationalNumber to = r(5, 6);
-			assertThat(S.translate(from, S.between(from, to))).isEqualTo(to);
+			assertThat(S.translate(from, S.displacement(from, to))).isEqualTo(to);
 		}
 	}
 }

@@ -29,7 +29,7 @@ final class AffineOrderStructureTest
 		@DisplayName("returns signed displacement from to to")
 		void returnsSignedDisplacement(final String as, final int from, final int to, final int expected)
 		{
-			assertThat(INTEGERS.between(from, to)).as(as).isEqualTo(expected);
+			assertThat(INTEGERS.displacement(from, to)).as(as).isEqualTo(expected);
 		}
 
 		private static Stream<Arguments> displacementCases()
@@ -75,7 +75,7 @@ final class AffineOrderStructureTest
 		@DisplayName("translate by displacement returns the target")
 		void translateByDisplacementReturnsTarget(final String as, final int from, final int to)
 		{
-			assertThat(INTEGERS.translate(from, INTEGERS.between(from, to))).as(as).isEqualTo(to);
+			assertThat(INTEGERS.translate(from, INTEGERS.displacement(from, to))).as(as).isEqualTo(to);
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -83,7 +83,7 @@ final class AffineOrderStructureTest
 		@DisplayName("displacement is antisymmetric")
 		void displacementIsAntisymmetric(final String as, final int from, final int to)
 		{
-			assertThat(INTEGERS.between(from, to)).as(as).isEqualTo(-INTEGERS.between(to, from));
+			assertThat(INTEGERS.displacement(from, to)).as(as).isEqualTo(-INTEGERS.displacement(to, from));
 		}
 
 		private static Stream<Arguments> roundTripCases()
@@ -115,7 +115,7 @@ final class AffineOrderStructureTest
 		void displacementSignCorrelatesWithOrder(final String as, final int from, final int to,
 		                                         final boolean expectedPositive)
 		{
-			int d = INTEGERS.between(from, to);
+			int d = INTEGERS.displacement(from, to);
 			assertThat(d > 0).as("%s: positive", as).isEqualTo(expectedPositive);
 			assertThat(d < 0).as("%s: negative", as).isEqualTo(!expectedPositive && from != to);
 		}
@@ -125,8 +125,9 @@ final class AffineOrderStructureTest
 		@DisplayName("displacement is additive: between(a,c) = between(a,b) + between(b,c)")
 		void displacementIsAdditive(final String as, final int a, final int b, final int c)
 		{
-			assertThat(INTEGERS.between(a, c)).as(as)
-			                                  .isEqualTo(INTEGERS.between(a, b) + INTEGERS.between(b, c));
+			assertThat(INTEGERS.displacement(a, c)).as(as)
+			                                       .isEqualTo(
+					                                       INTEGERS.displacement(a, b) + INTEGERS.displacement(b, c));
 		}
 
 		private static Stream<Arguments> orderCorrelationCases()
@@ -176,7 +177,7 @@ final class AffineOrderStructureTest
 		void betweenReturnsExactSignedDayCount(final String as, final LocalDate from, final LocalDate to,
 		                                       final long expected)
 		{
-			assertThat(DATES.between(from, to)).as(as).isEqualTo(expected);
+			assertThat(DATES.displacement(from, to)).as(as).isEqualTo(expected);
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -201,7 +202,7 @@ final class AffineOrderStructureTest
 		@DisplayName("translate by displacement returns the target")
 		void translateByDisplacementReturnsTarget(final String as, final LocalDate from, final LocalDate to)
 		{
-			assertThat(DATES.translate(from, DATES.between(from, to))).as(as).isEqualTo(to);
+			assertThat(DATES.translate(from, DATES.displacement(from, to))).as(as).isEqualTo(to);
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -209,7 +210,7 @@ final class AffineOrderStructureTest
 		@DisplayName("displacement is antisymmetric")
 		void displacementIsAntisymmetric(final String as, final LocalDate from, final LocalDate to)
 		{
-			assertThat(DATES.between(from, to)).as(as).isEqualTo(-DATES.between(to, from));
+			assertThat(DATES.displacement(from, to)).as(as).isEqualTo(-DATES.displacement(to, from));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -217,8 +218,8 @@ final class AffineOrderStructureTest
 		@DisplayName("displacement is additive: between(a,c) = between(a,b) + between(b,c)")
 		void displacementIsAdditive(final String as, final LocalDate a, final LocalDate b, final LocalDate c)
 		{
-			assertThat(DATES.between(a, c)).as(as)
-			                               .isEqualTo(DATES.between(a, b) + DATES.between(b, c));
+			assertThat(DATES.displacement(a, c)).as(as)
+			                                    .isEqualTo(DATES.displacement(a, b) + DATES.displacement(b, c));
 		}
 
 		private static Stream<Arguments> betweenCases()

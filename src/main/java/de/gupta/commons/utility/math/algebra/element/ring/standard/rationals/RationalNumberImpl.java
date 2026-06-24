@@ -76,4 +76,10 @@ record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) 
 	{
 		return of(IntegralNumberFactory.of(0), IntegralNumberFactory.of(1));
 	}
+
+	@Override
+	public RationalNumber ratio(final RationalNumber denominator)
+	{
+		return divide(denominator);
+	}
 }

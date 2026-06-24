@@ -19,7 +19,7 @@ public interface AffineOrderStructure<E, D> extends TotalOrderStructure<E>
 			}
 
 			@Override
-			public D between(final E from, final E to)
+			public D displacement(final E from, final E to)
 			{
 				return between.apply(from, to);
 			}
@@ -32,7 +32,7 @@ public interface AffineOrderStructure<E, D> extends TotalOrderStructure<E>
 		};
 	}
 
-	D between(E from, E to);
+	D displacement(E from, E to);
 
 	E translate(E point, D displacement);
 }
