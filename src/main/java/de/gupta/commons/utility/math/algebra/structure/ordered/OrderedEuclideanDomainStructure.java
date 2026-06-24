@@ -6,7 +6,7 @@ import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.algebra.structure.ring.EuclideanDomainStructure;
 
 public interface OrderedEuclideanDomainStructure<E>
-		extends EuclideanDomainStructure<E>, OrderedRingStructure<E>, ScalarDivisibleStructure<E>
+		extends EuclideanDomainStructure<E>, OrderedRingStructure<E>, ScalarDivisibleStructure<E, Long>
 {
 	@Override
 	default DivisionResult<E> divideWithRemainder(final E dividend, final E divisor)
@@ -17,7 +17,7 @@ public interface OrderedEuclideanDomainStructure<E>
 	DivisionResult<E> divideFloor(E dividend, E divisor);
 
 	@Override
-	default DivisionResult<E> shrink(final E element, final long scalar, final RoundingStrategy<E> strategy)
+	default DivisionResult<E> shrink(final E element, final Long scalar, final RoundingStrategy<E> strategy)
 	{
 		return divide(element, elementFromLong(scalar), strategy);
 	}
