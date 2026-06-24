@@ -1,0 +1,72 @@
+package de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
+
+import de.gupta.aletheia.collection.Dyad;
+import de.gupta.aletheia.functional.Unfolding;
+import de.gupta.commons.utility.exception.ExceptionHelper;
+import de.gupta.commons.utility.math.algebra.element.ring.IntegralDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+
+record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) implements RationalNumber
+{
+	@Override
+	public RationalNumber reciprocal()
+	{
+		return of(denominator, numerator);
+	}
+
+	static RationalNumber of(final IntegralNumber numerator, final IntegralNumber denominator)
+	{
+		return Unfolding.beckon(denominator)
+		                .interdict(IntegralDomain::isZero, ExceptionHelper.iaeFrom("Denominator may not be zero"))
+		                .metamorphose(_ -> normalize(numerator, denominator))
+		                .coronate(pair -> new RationalNumberImpl(pair.first(), pair.second()));
+	}
+
+	private static Dyad<IntegralNumber, IntegralNumber> normalize(final IntegralNumber numerator,
+	                                                              final IntegralNumber denominator)
+	{
+		final IntegralNumber gcd = numerator.abs().gcd(denominator.abs());
+
+		var normalizedNumerator = numerator.divideFloor(gcd).quotient();
+		var normalizedDenominator = denominator.divideFloor(gcd).quotient();
+
+		if (normalizedDenominator.isNegative())
+		{
+			return Dyad.of(normalizedNumerator.negate(), normalizedDenominator.negate());
+		}
+
+		return Dyad.of(normalizedNumerator, normalizedDenominator);
+	}
+
+	@Override
+	public RationalNumber negate()
+	{
+		return of(numerator.negate(), denominator);
+	}
+
+	@Override
+	public RationalNumber one()
+	{
+		return of(IntegralNumberFactory.of(1), IntegralNumberFactory.of(1));
+	}
+
+	@Override
+	public RationalNumber multiply(final RationalNumber other)
+	{
+		return of(numerator.multiply(other.numerator()), denominator.multiply(other.denominator()));
+	}
+
+	@Override
+	public RationalNumber add(final RationalNumber other)
+	{
+		return of(numerator.multiply(other.denominator()).add(denominator.multiply(other.numerator())),
+				denominator.multiply(other.denominator()));
+	}
+
+	@Override
+	public RationalNumber zero()
+	{
+		return of(IntegralNumberFactory.of(0), IntegralNumberFactory.of(1));
+	}
+}

@@ -13,19 +13,30 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("LongEuclideanDomainStructure")
+@DisplayName("IntegralNumber")
 final class LongEuclideanDomainStructureTest
 {
+	private static IntegralNumber i(final long v)
+	{
+		return IntegralNumberFactory.of(v);
+	}
+
 	@Nested
 	@DisplayName("when exposing identity elements")
 	final class WhenExposingIdentityElements
 	{
 		@Test
-		@DisplayName("returns zero and one")
-		void returnsZeroAndOne()
+		@DisplayName("zero returns the additive identity")
+		void zeroReturnsAdditiveIdentity()
 		{
-			assertThat(LongEuclideanDomainStructure.INSTANCE.zero()).as("zero").isEqualTo(0L);
-			assertThat(LongEuclideanDomainStructure.INSTANCE.one()).as("one").isEqualTo(1L);
+			assertThat(i(42).zero().value()).as("zero").isEqualTo(0L);
+		}
+
+		@Test
+		@DisplayName("one returns the multiplicative identity")
+		void oneReturnsMultiplicativeIdentity()
+		{
+			assertThat(i(42).one().value()).as("one").isEqualTo(1L);
 		}
 	}
 
@@ -34,50 +45,53 @@ final class LongEuclideanDomainStructureTest
 	final class WhenPerformingArithmetic
 	{
 		@ParameterizedTest(name = "{0}")
-		@MethodSource("addsValuesCases")
-		@DisplayName("adds values")
-		void addsValues(final String as, final long left, final long right, final long expected)
+		@MethodSource("addsCases")
+		@DisplayName("adds correctly")
+		void addsCorrectly(final String as, final long left, final long right, final long expected)
 		{
-			assertThat(LongEuclideanDomainStructure.INSTANCE.add(left, right)).as(as).isEqualTo(expected);
+			assertThat(i(left).add(i(right))).as(as).isEqualTo(i(expected));
 		}
 
 		@ParameterizedTest(name = "{0}")
-		@MethodSource("multipliesValuesCases")
-		@DisplayName("multiplies values")
-		void multipliesValues(final String as, final long left, final long right, final long expected)
+		@MethodSource("multipliesCases")
+		@DisplayName("multiplies correctly")
+		void multipliesCorrectly(final String as, final long left, final long right, final long expected)
 		{
-			assertThat(LongEuclideanDomainStructure.INSTANCE.multiply(left, right)).as(as).isEqualTo(expected);
+			assertThat(i(left).multiply(i(right))).as(as).isEqualTo(i(expected));
 		}
 
 		@ParameterizedTest(name = "{0}")
-		@MethodSource("negatesValuesCases")
-		@DisplayName("negates values")
-		void negatesValues(final String as, final long value, final long expected)
+		@MethodSource("negatesCases")
+		@DisplayName("negates correctly")
+		void negatesCorrectly(final String as, final long value, final long expected)
 		{
-			assertThat(LongEuclideanDomainStructure.INSTANCE.negate(value)).as(as).isEqualTo(expected);
+			assertThat(i(value).negate()).as(as).isEqualTo(i(expected));
 		}
 
-		private static Stream<Arguments> addsValuesCases()
+		private static Stream<Arguments> addsCases()
 		{
 			return Stream.of(
 					Arguments.of("3 + 4 = 7", 3L, 4L, 7L),
-					Arguments.of("-3 + 4 = 1", -3L, 4L, 1L)
+					Arguments.of("-3 + 4 = 1", -3L, 4L, 1L),
+					Arguments.of("0 + 0 = 0", 0L, 0L, 0L)
 			);
 		}
 
-		private static Stream<Arguments> multipliesValuesCases()
+		private static Stream<Arguments> multipliesCases()
 		{
 			return Stream.of(
 					Arguments.of("3 * 4 = 12", 3L, 4L, 12L),
-					Arguments.of("-3 * 4 = -12", -3L, 4L, -12L)
+					Arguments.of("-3 * 4 = -12", -3L, 4L, -12L),
+					Arguments.of("0 * 5 = 0", 0L, 5L, 0L)
 			);
 		}
 
-		private static Stream<Arguments> negatesValuesCases()
+		private static Stream<Arguments> negatesCases()
 		{
 			return Stream.of(
 					Arguments.of("negate 5 = -5", 5L, -5L),
-					Arguments.of("negate -3 = 3", -3L, 3L)
+					Arguments.of("negate -3 = 3", -3L, 3L),
+					Arguments.of("negate 0 = 0", 0L, 0L)
 			);
 		}
 	}
@@ -87,42 +101,55 @@ final class LongEuclideanDomainStructureTest
 	final class WhenCheckingZeroAndNorm
 	{
 		@Test
-		@DisplayName("identifies the zero element")
-		void identifiesTheZeroElement()
+		@DisplayName("isZero identifies the zero element")
+		void isZeroIdentifiesZeroElement()
 		{
-			assertThat(LongEuclideanDomainStructure.INSTANCE.isZero(0L)).as("zero element").isEqualTo(true);
-			assertThat(LongEuclideanDomainStructure.INSTANCE.isZero(5L)).as("non-zero element").isEqualTo(false);
+			assertThat(i(0).isZero()).as("zero").isTrue();
+			assertThat(i(5).isZero()).as("non-zero").isFalse();
+			assertThat(i(-1).isZero()).as("negative").isFalse();
 		}
 
 		@Test
-		@DisplayName("returns the absolute value as norm")
-		void returnsTheAbsoluteValueAsNorm()
+		@DisplayName("norm returns absolute value")
+		void normReturnsAbsoluteValue()
 		{
-			assertThat(LongEuclideanDomainStructure.INSTANCE.norm(-9L)).as("norm").isEqualTo(9L);
+			assertThat(i(-9).norm()).as("negative").isEqualTo(9L);
+			assertThat(i(7).norm()).as("positive").isEqualTo(7L);
+			assertThat(i(0).norm()).as("zero").isEqualTo(0L);
 		}
 
 		@Test
-		@DisplayName("throws ArithmeticException for the norm of MIN_VALUE")
-		void throwsArithmeticExceptionForTheNormOfMinValue()
+		@DisplayName("throws ArithmeticException for norm of MIN_VALUE")
+		void throwsForNormOfMinValue()
 		{
-			assertThatThrownBy(() -> LongEuclideanDomainStructure.INSTANCE.norm(Long.MIN_VALUE))
-					.as("norm(Long.MIN_VALUE)")
+			assertThatThrownBy(() -> i(Long.MIN_VALUE).norm())
 					.isInstanceOf(ArithmeticException.class);
 		}
 	}
 
 	@Nested
-	@DisplayName("when dividing with remainder")
-	final class WhenDividingWithRemainder
+	@DisplayName("when dividing with floor semantics")
+	final class WhenDividingWithFloorSemantics
 	{
-		@Test
-		@DisplayName("uses floor division semantics")
-		void usesFloorDivisionSemantics()
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("divideFloorCases")
+		@DisplayName("divideFloor returns correct quotient and remainder")
+		void divideFloorReturnsCorrectQuotientAndRemainder(final String as, final long dividend, final long divisor,
+		                                                   final long expectedQ, final long expectedR)
 		{
-			DivisionResult<Long> result = LongEuclideanDomainStructure.INSTANCE.divideWithRemainder(-17L, 5L);
+			final DivisionResult<IntegralNumber> result = i(dividend).divideFloor(i(divisor));
+			assertThat(result.quotient()).as("%s: quotient", as).isEqualTo(i(expectedQ));
+			assertThat(result.remainder()).as("%s: remainder", as).isEqualTo(i(expectedR));
+		}
 
-			assertThat(result.quotient()).as("quotient").isEqualTo(-4L);
-			assertThat(result.remainder()).as("remainder").isEqualTo(3L);
+		private static Stream<Arguments> divideFloorCases()
+		{
+			return Stream.of(
+					Arguments.of("-17 / 5", -17L, 5L, -4L, 3L),
+					Arguments.of("17 / 5", 17L, 5L, 3L, 2L),
+					Arguments.of("-17 / -5", -17L, -5L, 3L, -2L),
+					Arguments.of("10 / 2 (exact)", 10L, 2L, 5L, 0L)
+			);
 		}
 	}
 
@@ -131,30 +158,24 @@ final class LongEuclideanDomainStructureTest
 	final class WhenArithmeticOverflows
 	{
 		@Test
-		@DisplayName("throws ArithmeticException for overflowing addition")
-		void throwsArithmeticExceptionForOverflowingAddition()
+		@DisplayName("add throws on overflow")
+		void addThrowsOnOverflow()
 		{
-			assertThatThrownBy(() -> LongEuclideanDomainStructure.INSTANCE.add(Long.MAX_VALUE, 1L))
-					.as("MAX_VALUE + 1")
-					.isInstanceOf(ArithmeticException.class);
+			assertThatThrownBy(() -> i(Long.MAX_VALUE).add(i(1L))).isInstanceOf(ArithmeticException.class);
 		}
 
 		@Test
-		@DisplayName("throws ArithmeticException for overflowing multiplication")
-		void throwsArithmeticExceptionForOverflowingMultiplication()
+		@DisplayName("multiply throws on overflow")
+		void multiplyThrowsOnOverflow()
 		{
-			assertThatThrownBy(() -> LongEuclideanDomainStructure.INSTANCE.multiply(Long.MAX_VALUE, 2L))
-					.as("MAX_VALUE * 2")
-					.isInstanceOf(ArithmeticException.class);
+			assertThatThrownBy(() -> i(Long.MAX_VALUE).multiply(i(2L))).isInstanceOf(ArithmeticException.class);
 		}
 
 		@Test
-		@DisplayName("throws ArithmeticException for overflowing negation")
-		void throwsArithmeticExceptionForOverflowingNegation()
+		@DisplayName("negate throws on MIN_VALUE overflow")
+		void negateThrowsOnMinValueOverflow()
 		{
-			assertThatThrownBy(() -> LongEuclideanDomainStructure.INSTANCE.negate(Long.MIN_VALUE))
-					.as("negate(MIN_VALUE)")
-					.isInstanceOf(ArithmeticException.class);
+			assertThatThrownBy(() -> i(Long.MIN_VALUE).negate()).isInstanceOf(ArithmeticException.class);
 		}
 	}
 }
