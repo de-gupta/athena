@@ -1,10 +1,13 @@
 package de.gupta.commons.utility.math.ordering.element;
 
+import de.gupta.commons.utility.math.algebra.element.affine.AffineSpaceLaws;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import net.jqwik.api.Arbitraries;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.Provide;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,11 +17,18 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("AffinelyOrdered")
-final class AffinelyOrderedTest
+final class AffinelyOrderedTest implements AffineSpaceLaws<IntegralNumber, IntegralNumber>
 {
 	private static IntegralNumber i(final long value)
 	{
 		return IntegralNumberFactory.of(value);
+	}
+
+	@Override
+	@Provide
+	public Arbitrary<IntegralNumber> elements()
+	{
+		return Arbitraries.longs().between(-1000, 1000).map(IntegralNumberFactory::of);
 	}
 
 	@Nested
@@ -73,53 +83,9 @@ final class AffinelyOrderedTest
 	}
 
 	@Nested
-	@DisplayName("when combining displacement and translation")
-	final class WhenCombiningDisplacementAndTranslation
+	@DisplayName("when verifying ordering consistency")
+	final class WhenVerifyingOrderingConsistency
 	{
-		@ParameterizedTest(name = "{0}")
-		@MethodSource("roundTripCases")
-		@DisplayName("translate by displacement returns the target")
-		void translateByDisplacementReturnsTarget(final String as,
-		                                          final IntegralNumber from,
-		                                          final IntegralNumber to)
-		{
-			assertThat(from.translate(from.displacementTo(to))).as(as).isEqualTo(to);
-		}
-
-		@ParameterizedTest(name = "{0}")
-		@MethodSource("roundTripCases")
-		@DisplayName("displacement is antisymmetric")
-		void displacementIsAntisymmetric(final String as,
-		                                 final IntegralNumber from,
-		                                 final IntegralNumber to)
-		{
-			assertThat(from.displacementTo(to)).as(as).isEqualTo(to.displacementTo(from).negate());
-		}
-
-		private static Stream<Arguments> roundTripCases()
-		{
-			return Stream.of(
-					Arguments.of("3 → 7", i(3), i(7)),
-					Arguments.of("7 → 3", i(7), i(3)),
-					Arguments.of("0 → 0", i(0), i(0)),
-					Arguments.of("-5 → 5", i(-5), i(5))
-			);
-		}
-	}
-
-	@Nested
-	@DisplayName("when verifying affine space laws")
-	final class WhenVerifyingAffineLaws
-	{
-		@Test
-		@DisplayName("translate by zero is identity")
-		void translateByZeroIsIdentity()
-		{
-			assertThat(i(5).translate(i(0))).isEqualTo(i(5));
-			assertThat(i(-3).translate(i(0))).isEqualTo(i(-3));
-			assertThat(i(0).translate(i(0))).isEqualTo(i(0));
-		}
-
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("orderCorrelationCases")
 		@DisplayName("displacement sign correlates with order: a < b iff displacement is positive")
@@ -133,18 +99,6 @@ final class AffinelyOrderedTest
 			assertThat(from.displacementTo(to).isNegative()).as("%s: negative", as).isEqualTo(expectedNegative);
 		}
 
-		@ParameterizedTest(name = "{0}")
-		@MethodSource("additivityCases")
-		@DisplayName("displacement is additive: between(a,c) = between(a,b) + between(b,c)")
-		void displacementIsAdditive(final String as,
-		                            final IntegralNumber a,
-		                            final IntegralNumber b,
-		                            final IntegralNumber c)
-		{
-			assertThat(a.displacementTo(c)).as(as)
-			                               .isEqualTo(a.displacementTo(b).add(b.displacementTo(c)));
-		}
-
 		private static Stream<Arguments> orderCorrelationCases()
 		{
 			return Stream.of(
@@ -152,16 +106,6 @@ final class AffinelyOrderedTest
 					Arguments.of("7 > 3: negative displacement", i(7), i(3), false, true),
 					Arguments.of("-5 < 0: positive displacement", i(-5), i(0), true, false),
 					Arguments.of("0 > -5: negative displacement", i(0), i(-5), false, true)
-			);
-		}
-
-		private static Stream<Arguments> additivityCases()
-		{
-			return Stream.of(
-					Arguments.of("1→3→7: (1→7) = (1→3)+(3→7)", i(1), i(3), i(7)),
-					Arguments.of("7→3→1: (7→1) = (7→3)+(3→1)", i(7), i(3), i(1)),
-					Arguments.of("-5→0→5: (-5→5) = (-5→0)+(0→5)", i(-5), i(0), i(5)),
-					Arguments.of("equal points: all displacements zero", i(4), i(4), i(4))
 			);
 		}
 	}
