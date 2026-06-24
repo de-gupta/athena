@@ -36,7 +36,7 @@ record IntegersAsEuclideanDomain(long value) implements IntegralNumber
 	}
 
 	@Override
-	public long norm()
+	public Long norm()
 	{
 		return Math.absExact(value);
 	}

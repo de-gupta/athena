@@ -2,7 +2,7 @@ package de.gupta.commons.utility.math.algebra.element.ring;
 
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 
-public interface EuclideanDomain<E extends EuclideanDomain<E>> extends IntegralDomain<E>, Normed
+public interface EuclideanDomain<E extends EuclideanDomain<E>> extends IntegralDomain<E>, Normed<Long>
 {
 	default E quotient(final E divisor)
 	{

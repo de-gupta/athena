@@ -1,6 +1,6 @@
 package de.gupta.commons.utility.math.algebra.element.ring;
 
-public interface Normed
+public interface Normed<N>
 {
-	long norm();
+	N norm();
 }
