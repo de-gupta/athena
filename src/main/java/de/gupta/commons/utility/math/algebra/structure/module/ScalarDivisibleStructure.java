@@ -5,5 +5,5 @@ import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 
 public interface ScalarDivisibleStructure<E>
 {
-	DivisionResult<E> divide(final E element, final long scalar, final RoundingStrategy<E> strategy);
+	DivisionResult<E> shrink(final E element, final long scalar, final RoundingStrategy<E> strategy);
 }

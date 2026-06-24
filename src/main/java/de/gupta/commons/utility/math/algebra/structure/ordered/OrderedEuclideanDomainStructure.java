@@ -17,7 +17,7 @@ public interface OrderedEuclideanDomainStructure<E>
 	DivisionResult<E> divideFloor(E dividend, E divisor);
 
 	@Override
-	default DivisionResult<E> divide(final E element, final long scalar, final RoundingStrategy<E> strategy)
+	default DivisionResult<E> shrink(final E element, final long scalar, final RoundingStrategy<E> strategy)
 	{
 		return divide(element, elementFromLong(scalar), strategy);
 	}

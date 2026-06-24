@@ -36,7 +36,7 @@ final class ScalarDivisibleTest
 		assertThat(element.remainder()).as("element remainder").isEqualTo(e(expectedR));
 
 		DivisionResult<IntegralNumber> structure =
-				IntegerEuclideanDomainStructure.INSTANCE.divide(e(dividend), scalar, strategy);
+				IntegerEuclideanDomainStructure.INSTANCE.shrink(e(dividend), scalar, strategy);
 		assertThat(structure.quotient()).as("structure quotient").isEqualTo(e(expectedQ));
 		assertThat(structure.remainder()).as("structure remainder").isEqualTo(e(expectedR));
 	}
