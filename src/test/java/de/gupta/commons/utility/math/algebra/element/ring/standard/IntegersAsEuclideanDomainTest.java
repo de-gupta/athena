@@ -1,5 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ring.standard;
 
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,9 +27,9 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("adds two values correctly")
 		void addsTwoValuesCorrectly(final String as, final long left, final long right, final long expected)
 		{
-			assertThat(IntegersAsEuclideanDomain.of(left).add(IntegersAsEuclideanDomain.of(right)))
+			assertThat(IntegralNumberFactory.of(left).add(IntegralNumberFactory.of(right)))
 					.as(as)
-					.isEqualTo(IntegersAsEuclideanDomain.of(expected));
+					.isEqualTo(IntegralNumberFactory.of(expected));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -35,7 +37,7 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("throws ArithmeticException on overflow")
 		void throwsOnOverflow(final String as, final long left, final long right)
 		{
-			assertThatThrownBy(() -> IntegersAsEuclideanDomain.of(left).add(IntegersAsEuclideanDomain.of(right)))
+			assertThatThrownBy(() -> IntegralNumberFactory.of(left).add(IntegralNumberFactory.of(right)))
 					.as(as)
 					.isInstanceOf(ArithmeticException.class);
 		}
@@ -68,9 +70,9 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("multiplies two values correctly")
 		void multipliesTwoValuesCorrectly(final String as, final long left, final long right, final long expected)
 		{
-			assertThat(IntegersAsEuclideanDomain.of(left).multiply(IntegersAsEuclideanDomain.of(right)))
+			assertThat(IntegralNumberFactory.of(left).multiply(IntegralNumberFactory.of(right)))
 					.as(as)
-					.isEqualTo(IntegersAsEuclideanDomain.of(expected));
+					.isEqualTo(IntegralNumberFactory.of(expected));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -78,7 +80,7 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("throws ArithmeticException on overflow")
 		void throwsOnOverflow(final String as, final long left, final long right)
 		{
-			assertThatThrownBy(() -> IntegersAsEuclideanDomain.of(left).multiply(IntegersAsEuclideanDomain.of(right)))
+			assertThatThrownBy(() -> IntegralNumberFactory.of(left).multiply(IntegralNumberFactory.of(right)))
 					.as(as)
 					.isInstanceOf(ArithmeticException.class);
 		}
@@ -112,16 +114,16 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("negates value")
 		void negatesValue(final String as, final long value, final long expected)
 		{
-			assertThat(IntegersAsEuclideanDomain.of(value).negate())
+			assertThat(IntegralNumberFactory.of(value).negate())
 					.as(as)
-					.isEqualTo(IntegersAsEuclideanDomain.of(expected));
+					.isEqualTo(IntegralNumberFactory.of(expected));
 		}
 
 		@Test
 		@DisplayName("throws ArithmeticException for MIN_VALUE")
 		void throwsForMinValue()
 		{
-			assertThatThrownBy(() -> IntegersAsEuclideanDomain.of(Long.MIN_VALUE).negate())
+			assertThatThrownBy(() -> IntegralNumberFactory.of(Long.MIN_VALUE).negate())
 					.isInstanceOf(ArithmeticException.class);
 		}
 
@@ -147,14 +149,14 @@ final class IntegersAsEuclideanDomainTest
 				final String as, final long dividend, final long divisor,
 				final long expectedQuotient, final long expectedRemainder)
 		{
-			DivisionResult<IntegersAsEuclideanDomain> result =
-					IntegersAsEuclideanDomain.of(dividend).divideWithRemainder(
-							IntegersAsEuclideanDomain.of(divisor));
+			DivisionResult<IntegralNumbers> result =
+					IntegralNumberFactory.of(dividend).divideWithRemainder(
+							IntegralNumberFactory.of(divisor));
 
 			assertThat(result.quotient()).as("%s: quotient", as)
-			                             .isEqualTo(IntegersAsEuclideanDomain.of(expectedQuotient));
+			                             .isEqualTo(IntegralNumberFactory.of(expectedQuotient));
 			assertThat(result.remainder()).as("%s: remainder", as)
-			                              .isEqualTo(IntegersAsEuclideanDomain.of(expectedRemainder));
+			                              .isEqualTo(IntegralNumberFactory.of(expectedRemainder));
 		}
 
 		@Test
@@ -164,9 +166,9 @@ final class IntegersAsEuclideanDomainTest
 			long dividend = -17L;
 			long divisor = 5L;
 
-			DivisionResult<IntegersAsEuclideanDomain> result =
-					IntegersAsEuclideanDomain.of(dividend).divideWithRemainder(
-							IntegersAsEuclideanDomain.of(divisor));
+			DivisionResult<IntegralNumbers> result =
+					IntegralNumberFactory.of(dividend).divideWithRemainder(
+							IntegralNumberFactory.of(divisor));
 
 			long reconstructed = result.quotient().value() * divisor + result.remainder().value();
 			assertThat(reconstructed).as("q * d + r must equal dividend").isEqualTo(dividend);
@@ -177,7 +179,7 @@ final class IntegersAsEuclideanDomainTest
 		void throwsForDivisionByZero()
 		{
 			assertThatThrownBy(
-					() -> IntegersAsEuclideanDomain.of(7).divideWithRemainder(IntegersAsEuclideanDomain.of(0)))
+					() -> IntegralNumberFactory.of(7).divideWithRemainder(IntegralNumberFactory.of(0)))
 					.isInstanceOf(ArithmeticException.class);
 		}
 
@@ -202,14 +204,14 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("returns absolute value")
 		void returnsAbsoluteValue(final String as, final long value, final long expected)
 		{
-			assertThat(IntegersAsEuclideanDomain.of(value).norm()).as(as).isEqualTo(expected);
+			assertThat(IntegralNumberFactory.of(value).norm()).as(as).isEqualTo(expected);
 		}
 
 		@Test
 		@DisplayName("throws ArithmeticException for MIN_VALUE")
 		void throwsForMinValue()
 		{
-			assertThatThrownBy(() -> IntegersAsEuclideanDomain.of(Long.MIN_VALUE).norm())
+			assertThatThrownBy(() -> IntegralNumberFactory.of(Long.MIN_VALUE).norm())
 					.isInstanceOf(ArithmeticException.class);
 		}
 
@@ -232,9 +234,9 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("computes gcd correctly")
 		void computesGcdCorrectly(final String as, final long a, final long b, final long expected)
 		{
-			assertThat(IntegersAsEuclideanDomain.of(a).gcd(IntegersAsEuclideanDomain.of(b)))
+			assertThat(IntegralNumberFactory.of(a).gcd(IntegralNumberFactory.of(b)))
 					.as(as)
-					.isEqualTo(IntegersAsEuclideanDomain.of(expected));
+					.isEqualTo(IntegralNumberFactory.of(expected));
 		}
 
 		private static Stream<Arguments> computesGcdCorrectlyCases()
@@ -256,7 +258,7 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("zero is additive identity")
 		void zeroIsAdditiveIdentity()
 		{
-			IntegersAsEuclideanDomain a = IntegersAsEuclideanDomain.of(42);
+			IntegralNumbers a = IntegralNumberFactory.of(42);
 
 			assertThat(a.add(a.zero())).as("a + 0").isEqualTo(a);
 			assertThat(a.zero().add(a)).as("0 + a").isEqualTo(a);
@@ -266,7 +268,7 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("one is multiplicative identity")
 		void oneIsMultiplicativeIdentity()
 		{
-			IntegersAsEuclideanDomain a = IntegersAsEuclideanDomain.of(42);
+			IntegralNumbers a = IntegralNumberFactory.of(42);
 
 			assertThat(a.multiply(a.one())).as("a * 1").isEqualTo(a);
 			assertThat(a.one().multiply(a)).as("1 * a").isEqualTo(a);
@@ -276,9 +278,9 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("isZero is true only for zero element")
 		void isZeroIsTrueOnlyForZeroElement()
 		{
-			assertThat(IntegersAsEuclideanDomain.of(0).isZero()).as("0 is zero").isEqualTo(true);
-			assertThat(IntegersAsEuclideanDomain.of(1).isZero()).as("1 is not zero").isEqualTo(false);
-			assertThat(IntegersAsEuclideanDomain.of(-1).isZero()).as("-1 is not zero").isEqualTo(false);
+			assertThat(IntegralNumberFactory.of(0).isZero()).as("0 is zero").isEqualTo(true);
+			assertThat(IntegralNumberFactory.of(1).isZero()).as("1 is not zero").isEqualTo(false);
+			assertThat(IntegralNumberFactory.of(-1).isZero()).as("-1 is not zero").isEqualTo(false);
 		}
 	}
 }

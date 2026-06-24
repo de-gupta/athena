@@ -1,7 +1,8 @@
 package de.gupta.commons.utility.math.series;
 
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
-import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,13 +15,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("SeriesOperations")
 final class SeriesOperationsTest
 {
-	private static final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> SERIES =
+	private static final Series<IntegralNumbers, IntegralNumbers> SERIES =
 			SeriesFactory.of(Map.of(i(1), i(10), i(3), i(30), i(5), i(50), i(7), i(70), i(9), i(90)));
-	private static final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> EMPTY = SeriesFactory.empty();
+	private static final Series<IntegralNumbers, IntegralNumbers> EMPTY = SeriesFactory.empty();
 
-	private static IntegersAsEuclideanDomain i(final long v)
+	private static IntegralNumbers i(final long v)
 	{
-		return IntegersAsEuclideanDomain.of(v);
+		return IntegralNumberFactory.of(v);
 	}
 
 	@Nested
@@ -73,7 +74,7 @@ final class SeriesOperationsTest
 		@DisplayName("average of series with non-divisible sum floors correctly")
 		void averageWithNonDivisibleSumFloorsCorrectly()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> uneven =
+			final Series<IntegralNumbers, IntegralNumbers> uneven =
 					SeriesFactory.of(Map.of(i(1), i(10), i(2), i(20), i(3), i(31)));
 			assertThat(SeriesOperations.average(uneven, RoundingStrategies.floor()))
 					.isEqualTo(Optional.of(i(20)));
@@ -95,7 +96,7 @@ final class SeriesOperationsTest
 		@DisplayName("changes returns consecutive differences indexed at later entry")
 		void changesReturnsConsecutiveDifferences()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> changes =
+			final Series<IntegralNumbers, IntegralNumbers> changes =
 					SeriesOperations.changes(SERIES);
 			assertThat(changes.size()).isEqualTo(4);
 			assertThat(changes.at(i(1))).isEmpty();
@@ -109,9 +110,9 @@ final class SeriesOperationsTest
 		@DisplayName("changes of decreasing series returns negative differences")
 		void changesOfDecreasingSeriesReturnsNegativeDifferences()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> decreasing =
+			final Series<IntegralNumbers, IntegralNumbers> decreasing =
 					SeriesFactory.of(Map.of(i(1), i(90), i(2), i(60), i(3), i(30)));
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> changes =
+			final Series<IntegralNumbers, IntegralNumbers> changes =
 					SeriesOperations.changes(decreasing);
 			assertThat(changes.at(i(2))).isEqualTo(Optional.of(i(-30)));
 			assertThat(changes.at(i(3))).isEqualTo(Optional.of(i(-30)));
@@ -135,7 +136,7 @@ final class SeriesOperationsTest
 		@DisplayName("changes respects sub-series slice")
 		void changesRespectsSubSeriesSlice()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> changes =
+			final Series<IntegralNumbers, IntegralNumbers> changes =
 					SeriesOperations.changes(SERIES.between(i(3), i(8)));
 			assertThat(changes.size()).isEqualTo(2);
 			assertThat(changes.at(i(5))).isEqualTo(Optional.of(i(20)));

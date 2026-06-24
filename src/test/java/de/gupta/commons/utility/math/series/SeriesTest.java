@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.series;
 
-import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.ordering.interval.Intervals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,12 +19,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Series")
 final class SeriesTest
 {
-	private static final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> SERIES =
+	private static final Series<IntegralNumbers, IntegralNumbers> SERIES =
 			SeriesFactory.of(Map.of(i(1), i(10), i(3), i(30), i(5), i(50), i(7), i(70), i(9), i(90)));
 
-	private static IntegersAsEuclideanDomain i(final long v)
+	private static IntegralNumbers i(final long v)
 	{
-		return IntegersAsEuclideanDomain.of(v);
+		return IntegralNumberFactory.of(v);
 	}
 
 	@Nested
@@ -81,7 +82,7 @@ final class SeriesTest
 		@DisplayName("first and last are empty on empty series")
 		void firstAndLastAreEmptyOnEmptySeries()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> empty = SeriesFactory.empty();
+			final Series<IntegralNumbers, IntegralNumbers> empty = SeriesFactory.empty();
 			assertThat(empty.first()).isEmpty();
 			assertThat(empty.last()).isEmpty();
 		}
@@ -95,7 +96,7 @@ final class SeriesTest
 		@DisplayName("between uses closed-open semantics [from, to)")
 		void betweenUsesClosedOpenSemantics()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> slice = SERIES.between(i(3), i(7));
+			final Series<IntegralNumbers, IntegralNumbers> slice = SERIES.between(i(3), i(7));
 			assertThat(slice.size()).isEqualTo(2);
 			assertThat(slice.at(i(3))).isEqualTo(Optional.of(i(30)));
 			assertThat(slice.at(i(5))).isEqualTo(Optional.of(i(50)));
@@ -125,7 +126,7 @@ final class SeriesTest
 		@MethodSource("intervalSliceCases")
 		@DisplayName("respects interval bound semantics")
 		void respectsIntervalBoundSemantics(final String as,
-		                                    final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> slice,
+		                                    final Series<IntegralNumbers, IntegralNumbers> slice,
 		                                    final int expectedSize,
 		                                    final boolean includesThree,
 		                                    final boolean includesSeven)
@@ -146,7 +147,7 @@ final class SeriesTest
 		@DisplayName("atLeast returns suffix from bound inclusive")
 		void atLeastReturnsSuffixFromBoundInclusive()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> suffix =
+			final Series<IntegralNumbers, IntegralNumbers> suffix =
 					SERIES.between(Intervals.atLeast(i(5)));
 			assertThat(suffix.size()).isEqualTo(3);
 			assertThat(suffix.at(i(5))).isPresent();
@@ -157,7 +158,7 @@ final class SeriesTest
 		@DisplayName("atMost returns prefix up to bound inclusive")
 		void atMostReturnsPrefixUpToBoundInclusive()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> prefix =
+			final Series<IntegralNumbers, IntegralNumbers> prefix =
 					SERIES.between(Intervals.atMost(i(5)));
 			assertThat(prefix.size()).isEqualTo(3);
 			assertThat(prefix.at(i(5))).isPresent();
@@ -184,7 +185,7 @@ final class SeriesTest
 		@DisplayName("map transforms each value preserving index")
 		void mapTransformsEachValuePreservingIndex()
 		{
-			final Series<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain> shifted =
+			final Series<IntegralNumbers, IntegralNumbers> shifted =
 					SERIES.map(e -> e.add(i(5)));
 			assertThat(shifted.size()).isEqualTo(SERIES.size());
 			assertThat(shifted.at(i(1))).isEqualTo(Optional.of(i(15)));
@@ -196,7 +197,7 @@ final class SeriesTest
 		@DisplayName("map on empty series returns empty series")
 		void mapOnEmptySeriesReturnsEmptySeries()
 		{
-			assertThat(SeriesFactory.<IntegersAsEuclideanDomain, IntegersAsEuclideanDomain>empty()
+			assertThat(SeriesFactory.<IntegralNumbers, IntegralNumbers>empty()
 			                        .map(e -> e.add(i(1))).isEmpty()).isTrue();
 		}
 	}

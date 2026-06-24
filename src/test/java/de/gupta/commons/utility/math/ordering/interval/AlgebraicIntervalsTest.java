@@ -1,7 +1,8 @@
 package de.gupta.commons.utility.math.ordering.interval;
 
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
-import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,14 +17,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("AlgebraicIntervals")
 final class AlgebraicIntervalsTest
 {
-	private static BoundedInterval<IntegersAsEuclideanDomain> closed(final long a, final long b)
+	private static BoundedInterval<IntegralNumbers> closed(final long a, final long b)
 	{
 		return Intervals.closed(n(a), n(b));
 	}
 
-	private static IntegersAsEuclideanDomain n(final long value)
+	private static IntegralNumbers n(final long value)
 	{
-		return IntegersAsEuclideanDomain.of(value);
+		return IntegralNumberFactory.of(value);
 	}
 
 	@Nested
@@ -56,8 +57,8 @@ final class AlgebraicIntervalsTest
 		@MethodSource("shiftIntervalDispatchCases")
 		@DisplayName("shift(interval, delta) dispatches to bounded and unbounded implementations")
 		void shiftIntervalDispatchesToBoundedAndUnboundedImplementations(
-				final String as, final Interval<IntegersAsEuclideanDomain> interval,
-				final IntegersAsEuclideanDomain delta, final Interval<IntegersAsEuclideanDomain> expected)
+				final String as, final Interval<IntegralNumbers> interval,
+				final IntegralNumbers delta, final Interval<IntegralNumbers> expected)
 		{
 			assertThat(AlgebraicIntervals.shift(interval, delta)).as(as).isEqualTo(expected);
 		}
@@ -77,13 +78,13 @@ final class AlgebraicIntervalsTest
 		@DisplayName("shifts unbounded interval shifting finite bound only")
 		void shiftsUnboundedIntervalShiftingFiniteBoundOnly()
 		{
-			UnboundedInterval<IntegersAsEuclideanDomain> result = AlgebraicIntervals.shift(
+			UnboundedInterval<IntegralNumbers> result = AlgebraicIntervals.shift(
 					Intervals.atLeast(n(1)), n(3));
 			assertThat(result.lowerBound()).isPresent();
 			assertThat(result.lowerBound().get().value()).isEqualTo(n(4));
 			assertThat(result.upperBound()).isEmpty();
 
-			UnboundedInterval<IntegersAsEuclideanDomain> result2 = AlgebraicIntervals.shift(
+			UnboundedInterval<IntegralNumbers> result2 = AlgebraicIntervals.shift(
 					Intervals.atMost(n(10)), n(-5));
 			assertThat(result2.upperBound()).isPresent();
 			assertThat(result2.upperBound().get().value()).isEqualTo(n(5));

@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ordered;
 
-import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.algebra.structure.ring.standard.IntegerEuclideanDomainStructure;
 import org.junit.jupiter.api.DisplayName;
@@ -17,17 +18,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 final class RoundingStrategiesTest
 {
 	private static void assertDivision(final String as, final long dividend, final long divisor,
-	                                   final RoundingStrategy<IntegersAsEuclideanDomain> strategy,
+	                                   final RoundingStrategy<IntegralNumbers> strategy,
 	                                   final long expectedQuotient, final long expectedRemainder)
 	{
-		DivisionResult<IntegersAsEuclideanDomain> result = strategy.divide(integer(dividend), integer(divisor));
+		DivisionResult<IntegralNumbers> result = strategy.divide(integer(dividend), integer(divisor));
 		assertThat(result.quotient()).as("%s: quotient", as).isEqualTo(integer(expectedQuotient));
 		assertThat(result.remainder()).as("%s: remainder", as).isEqualTo(integer(expectedRemainder));
 	}
 
-	private static IntegersAsEuclideanDomain integer(final long value)
+	private static IntegralNumbers integer(final long value)
 	{
-		return IntegersAsEuclideanDomain.of(value);
+		return IntegralNumberFactory.of(value);
 	}
 
 	@Nested
@@ -38,8 +39,8 @@ final class RoundingStrategiesTest
 		@MethodSource("structureFactoryCases")
 		@DisplayName("produce the same results as the element-side strategies")
 		void produceTheSameResultsAsTheElementSideStrategies(final String as,
-		                                                     final RoundingStrategy<IntegersAsEuclideanDomain> actual,
-		                                                     final RoundingStrategy<IntegersAsEuclideanDomain> expected,
+		                                                     final RoundingStrategy<IntegralNumbers> actual,
+		                                                     final RoundingStrategy<IntegralNumbers> expected,
 		                                                     final long dividend, final long divisor)
 		{
 			assertThat(actual.divide(integer(dividend), integer(divisor))).as("%s: structure strategy result", as)
@@ -76,10 +77,10 @@ final class RoundingStrategiesTest
 			assertDivision(as, dividend, divisor, customCeiling(), expectedQuotient, expectedRemainder);
 		}
 
-		private static RoundingStrategy<IntegersAsEuclideanDomain> customCeiling()
+		private static RoundingStrategy<IntegralNumbers> customCeiling()
 		{
-			return RoundingStrategies.ceiling(RoundingStrategies.floor(), IntegersAsEuclideanDomain::isZero,
-					integer(1), IntegersAsEuclideanDomain::add, IntegersAsEuclideanDomain::subtract);
+			return RoundingStrategies.ceiling(RoundingStrategies.floor(), IntegralNumbers::isZero,
+					integer(1), IntegralNumbers::add, IntegralNumbers::subtract);
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -93,11 +94,11 @@ final class RoundingStrategiesTest
 			assertDivision(as, dividend, divisor, customTruncate(), expectedQuotient, expectedRemainder);
 		}
 
-		private static RoundingStrategy<IntegersAsEuclideanDomain> customTruncate()
+		private static RoundingStrategy<IntegralNumbers> customTruncate()
 		{
-			return RoundingStrategies.truncate(RoundingStrategies.floor(), IntegersAsEuclideanDomain::isZero,
-					IntegersAsEuclideanDomain::isNegative, integer(1), IntegersAsEuclideanDomain::add,
-					IntegersAsEuclideanDomain::subtract);
+			return RoundingStrategies.truncate(RoundingStrategies.floor(), IntegralNumbers::isZero,
+					IntegralNumbers::isNegative, integer(1), IntegralNumbers::add,
+					IntegralNumbers::subtract);
 		}
 
 		private static Stream<Arguments> customCeilingCases()

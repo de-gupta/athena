@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.algebra.structure.ring.standard;
 
-import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,9 +26,9 @@ final class IntegerEuclideanDomainStructureTest
 		void returnsTheCanonicalZeroAndOneElements()
 		{
 			assertThat(IntegerEuclideanDomainStructure.INSTANCE.zero()).as("zero")
-			                                                           .isEqualTo(IntegersAsEuclideanDomain.of(0));
+			                                                           .isEqualTo(IntegralNumberFactory.of(0));
 			assertThat(IntegerEuclideanDomainStructure.INSTANCE.one()).as("one")
-			                                                          .isEqualTo(IntegersAsEuclideanDomain.of(1));
+			                                                          .isEqualTo(IntegralNumberFactory.of(1));
 		}
 	}
 
@@ -40,10 +41,10 @@ final class IntegerEuclideanDomainStructureTest
 		@DisplayName("adds values")
 		void addsValues(final String as, final long left, final long right, final long expected)
 		{
-			assertThat(IntegerEuclideanDomainStructure.INSTANCE.add(IntegersAsEuclideanDomain.of(left),
-					IntegersAsEuclideanDomain.of(right)))
+			assertThat(IntegerEuclideanDomainStructure.INSTANCE.add(IntegralNumberFactory.of(left),
+					IntegralNumberFactory.of(right)))
 					.as(as)
-					.isEqualTo(IntegersAsEuclideanDomain.of(expected));
+					.isEqualTo(IntegralNumberFactory.of(expected));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -51,10 +52,10 @@ final class IntegerEuclideanDomainStructureTest
 		@DisplayName("multiplies values")
 		void multipliesValues(final String as, final long left, final long right, final long expected)
 		{
-			assertThat(IntegerEuclideanDomainStructure.INSTANCE.multiply(IntegersAsEuclideanDomain.of(left),
-					IntegersAsEuclideanDomain.of(right)))
+			assertThat(IntegerEuclideanDomainStructure.INSTANCE.multiply(IntegralNumberFactory.of(left),
+					IntegralNumberFactory.of(right)))
 					.as(as)
-					.isEqualTo(IntegersAsEuclideanDomain.of(expected));
+					.isEqualTo(IntegralNumberFactory.of(expected));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -62,9 +63,9 @@ final class IntegerEuclideanDomainStructureTest
 		@DisplayName("negates values")
 		void negatesValues(final String as, final long value, final long expected)
 		{
-			assertThat(IntegerEuclideanDomainStructure.INSTANCE.negate(IntegersAsEuclideanDomain.of(value)))
+			assertThat(IntegerEuclideanDomainStructure.INSTANCE.negate(IntegralNumberFactory.of(value)))
 					.as(as)
-					.isEqualTo(IntegersAsEuclideanDomain.of(expected));
+					.isEqualTo(IntegralNumberFactory.of(expected));
 		}
 
 		private static Stream<Arguments> addsValuesCases()
@@ -100,10 +101,10 @@ final class IntegerEuclideanDomainStructureTest
 		@DisplayName("identifies the zero element")
 		void identifiesTheZeroElement()
 		{
-			assertThat(IntegerEuclideanDomainStructure.INSTANCE.isZero(IntegersAsEuclideanDomain.of(0)))
+			assertThat(IntegerEuclideanDomainStructure.INSTANCE.isZero(IntegralNumberFactory.of(0)))
 					.as("zero element")
 					.isEqualTo(true);
-			assertThat(IntegerEuclideanDomainStructure.INSTANCE.isZero(IntegersAsEuclideanDomain.of(5)))
+			assertThat(IntegerEuclideanDomainStructure.INSTANCE.isZero(IntegralNumberFactory.of(5)))
 					.as("non-zero element")
 					.isEqualTo(false);
 		}
@@ -112,7 +113,7 @@ final class IntegerEuclideanDomainStructureTest
 		@DisplayName("returns the element norm")
 		void returnsTheElementNorm()
 		{
-			assertThat(IntegerEuclideanDomainStructure.INSTANCE.norm(IntegersAsEuclideanDomain.of(-9)))
+			assertThat(IntegerEuclideanDomainStructure.INSTANCE.norm(IntegralNumberFactory.of(-9)))
 					.as("norm")
 					.isEqualTo(9L);
 		}
@@ -126,12 +127,12 @@ final class IntegerEuclideanDomainStructureTest
 		@DisplayName("delegates to the element implementation")
 		void delegatesToTheElementImplementation()
 		{
-			DivisionResult<IntegersAsEuclideanDomain> result =
+			DivisionResult<IntegralNumbers> result =
 					IntegerEuclideanDomainStructure.INSTANCE.divideWithRemainder(
-							IntegersAsEuclideanDomain.of(-17), IntegersAsEuclideanDomain.of(5));
+							IntegralNumberFactory.of(-17), IntegralNumberFactory.of(5));
 
-			assertThat(result.quotient()).as("quotient").isEqualTo(IntegersAsEuclideanDomain.of(-4));
-			assertThat(result.remainder()).as("remainder").isEqualTo(IntegersAsEuclideanDomain.of(3));
+			assertThat(result.quotient()).as("quotient").isEqualTo(IntegralNumberFactory.of(-4));
+			assertThat(result.remainder()).as("remainder").isEqualTo(IntegralNumberFactory.of(3));
 		}
 	}
 }

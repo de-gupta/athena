@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ordered;
 
-import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,9 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("OrderedAdditiveGroup")
 final class OrderedAdditiveGroupTest
 {
-	private static IntegersAsEuclideanDomain integer(final long value)
+	private static IntegralNumbers integer(final long value)
 	{
-		return IntegersAsEuclideanDomain.of(value);
+		return IntegralNumberFactory.of(value);
 	}
 
 	@Nested
@@ -27,7 +28,7 @@ final class OrderedAdditiveGroupTest
 		@MethodSource("classifiesSignCases")
 		@DisplayName("reports positive, negative, and non-strict sign predicates consistently")
 		void reportsPositiveNegativeAndNonStrictSignPredicatesConsistently(
-				final String as, final IntegersAsEuclideanDomain value, final boolean expectedPositive,
+				final String as, final IntegralNumbers value, final boolean expectedPositive,
 				final boolean expectedNegative, final boolean expectedNonPositive, final boolean expectedNonNegative,
 				final int expectedSignum)
 		{
@@ -55,8 +56,8 @@ final class OrderedAdditiveGroupTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("returnsNonNegativeMagnitudeCases")
 		@DisplayName("returns the non-negative magnitude")
-		void returnsTheNonNegativeMagnitude(final String as, final IntegersAsEuclideanDomain value,
-		                                    final IntegersAsEuclideanDomain expected)
+		void returnsTheNonNegativeMagnitude(final String as, final IntegralNumbers value,
+		                                    final IntegralNumbers expected)
 		{
 			assertThat(value.abs()).as(as).isEqualTo(expected);
 		}
@@ -79,8 +80,8 @@ final class OrderedAdditiveGroupTest
 		@MethodSource("returnsPositivePartCases")
 		@DisplayName("returns the value when non-negative and zero otherwise")
 		void returnsTheValueWhenNonNegativeAndZeroOtherwise(final String as,
-		                                                    final IntegersAsEuclideanDomain value,
-		                                                    final IntegersAsEuclideanDomain expected)
+		                                                    final IntegralNumbers value,
+		                                                    final IntegralNumbers expected)
 		{
 			assertThat(value.positivePart()).as(as).isEqualTo(expected);
 		}
@@ -103,8 +104,8 @@ final class OrderedAdditiveGroupTest
 		@MethodSource("returnsNegativePartCases")
 		@DisplayName("returns the magnitude when non-positive and zero otherwise")
 		void returnsTheMagnitudeWhenNonPositiveAndZeroOtherwise(final String as,
-		                                                        final IntegersAsEuclideanDomain value,
-		                                                        final IntegersAsEuclideanDomain expected)
+		                                                        final IntegralNumbers value,
+		                                                        final IntegralNumbers expected)
 		{
 			assertThat(value.negativePart()).as(as).isEqualTo(expected);
 		}

@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ordered;
 
-import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.algebra.structure.ring.standard.IntegerEuclideanDomainStructure;
 import org.junit.jupiter.api.DisplayName;
@@ -27,25 +28,25 @@ final class ScalarDivisibleTest
 	}
 
 	private void assertBothSides(final long dividend, final long scalar,
-	                             final RoundingStrategy<IntegersAsEuclideanDomain> strategy,
+	                             final RoundingStrategy<IntegralNumbers> strategy,
 	                             final long expectedQ, final long expectedR)
 	{
-		DivisionResult<IntegersAsEuclideanDomain> element = e(dividend).divide(scalar, strategy);
+		DivisionResult<IntegralNumbers> element = e(dividend).divide(scalar, strategy);
 		assertThat(element.quotient()).as("element quotient").isEqualTo(e(expectedQ));
 		assertThat(element.remainder()).as("element remainder").isEqualTo(e(expectedR));
 
-		DivisionResult<IntegersAsEuclideanDomain> structure =
+		DivisionResult<IntegralNumbers> structure =
 				IntegerEuclideanDomainStructure.INSTANCE.divide(e(dividend), scalar, strategy);
 		assertThat(structure.quotient()).as("structure quotient").isEqualTo(e(expectedQ));
 		assertThat(structure.remainder()).as("structure remainder").isEqualTo(e(expectedR));
 	}
 
-	private static IntegersAsEuclideanDomain e(final long value)
+	private static IntegralNumbers e(final long value)
 	{
-		return IntegersAsEuclideanDomain.of(value);
+		return IntegralNumberFactory.of(value);
 	}
 
-	private record StrategyArg(String name, RoundingStrategy<IntegersAsEuclideanDomain> strategy)
+	private record StrategyArg(String name, RoundingStrategy<IntegralNumbers> strategy)
 	{
 	}
 
@@ -137,7 +138,7 @@ final class ScalarDivisibleTest
 		void allStrategiesProduceZeroRemainderAndTheSameQuotient(final String as, final long dividend,
 		                                                         final long scalar, final long expectedQ,
 		                                                         final String strategyName,
-		                                                         final RoundingStrategy<IntegersAsEuclideanDomain> strategy)
+		                                                         final RoundingStrategy<IntegralNumbers> strategy)
 		{
 			assertBothSides(dividend, scalar, strategy, expectedQ, 0L);
 		}
@@ -166,9 +167,9 @@ final class ScalarDivisibleTest
 		@DisplayName("dividend = quotient * scalar + remainder")
 		void dividendEqualsQuotientTimesScalarPlusRemainderForAllStrategiesAndSignCombinations(
 				final long dividend, final long scalar, final String strategyName,
-				final RoundingStrategy<IntegersAsEuclideanDomain> strategy)
+				final RoundingStrategy<IntegralNumbers> strategy)
 		{
-			DivisionResult<IntegersAsEuclideanDomain> result = e(dividend).divide(scalar, strategy);
+			DivisionResult<IntegralNumbers> result = e(dividend).divide(scalar, strategy);
 			assertThat(result.quotient().multiply(e(scalar)).add(result.remainder()))
 					.as("dividend=%d, scalar=%d — %s: q*s+r must equal dividend", dividend, scalar, strategyName)
 					.isEqualTo(e(dividend));

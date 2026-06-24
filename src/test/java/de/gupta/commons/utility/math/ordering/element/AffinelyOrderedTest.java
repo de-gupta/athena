@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.ordering.element;
 
-import de.gupta.commons.utility.math.algebra.element.ring.standard.IntegersAsEuclideanDomain;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("AffinelyOrdered")
 final class AffinelyOrderedTest
 {
-	private static IntegersAsEuclideanDomain i(final long value)
+	private static IntegralNumbers i(final long value)
 	{
-		return IntegersAsEuclideanDomain.of(value);
+		return IntegralNumberFactory.of(value);
 	}
 
 	@Nested
@@ -28,9 +29,9 @@ final class AffinelyOrderedTest
 		@MethodSource("displacementCases")
 		@DisplayName("returns signed displacement from this to other")
 		void returnsSignedDisplacementFromThisToOther(final String as,
-		                                              final IntegersAsEuclideanDomain from,
-		                                              final IntegersAsEuclideanDomain to,
-		                                              final IntegersAsEuclideanDomain expected)
+		                                              final IntegralNumbers from,
+		                                              final IntegralNumbers to,
+		                                              final IntegralNumbers expected)
 		{
 			assertThat(from.displacementTo(to)).as(as).isEqualTo(expected);
 		}
@@ -54,9 +55,9 @@ final class AffinelyOrderedTest
 		@MethodSource("translateCases")
 		@DisplayName("returns point shifted by displacement")
 		void returnsPointShiftedByDisplacement(final String as,
-		                                       final IntegersAsEuclideanDomain point,
-		                                       final IntegersAsEuclideanDomain displacement,
-		                                       final IntegersAsEuclideanDomain expected)
+		                                       final IntegralNumbers point,
+		                                       final IntegralNumbers displacement,
+		                                       final IntegralNumbers expected)
 		{
 			assertThat(point.translate(displacement)).as(as).isEqualTo(expected);
 		}
@@ -79,8 +80,8 @@ final class AffinelyOrderedTest
 		@MethodSource("roundTripCases")
 		@DisplayName("translate by displacement returns the target")
 		void translateByDisplacementReturnsTarget(final String as,
-		                                          final IntegersAsEuclideanDomain from,
-		                                          final IntegersAsEuclideanDomain to)
+		                                          final IntegralNumbers from,
+		                                          final IntegralNumbers to)
 		{
 			assertThat(from.translate(from.displacementTo(to))).as(as).isEqualTo(to);
 		}
@@ -89,8 +90,8 @@ final class AffinelyOrderedTest
 		@MethodSource("roundTripCases")
 		@DisplayName("displacement is antisymmetric")
 		void displacementIsAntisymmetric(final String as,
-		                                 final IntegersAsEuclideanDomain from,
-		                                 final IntegersAsEuclideanDomain to)
+		                                 final IntegralNumbers from,
+		                                 final IntegralNumbers to)
 		{
 			assertThat(from.displacementTo(to)).as(as).isEqualTo(to.displacementTo(from).negate());
 		}
@@ -123,8 +124,8 @@ final class AffinelyOrderedTest
 		@MethodSource("orderCorrelationCases")
 		@DisplayName("displacement sign correlates with order: a < b iff displacement is positive")
 		void displacementSignCorrelatesWithOrder(final String as,
-		                                         final IntegersAsEuclideanDomain from,
-		                                         final IntegersAsEuclideanDomain to,
+		                                         final IntegralNumbers from,
+		                                         final IntegralNumbers to,
 		                                         final boolean expectedPositive,
 		                                         final boolean expectedNegative)
 		{
@@ -136,9 +137,9 @@ final class AffinelyOrderedTest
 		@MethodSource("additivityCases")
 		@DisplayName("displacement is additive: between(a,c) = between(a,b) + between(b,c)")
 		void displacementIsAdditive(final String as,
-		                            final IntegersAsEuclideanDomain a,
-		                            final IntegersAsEuclideanDomain b,
-		                            final IntegersAsEuclideanDomain c)
+		                            final IntegralNumbers a,
+		                            final IntegralNumbers b,
+		                            final IntegralNumbers c)
 		{
 			assertThat(a.displacementTo(c)).as(as)
 			                               .isEqualTo(a.displacementTo(b).add(b.displacementTo(c)));

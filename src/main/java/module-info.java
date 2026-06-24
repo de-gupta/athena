@@ -67,6 +67,7 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.structure.module.standard;
 
 	exports de.gupta.commons.utility.math.ordering.bound;
+	exports de.gupta.commons.utility.math.algebra.element.ring.standard.integers;
 
 	requires de.gupta.aletheia;
 }
