@@ -1,7 +1,6 @@
 package de.gupta.commons.utility.math.algebra.element.ring.standard.integers;
 
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
-import de.gupta.commons.utility.math.algebra.structure.ring.standard.IntegersEuclideanDomainStructure;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
 
 record IntegersAsEuclideanDomain(long value) implements IntegralNumber
@@ -60,6 +59,6 @@ record IntegersAsEuclideanDomain(long value) implements IntegralNumber
 	@Override
 	public OrderRelation compare(final IntegralNumber other)
 	{
-		return OrderRelation.from(Long.compare(value, other.value()));
+		return canonicalStructure.compare(value, other.value());
 	}
 }
