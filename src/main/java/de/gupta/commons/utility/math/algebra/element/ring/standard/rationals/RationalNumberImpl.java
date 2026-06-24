@@ -6,6 +6,7 @@ import de.gupta.commons.utility.exception.ExceptionHelper;
 import de.gupta.commons.utility.math.algebra.element.ring.IntegralDomain;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.ordering.OrderRelation;
 
 record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) implements RationalNumber
 {
@@ -37,6 +38,12 @@ record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) 
 		}
 
 		return Dyad.of(normalizedNumerator, normalizedDenominator);
+	}
+
+	@Override
+	public OrderRelation compare(final RationalNumber other)
+	{
+		return numerator.multiply(other.denominator()).compare(other.numerator().multiply(denominator));
 	}
 
 	@Override

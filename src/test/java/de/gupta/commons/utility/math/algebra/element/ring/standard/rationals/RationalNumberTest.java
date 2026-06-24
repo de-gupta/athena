@@ -1,5 +1,6 @@
 package de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
 
+import de.gupta.commons.utility.math.ordering.OrderRelation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -358,6 +359,52 @@ final class RationalNumberTest
 					Arguments.of("(1/2) * 2 = 1", r(1, 2), 2, r(1, 1)),
 					Arguments.of("(1/2) * (-1) = -1/2 (negated)", r(1, 2), -1, r(-1, 2)),
 					Arguments.of("(2/3) * 3 = 2", r(2, 3), 3, r(2, 1))
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when comparing")
+	final class WhenComparing
+	{
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("compareCases")
+		@DisplayName("returns correct order relation")
+		void returnsCorrectOrderRelation(final String as, final RationalNumber a, final RationalNumber b,
+		                                 final OrderRelation expected)
+		{
+			assertThat(a.compare(b)).as(as).isEqualTo(expected);
+		}
+
+		@Test
+		@DisplayName("comparison is antisymmetric")
+		void comparisonIsAntisymmetric()
+		{
+			assertThat(r(1, 3).compare(r(1, 2))).isEqualTo(OrderRelation.LESS_THAN);
+			assertThat(r(1, 2).compare(r(1, 3))).isEqualTo(OrderRelation.GREATER_THAN);
+		}
+
+		@Test
+		@DisplayName("ordering is consistent with sign")
+		void orderingIsConsistentWithSign()
+		{
+			assertThat(r(1, 2).isPositive()).isTrue();
+			assertThat(r(-1, 2).isNegative()).isTrue();
+			assertThat(r(0, 1).isNonNegative()).isTrue();
+			assertThat(r(0, 1).isNonPositive()).isTrue();
+		}
+
+		private static Stream<Arguments> compareCases()
+		{
+			return Stream.of(
+					Arguments.of("1/3 < 1/2", r(1, 3), r(1, 2), OrderRelation.LESS_THAN),
+					Arguments.of("1/2 > 1/3", r(1, 2), r(1, 3), OrderRelation.GREATER_THAN),
+					Arguments.of("1/2 = 2/4 (normalized equal)", r(1, 2), r(2, 4), OrderRelation.EQUAL),
+					Arguments.of("2/3 < 3/4", r(2, 3), r(3, 4), OrderRelation.LESS_THAN),
+					Arguments.of("-1/2 < 1/2", r(-1, 2), r(1, 2), OrderRelation.LESS_THAN),
+					Arguments.of("-1/3 > -1/2", r(-1, 3), r(-1, 2), OrderRelation.GREATER_THAN),
+					Arguments.of("0 < 1/1000", r(0, 1), r(1, 1000), OrderRelation.LESS_THAN),
+					Arguments.of("3/7 = 3/7", r(3, 7), r(3, 7), OrderRelation.EQUAL)
 			);
 		}
 	}
