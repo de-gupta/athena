@@ -6,6 +6,9 @@ import de.gupta.commons.utility.math.algebra.element.module.ScalarDivisible;
 import de.gupta.commons.utility.math.algebra.element.module.ScalarQuotientable;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.algebra.element.ring.Field;
+import de.gupta.commons.utility.math.algebra.element.ring.Normed;
+import de.gupta.commons.utility.math.algebra.element.ring.Ring;
+import de.gupta.commons.utility.math.ordering.element.AffinelyOrdered;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,53 +17,91 @@ import java.util.function.BiFunction;
 
 public final class SeriesOperations
 {
-	public static <T, E extends AdditiveSemigroup<E> & ScalarDivisible<E, Long>> Optional<E> average(
-			final Series<T, E> series, final RoundingStrategy<E> rounding)
+	public static <I, E extends AdditiveSemigroup<E> & ScalarDivisible<E, Long>> Optional<E> average(
+			final Series<I, E> series, final RoundingStrategy<E> rounding)
 	{
 		if (series.isEmpty()) return Optional.empty();
 		return sum(series).map(s -> s.divide(series.size(), rounding).quotient());
 	}
 
-	public static <T, E extends AdditiveSemigroup<E>> Optional<E> sum(final Series<T, E> series)
+	public static <I, E extends AdditiveSemigroup<E>> Optional<E> sum(final Series<I, E> series)
 	{
 		return series.values().stream().reduce(E::add);
 	}
 
-	public static <T, E extends AdditiveGroup<E>> Series<T, E> changes(final Series<T, E> series)
+	public static <I, E extends AdditiveGroup<E>> Series<I, E> changes(final Series<I, E> series)
 	{
 		return consecutivePairs(series, E::subtract);
 	}
 
-	private static <T, E, R> Series<T, R> consecutivePairs(final Series<T, E> series,
+	private static <I, E, R> Series<I, R> consecutivePairs(final Series<I, E> series,
 	                                                       final BiFunction<E, E, R> operation)
 	{
-		final SeriesImpl<T, E> impl = asImpl(series);
-		final Map<T, R> result = new LinkedHashMap<>();
-		T prevKey = null;
-		E prevVal = null;
-		for (final Map.Entry<T, E> entry : impl.data().entrySet())
+		return consecutiveEntryPairs(series, (prev, curr) -> operation.apply(curr.getValue(), prev.getValue()));
+	}
+
+	private static <I, E, R> Series<I, R> consecutiveEntryPairs(final Series<I, E> series,
+	                                                            final BiFunction<Map.Entry<I, E>, Map.Entry<I, E>, R> operation)
+	{
+		final SeriesImpl<I, E> impl = asImpl(series);
+		final Map<I, R> result = new LinkedHashMap<>();
+		Map.Entry<I, E> prev = null;
+		for (final Map.Entry<I, E> entry : impl.data().entrySet())
 		{
-			if (prevKey != null)
-				result.put(entry.getKey(), operation.apply(entry.getValue(), prevVal));
-			prevKey = entry.getKey();
-			prevVal = entry.getValue();
+			if (prev != null)
+				result.put(entry.getKey(), operation.apply(prev, entry));
+			prev = entry;
 		}
 		return impl.withMappedValues(result);
 	}
 
-	private static <T, E> SeriesImpl<T, E> asImpl(final Series<T, E> series)
+	private static <I, E> SeriesImpl<I, E> asImpl(final Series<I, E> series)
 	{
-		if (series instanceof SeriesImpl<T, E> impl) return impl;
+		if (series instanceof SeriesImpl<I, E> impl) return impl;
 		throw new IllegalStateException("Unknown Series implementation");
 	}
 
-	public static <T, S extends Field<S>, E extends ScalarQuotientable<E, S>> Series<T, S> percentageChanges(
-			final Series<T, E> series)
+	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
+			E extends AdditiveGroup<E> & ScalarDivisible<E, N>> Series<I, E> indexWeightedChanges(
+			final Series<I, E> series, final RoundingStrategy<E> rounding)
+	{
+		return consecutiveEntryPairs(series, (previous, current) ->
+		{
+			final N norm = previous.getKey().displacementTo(current.getKey()).norm();
+			return current.getValue().subtract(previous.getValue()).divide(norm, rounding).quotient();
+		});
+	}
+
+	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
+			S extends ScalarDivisible<S, N> & Ring<S>, E extends ScalarQuotientable<E, S>> Series<I, S> indexWeightedPercentChanges(
+			final Series<I, E> series, final RoundingStrategy<S> rounding)
+	{
+		return consecutiveEntryPairs(series, (previous, current) ->
+		{
+			final N norm = previous.getKey().displacementTo(current.getKey()).norm();
+			final S ratio = current.getValue().ratio(previous.getValue());
+			return ratio.subtract(ratio.one()).divide(norm, rounding).quotient();
+		});
+	}
+
+	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
+			S extends ScalarDivisible<S, N>, E extends ScalarQuotientable<E, S>> Series<I, S> indexWeightedRatios(
+			final Series<I, E> series, final RoundingStrategy<S> rounding)
+	{
+		return consecutiveEntryPairs(series, (previous, current) ->
+		{
+			final N norm = previous.getKey().displacementTo(current.getKey()).norm();
+			return current.getValue().ratio(previous.getValue()).divide(norm, rounding).quotient();
+		});
+	}
+
+	public static <I, S extends Field<S>, E extends ScalarQuotientable<E, S>> Series<I, S> percentageChanges(
+			final Series<I, E> series)
 	{
 		return ratios(series).map(s -> s.subtract(s.one()));
 	}
 
-	public static <T, S, E extends ScalarQuotientable<E, S>> Series<T, S> ratios(final Series<T, E> series)
+	public static <I, S, E extends ScalarQuotientable<E, S>> Series<I, S> ratios(final Series<I, E> series)
 	{
 		return consecutivePairs(series, E::ratio);
 	}

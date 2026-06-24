@@ -3,9 +3,11 @@ package de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
 import de.gupta.aletheia.collection.Dyad;
 import de.gupta.aletheia.functional.Unfolding;
 import de.gupta.commons.utility.exception.ExceptionHelper;
+import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.algebra.element.ring.IntegralDomain;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
+import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
 
 record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) implements RationalNumber
@@ -81,5 +83,11 @@ record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) 
 	public RationalNumber ratio(final RationalNumber denominator)
 	{
 		return divide(denominator);
+	}
+
+	@Override
+	public DivisionResult<RationalNumber> divide(final Long scalar, final RoundingStrategy<RationalNumber> strategy)
+	{
+		return DivisionResult.of(divide(RationalNumberFactory.of(scalar, 1)), zero());
 	}
 }

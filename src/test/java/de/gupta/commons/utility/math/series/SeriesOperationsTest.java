@@ -1,10 +1,12 @@
 package de.gupta.commons.utility.math.series;
 
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
+import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumberFactory;
+import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -499,6 +501,256 @@ final class SeriesOperationsTest
 					Arguments.of("+200%: 1→3", r(1, 1), r(3, 1), r(2, 1)),
 					Arguments.of("-100% impossible: divides to -1 is fine", r(2, 1), r(1, 1), r(-1, 2)),
 					Arguments.of("unchanged: same value", r(5, 7), r(5, 7), r(0, 1))
+			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when computing indexed changes")
+	final class WhenComputingIndexedChanges
+	{
+		@Test
+		@DisplayName("divides consecutive difference by displacement norm")
+		void dividesConsecutiveDifferenceByDisplacementNorm()
+		{
+			final Series<IntegralNumber, IntegralNumber> series =
+					SeriesFactory.of(Map.of(i(0), i(0), i(2), i(10), i(6), i(30)));
+			final Series<IntegralNumber, IntegralNumber> result =
+					SeriesOperations.indexWeightedChanges(series, RoundingStrategies.floor());
+			assertThat(result.size()).isEqualTo(2);
+			assertThat(result.at(i(2))).isEqualTo(Optional.of(i(5)));
+			assertThat(result.at(i(6))).isEqualTo(Optional.of(i(5)));
+		}
+
+		@Test
+		@DisplayName("non-uniform intervals produce different indexed changes")
+		void nonUniformIntervalsProduceDifferentIndexedChanges()
+		{
+			final Series<IntegralNumber, IntegralNumber> series =
+					SeriesFactory.of(Map.of(i(0), i(0), i(1), i(10), i(3), i(10)));
+			final Series<IntegralNumber, IntegralNumber> result =
+					SeriesOperations.indexWeightedChanges(series, RoundingStrategies.floor());
+			assertThat(result.at(i(1))).isEqualTo(Optional.of(i(10)));
+			assertThat(result.at(i(3))).isEqualTo(Optional.of(i(0)));
+		}
+
+		@Test
+		@DisplayName("unit interval gives same result as changes")
+		void unitIntervalGivesSameResultAsChanges()
+		{
+			final Series<IntegralNumber, IntegralNumber> series =
+					SeriesFactory.of(Map.of(i(1), i(10), i(2), i(30), i(3), i(60)));
+			assertThat(SeriesOperations.indexWeightedChanges(series, RoundingStrategies.floor()))
+					.isEqualTo(SeriesOperations.changes(series));
+		}
+
+		@Test
+		@DisplayName("floor rounding applies on non-exact division")
+		void floorRoundingAppliesOnNonExactDivision()
+		{
+			final Series<IntegralNumber, IntegralNumber> series =
+					SeriesFactory.of(Map.of(i(0), i(0), i(3), i(10)));
+			assertThat(SeriesOperations.indexWeightedChanges(series, RoundingStrategies.floor()).at(i(3)))
+					.isEqualTo(Optional.of(i(3)));
+		}
+
+		@Test
+		@DisplayName("ceiling rounding applies on non-exact division")
+		void ceilingRoundingAppliesOnNonExactDivision()
+		{
+			final Series<IntegralNumber, IntegralNumber> series =
+					SeriesFactory.of(Map.of(i(0), i(0), i(3), i(10)));
+			assertThat(SeriesOperations.indexWeightedChanges(series, RoundingStrategies.ceiling()).at(i(3)))
+					.isEqualTo(Optional.of(i(4)));
+		}
+
+		@Test
+		@DisplayName("empty series returns empty")
+		void emptySeriesReturnsEmpty()
+		{
+			assertThat(SeriesOperations.indexWeightedChanges(EMPTY, RoundingStrategies.floor()).isEmpty()).isTrue();
+		}
+
+		@Test
+		@DisplayName("single element returns empty")
+		void singleElementReturnsEmpty()
+		{
+			assertThat(SeriesOperations.indexWeightedChanges(
+					SeriesFactory.of(Map.of(i(1), i(99))), RoundingStrategies.floor()).isEmpty()).isTrue();
+		}
+	}
+
+	@Nested
+	@DisplayName("when computing indexed ratios")
+	final class WhenComputingIndexedRatios
+	{
+		private static final RoundingStrategy<RationalNumber> EXACT =
+				(dividend, divisor) -> DivisionResult.of(dividend.divide(divisor), RationalNumberFactory.zero());
+
+		@Test
+		@DisplayName("divides consecutive ratio by displacement norm")
+		void dividesConsecutiveRatioByDisplacementNorm()
+		{
+			final Series<IntegralNumber, RationalNumber> series =
+					SeriesFactory.of(Map.of(i(0), r(1, 1), i(1), r(2, 1), i(3), r(8, 1)));
+			final Series<IntegralNumber, RationalNumber> result =
+					SeriesOperations.indexWeightedRatios(series, EXACT);
+			assertThat(result.size()).isEqualTo(2);
+			assertThat(result.at(i(1))).isEqualTo(Optional.of(r(2, 1)));
+			assertThat(result.at(i(3))).isEqualTo(Optional.of(r(2, 1)));
+		}
+
+		private static RationalNumber r(final long num, final long denom)
+		{
+			return RationalNumberFactory.of(num, denom);
+		}
+
+		@Test
+		@DisplayName("unit interval gives same result as ratios")
+		void unitIntervalGivesSameResultAsRatios()
+		{
+			final Series<IntegralNumber, RationalNumber> series =
+					SeriesFactory.of(Map.of(i(1), r(1, 1), i(2), r(2, 1), i(3), r(4, 1)));
+			assertThat(SeriesOperations.indexWeightedRatios(series, EXACT))
+					.isEqualTo(SeriesOperations.ratios(series));
+		}
+
+		@Test
+		@DisplayName("longer interval shrinks the indexed ratio")
+		void longerIntervalShrinksTheIndexedRatio()
+		{
+			final Series<IntegralNumber, RationalNumber> series =
+					SeriesFactory.of(Map.of(i(0), r(1, 1), i(4), r(16, 1)));
+			assertThat(SeriesOperations.indexWeightedRatios(series, EXACT).at(i(4)))
+					.isEqualTo(Optional.of(r(4, 1)));
+		}
+
+		@Test
+		@DisplayName("exact rational division is preserved")
+		void exactRationalDivisionIsPreserved()
+		{
+			final Series<IntegralNumber, RationalNumber> series =
+					SeriesFactory.of(Map.of(i(0), r(1, 1), i(3), r(2, 1)));
+			assertThat(SeriesOperations.indexWeightedRatios(series, EXACT).at(i(3)))
+					.isEqualTo(Optional.of(r(2, 3)));
+		}
+
+		@Test
+		@DisplayName("empty series returns empty")
+		void emptySeriesReturnsEmpty()
+		{
+			assertThat(SeriesOperations.indexWeightedRatios(
+					SeriesFactory.<IntegralNumber, RationalNumber>empty(), EXACT).isEmpty()).isTrue();
+		}
+
+		@Test
+		@DisplayName("single element returns empty")
+		void singleElementReturnsEmpty()
+		{
+			assertThat(SeriesOperations.indexWeightedRatios(
+					SeriesFactory.of(Map.of(i(1), r(1, 1))), EXACT).isEmpty()).isTrue();
+		}
+	}
+
+	@Nested
+	@DisplayName("when computing index-weighted percentage changes")
+	final class WhenComputingIndexWeightedPercentChanges
+	{
+		private static final RoundingStrategy<RationalNumber> EXACT =
+				(dividend, divisor) -> DivisionResult.of(dividend.divide(divisor), RationalNumberFactory.zero());
+
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("cases")
+		@DisplayName("computes (ratio - 1) / norm(displacement)")
+		void computesPercentChangePerUnitInterval(final String as,
+		                                          final Series<IntegralNumber, RationalNumber> series,
+		                                          final IntegralNumber index,
+		                                          final RationalNumber expected)
+		{
+			assertThat(SeriesOperations.indexWeightedPercentChanges(series, EXACT).at(index))
+					.as(as).isEqualTo(Optional.of(expected));
+		}
+
+		@Test
+		@DisplayName("unit interval gives same result as percentageChanges")
+		void unitIntervalGivesSameResultAsPercentageChanges()
+		{
+			final Series<IntegralNumber, RationalNumber> series =
+					SeriesFactory.of(Map.of(i(1), r(1, 1), i(2), r(2, 1), i(3), r(4, 1)));
+			assertThat(SeriesOperations.indexWeightedPercentChanges(series, EXACT))
+					.isEqualTo(SeriesOperations.percentageChanges(series));
+		}
+
+		private static RationalNumber r(final long num, final long denom)
+		{
+			return RationalNumberFactory.of(num, denom);
+		}
+
+		@Test
+		@DisplayName("differs from indexWeightedRatios: subtracts one before dividing, not after")
+		void differsFromIndexWeightedRatiosBySubtractingOneBeforeDividing()
+		{
+			final Series<IntegralNumber, RationalNumber> series =
+					SeriesFactory.of(Map.of(i(0), r(1, 1), i(2), r(2, 1)));
+			assertThat(SeriesOperations.indexWeightedPercentChanges(series, EXACT).at(i(2)))
+					.isEqualTo(Optional.of(r(1, 2)));
+			assertThat(SeriesOperations.indexWeightedRatios(series, EXACT).at(i(2)))
+					.isEqualTo(Optional.of(r(1, 1)));
+		}
+
+		@Test
+		@DisplayName("flat series produces zero change regardless of interval length")
+		void flatSeriesProducesZeroChangeRegardlessOfIntervalLength()
+		{
+			final Series<IntegralNumber, RationalNumber> flat =
+					SeriesFactory.of(Map.of(i(0), r(3, 7), i(5), r(3, 7)));
+			assertThat(SeriesOperations.indexWeightedPercentChanges(flat, EXACT).at(i(5)))
+					.isEqualTo(Optional.of(r(0, 1)));
+		}
+
+		@Test
+		@DisplayName("empty series returns empty")
+		void emptySeriesReturnsEmpty()
+		{
+			assertThat(SeriesOperations.indexWeightedPercentChanges(
+					SeriesFactory.<IntegralNumber, RationalNumber>empty(), EXACT).isEmpty()).isTrue();
+		}
+
+		@Test
+		@DisplayName("single element returns empty")
+		void singleElementReturnsEmpty()
+		{
+			assertThat(SeriesOperations.indexWeightedPercentChanges(
+					SeriesFactory.of(Map.of(i(1), r(1, 1))), EXACT).isEmpty()).isTrue();
+		}
+
+		private static Stream<Arguments> cases()
+		{
+			return Stream.of(
+					Arguments.of(
+							"doubling over 2 periods: (2/1 - 1) / 2 = 1/2",
+							SeriesFactory.of(Map.of(i(0), r(1, 1), i(2), r(2, 1))),
+							i(2), r(1, 2)),
+					Arguments.of(
+							"halving over 4 periods: (1/2 - 1) / 4 = -1/8",
+							SeriesFactory.of(Map.of(i(0), r(1, 1), i(4), r(1, 2))),
+							i(4), r(-1, 8)),
+					Arguments.of(
+							"+25% over 5 periods: (5/4 - 1) / 5 = 1/20",
+							SeriesFactory.of(Map.of(i(0), r(4, 1), i(5), r(5, 1))),
+							i(5), r(1, 20)),
+					Arguments.of(
+							"-25% over 1 period: (3/4 - 1) / 1 = -1/4",
+							SeriesFactory.of(Map.of(i(0), r(1, 1), i(1), r(3, 4))),
+							i(1), r(-1, 4)),
+					Arguments.of(
+							"+200% over 3 periods: (3/1 - 1) / 3 = 2/3",
+							SeriesFactory.of(Map.of(i(0), r(1, 1), i(3), r(3, 1))),
+							i(3), r(2, 3)),
+					Arguments.of(
+							"+50% over 4 periods: (3/2 - 1) / 4 = 1/8",
+							SeriesFactory.of(Map.of(i(0), r(2, 1), i(4), r(3, 1))),
+							i(4), r(1, 8))
 			);
 		}
 	}
