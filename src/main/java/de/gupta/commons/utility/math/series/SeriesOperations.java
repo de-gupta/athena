@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 
 public final class SeriesOperations
 {
-	public static <T, E extends AdditiveSemigroup<E> & ScalarDivisible<E>> Optional<E> average(
+	public static <T, E extends AdditiveSemigroup<E> & ScalarDivisible<E, Long>> Optional<E> average(
 			final Series<T, E> series, final RoundingStrategy<E> rounding)
 	{
 		if (series.isEmpty()) return Optional.empty();

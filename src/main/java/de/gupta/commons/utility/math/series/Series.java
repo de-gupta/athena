@@ -20,7 +20,7 @@ public sealed interface Series<T, E> permits SeriesImpl
 
 	Optional<Map.Entry<T, E>> last();
 
-	int size();
+	long size();
 
 	boolean isEmpty();
 

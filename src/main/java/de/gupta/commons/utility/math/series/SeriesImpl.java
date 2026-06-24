@@ -65,7 +65,7 @@ final class SeriesImpl<T, E> implements Series<T, E>
 	}
 
 	@Override
-	public int size()
+	public long size()
 	{
 		return data.size();
 	}
