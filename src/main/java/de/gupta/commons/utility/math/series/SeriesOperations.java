@@ -2,8 +2,8 @@ package de.gupta.commons.utility.math.series;
 
 import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveGroup;
 import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveSemigroup;
+import de.gupta.commons.utility.math.algebra.element.module.ScalarDivisible;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
-import de.gupta.commons.utility.math.algebra.element.ordered.ScalarDivisible;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
