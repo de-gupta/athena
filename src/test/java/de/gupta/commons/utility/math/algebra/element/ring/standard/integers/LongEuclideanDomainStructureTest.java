@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("IntegersEuclideanDomainStructure")
-final class IntegersEuclideanDomainStructureTest
+@DisplayName("LongEuclideanDomainStructure")
+final class LongEuclideanDomainStructureTest
 {
 	@Nested
 	@DisplayName("when exposing identity elements")
@@ -24,8 +24,8 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("returns zero and one")
 		void returnsZeroAndOne()
 		{
-			assertThat(IntegersEuclideanDomainStructure.INSTANCE.zero()).as("zero").isEqualTo(0L);
-			assertThat(IntegersEuclideanDomainStructure.INSTANCE.one()).as("one").isEqualTo(1L);
+			assertThat(LongEuclideanDomainStructure.INSTANCE.zero()).as("zero").isEqualTo(0L);
+			assertThat(LongEuclideanDomainStructure.INSTANCE.one()).as("one").isEqualTo(1L);
 		}
 	}
 
@@ -38,7 +38,7 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("adds values")
 		void addsValues(final String as, final long left, final long right, final long expected)
 		{
-			assertThat(IntegersEuclideanDomainStructure.INSTANCE.add(left, right)).as(as).isEqualTo(expected);
+			assertThat(LongEuclideanDomainStructure.INSTANCE.add(left, right)).as(as).isEqualTo(expected);
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -46,7 +46,7 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("multiplies values")
 		void multipliesValues(final String as, final long left, final long right, final long expected)
 		{
-			assertThat(IntegersEuclideanDomainStructure.INSTANCE.multiply(left, right)).as(as).isEqualTo(expected);
+			assertThat(LongEuclideanDomainStructure.INSTANCE.multiply(left, right)).as(as).isEqualTo(expected);
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -54,7 +54,7 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("negates values")
 		void negatesValues(final String as, final long value, final long expected)
 		{
-			assertThat(IntegersEuclideanDomainStructure.INSTANCE.negate(value)).as(as).isEqualTo(expected);
+			assertThat(LongEuclideanDomainStructure.INSTANCE.negate(value)).as(as).isEqualTo(expected);
 		}
 
 		private static Stream<Arguments> addsValuesCases()
@@ -90,22 +90,22 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("identifies the zero element")
 		void identifiesTheZeroElement()
 		{
-			assertThat(IntegersEuclideanDomainStructure.INSTANCE.isZero(0L)).as("zero element").isEqualTo(true);
-			assertThat(IntegersEuclideanDomainStructure.INSTANCE.isZero(5L)).as("non-zero element").isEqualTo(false);
+			assertThat(LongEuclideanDomainStructure.INSTANCE.isZero(0L)).as("zero element").isEqualTo(true);
+			assertThat(LongEuclideanDomainStructure.INSTANCE.isZero(5L)).as("non-zero element").isEqualTo(false);
 		}
 
 		@Test
 		@DisplayName("returns the absolute value as norm")
 		void returnsTheAbsoluteValueAsNorm()
 		{
-			assertThat(IntegersEuclideanDomainStructure.INSTANCE.norm(-9L)).as("norm").isEqualTo(9L);
+			assertThat(LongEuclideanDomainStructure.INSTANCE.norm(-9L)).as("norm").isEqualTo(9L);
 		}
 
 		@Test
 		@DisplayName("throws ArithmeticException for the norm of MIN_VALUE")
 		void throwsArithmeticExceptionForTheNormOfMinValue()
 		{
-			assertThatThrownBy(() -> IntegersEuclideanDomainStructure.INSTANCE.norm(Long.MIN_VALUE))
+			assertThatThrownBy(() -> LongEuclideanDomainStructure.INSTANCE.norm(Long.MIN_VALUE))
 					.as("norm(Long.MIN_VALUE)")
 					.isInstanceOf(ArithmeticException.class);
 		}
@@ -119,7 +119,7 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("uses floor division semantics")
 		void usesFloorDivisionSemantics()
 		{
-			DivisionResult<Long> result = IntegersEuclideanDomainStructure.INSTANCE.divideWithRemainder(-17L, 5L);
+			DivisionResult<Long> result = LongEuclideanDomainStructure.INSTANCE.divideWithRemainder(-17L, 5L);
 
 			assertThat(result.quotient()).as("quotient").isEqualTo(-4L);
 			assertThat(result.remainder()).as("remainder").isEqualTo(3L);
@@ -134,7 +134,7 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("throws ArithmeticException for overflowing addition")
 		void throwsArithmeticExceptionForOverflowingAddition()
 		{
-			assertThatThrownBy(() -> IntegersEuclideanDomainStructure.INSTANCE.add(Long.MAX_VALUE, 1L))
+			assertThatThrownBy(() -> LongEuclideanDomainStructure.INSTANCE.add(Long.MAX_VALUE, 1L))
 					.as("MAX_VALUE + 1")
 					.isInstanceOf(ArithmeticException.class);
 		}
@@ -143,7 +143,7 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("throws ArithmeticException for overflowing multiplication")
 		void throwsArithmeticExceptionForOverflowingMultiplication()
 		{
-			assertThatThrownBy(() -> IntegersEuclideanDomainStructure.INSTANCE.multiply(Long.MAX_VALUE, 2L))
+			assertThatThrownBy(() -> LongEuclideanDomainStructure.INSTANCE.multiply(Long.MAX_VALUE, 2L))
 					.as("MAX_VALUE * 2")
 					.isInstanceOf(ArithmeticException.class);
 		}
@@ -152,7 +152,7 @@ final class IntegersEuclideanDomainStructureTest
 		@DisplayName("throws ArithmeticException for overflowing negation")
 		void throwsArithmeticExceptionForOverflowingNegation()
 		{
-			assertThatThrownBy(() -> IntegersEuclideanDomainStructure.INSTANCE.negate(Long.MIN_VALUE))
+			assertThatThrownBy(() -> LongEuclideanDomainStructure.INSTANCE.negate(Long.MIN_VALUE))
 					.as("negate(MIN_VALUE)")
 					.isInstanceOf(ArithmeticException.class);
 		}

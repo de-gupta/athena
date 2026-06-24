@@ -5,8 +5,8 @@ import de.gupta.commons.utility.math.ordering.OrderRelation;
 
 record IntegersAsEuclideanDomain(long value) implements IntegralNumber
 {
-	private final static IntegersEuclideanDomainStructure canonicalStructure =
-			IntegersEuclideanDomainStructure.INSTANCE;
+	private final static LongEuclideanDomainStructure canonicalStructure =
+			LongEuclideanDomainStructure.INSTANCE;
 
 	@Override
 	public IntegralNumber negate()

@@ -6,7 +6,7 @@ import de.gupta.commons.utility.math.ordering.OrderRelation;
 
 import java.util.Objects;
 
-enum IntegersEuclideanDomainStructure implements OrderedEuclideanDomainStructure<Long>
+enum LongEuclideanDomainStructure implements OrderedEuclideanDomainStructure<Long>
 {
 	INSTANCE;
 
@@ -37,12 +37,7 @@ enum IntegersEuclideanDomainStructure implements OrderedEuclideanDomainStructure
 	public Long one()
 	{
 		return 1L;
-	}@Override
-	public DivisionResult<Long> divideWithRemainder(final Long dividend, final Long divisor)
-	{
-		return divideFloor(dividend, divisor);
 	}
-
 @Override
 	public Long multiply(final Long left, final Long right)
 	{
@@ -54,12 +49,21 @@ enum IntegersEuclideanDomainStructure implements OrderedEuclideanDomainStructure
 	{
 		return OrderRelation.from(Long.compare(left, right));
 	}
-
-			@Override
+	@Override
 	public Long add(final Long left, final Long right)
 	{
 		return Math.addExact(left, right);
-	}	public DivisionResult<Long> divideFloor(final Long dividend, final Long divisor)
+	}@Override
+	public DivisionResult<Long> divideWithRemainder(final Long dividend, final Long divisor)
+	{
+		return divideFloor(dividend, divisor);
+	}
+
+
+
+
+
+	public DivisionResult<Long> divideFloor(final Long dividend, final Long divisor)
 	{
 		return DivisionResult.of(Math.floorDiv(dividend, divisor), Math.floorMod(dividend, divisor));
 	}
