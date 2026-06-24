@@ -33,50 +33,43 @@ enum LongEuclideanDomainStructure implements OrderedEuclideanDomainStructure<Lon
 	public Long negate(final Long element)
 	{
 		return Math.negateExact(element);
-	}	@Override
+	}
+
+	@Override
 	public Long one()
 	{
 		return 1L;
 	}
-@Override
+
+	@Override
 	public Long multiply(final Long left, final Long right)
 	{
 		return Math.multiplyExact(left, right);
 	}
 
-@Override
+	@Override
 	public OrderRelation compare(final Long left, final Long right)
 	{
 		return OrderRelation.from(Long.compare(left, right));
 	}
+
 	@Override
 	public Long add(final Long left, final Long right)
 	{
 		return Math.addExact(left, right);
-	}@Override
+	}
+
+	@Override
 	public DivisionResult<Long> divideWithRemainder(final Long dividend, final Long divisor)
 	{
 		return divideFloor(dividend, divisor);
 	}
 
 
-
-
-
 	public DivisionResult<Long> divideFloor(final Long dividend, final Long divisor)
 	{
 		return DivisionResult.of(Math.floorDiv(dividend, divisor), Math.floorMod(dividend, divisor));
 	}
-
-
-
-
-
-
-
-
-
-
 
 
 }
