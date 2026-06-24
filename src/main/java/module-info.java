@@ -52,7 +52,6 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.element.module;
 	exports de.gupta.commons.utility.math.algebra.element.ordered;
 	exports de.gupta.commons.utility.math.algebra.structure.ordered;
-	exports de.gupta.commons.utility.math.algebra.element.ring.standard;
 	exports de.gupta.commons.utility.math.algebra.element.lattice;
 
 	exports de.gupta.commons.utility.math.algebra.laws.lattice;
@@ -68,6 +67,7 @@ module de.gupta.athena
 
 	exports de.gupta.commons.utility.math.ordering.bound;
 	exports de.gupta.commons.utility.math.algebra.element.ring.standard.integers;
+	exports de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
 
 	requires de.gupta.aletheia;
 }

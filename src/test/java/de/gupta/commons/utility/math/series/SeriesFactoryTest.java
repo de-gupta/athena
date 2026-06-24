@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.series;
 
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
-import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.ordering.structure.IntegerNaturalOrder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("SeriesFactory")
 final class SeriesFactoryTest
 {
-	private static IntegralNumbers i(final long v)
+	private static IntegralNumber i(final long v)
 	{
 		return IntegralNumberFactory.of(v);
 	}
@@ -28,7 +28,7 @@ final class SeriesFactoryTest
 		@DisplayName("of() produces series sorted by T's natural order regardless of insertion order")
 		void ofProducesSeriesSortedByNaturalOrder()
 		{
-			final Series<IntegralNumbers, IntegralNumbers> series =
+			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(5), i(50), i(1), i(10), i(3), i(30)));
 			assertThat(series.indices()).containsExactly(i(1), i(3), i(5));
 			assertThat(series.first()).isPresent()
@@ -41,7 +41,7 @@ final class SeriesFactoryTest
 		@DisplayName("of() preserves all entries")
 		void ofPreservesAllEntries()
 		{
-			final Series<IntegralNumbers, IntegralNumbers> series =
+			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(1), i(10), i(3), i(30), i(5), i(50)));
 			assertThat(series.size()).isEqualTo(3);
 			assertThat(series.at(i(1))).isEqualTo(Optional.of(i(10)));
@@ -53,7 +53,7 @@ final class SeriesFactoryTest
 		@DisplayName("empty() produces an empty series")
 		void emptyProducesEmptySeries()
 		{
-			final Series<IntegralNumbers, IntegralNumbers> empty = SeriesFactory.empty();
+			final Series<IntegralNumber, IntegralNumber> empty = SeriesFactory.empty();
 			assertThat(empty.isEmpty()).isTrue();
 			assertThat(empty.size()).isEqualTo(0);
 			assertThat(empty.first()).isEmpty();
@@ -92,7 +92,7 @@ final class SeriesFactoryTest
 		@DisplayName("over(order) supports types not in the TotallyOrdered hierarchy")
 		void overOrderSupportsExternalTypes()
 		{
-			final Series<Integer, IntegralNumbers> series =
+			final Series<Integer, IntegralNumber> series =
 					SeriesFactory.over(IntegerNaturalOrder.INSTANCE)
 					             .of(Map.of(10, i(100), 30, i(300), 20, i(200)));
 			assertThat(series.indices()).containsExactly(10, 20, 30);

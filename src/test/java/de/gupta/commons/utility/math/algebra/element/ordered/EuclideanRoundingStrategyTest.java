@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ordered;
 
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
-import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.algebra.structure.ring.standard.IntegerEuclideanDomainStructure;
 import org.junit.jupiter.api.DisplayName;
@@ -27,25 +27,25 @@ final class EuclideanRoundingStrategyTest
 	}
 
 	private void assertDivision(final String as, final long dividend, final long divisor,
-	                            final RoundingStrategy<IntegralNumbers> strategy,
+	                            final RoundingStrategy<IntegralNumber> strategy,
 	                            final long expectedQuotient, final long expectedRemainder)
 	{
-		DivisionResult<IntegralNumbers> element = e(dividend).divide(e(divisor), strategy);
+		DivisionResult<IntegralNumber> element = e(dividend).divide(e(divisor), strategy);
 		assertThat(element.quotient()).as("%s element quotient", as).isEqualTo(e(expectedQuotient));
 		assertThat(element.remainder()).as("%s element remainder", as).isEqualTo(e(expectedRemainder));
 
-		DivisionResult<IntegralNumbers> structure =
+		DivisionResult<IntegralNumber> structure =
 				IntegerEuclideanDomainStructure.INSTANCE.divide(e(dividend), e(divisor), strategy);
 		assertThat(structure.quotient()).as("%s structure quotient", as).isEqualTo(e(expectedQuotient));
 		assertThat(structure.remainder()).as("%s structure remainder", as).isEqualTo(e(expectedRemainder));
 	}
 
-	private static IntegralNumbers e(final long value)
+	private static IntegralNumber e(final long value)
 	{
 		return IntegralNumberFactory.of(value);
 	}
 
-	private record StrategyArg(String name, RoundingStrategy<IntegralNumbers> strategy)
+	private record StrategyArg(String name, RoundingStrategy<IntegralNumber> strategy)
 	{
 	}
 
@@ -134,7 +134,7 @@ final class EuclideanRoundingStrategyTest
 		void allStrategiesProduceZeroRemainderAndTheSameQuotient(final String as, final long dividend,
 		                                                         final long divisor, final long expectedQ,
 		                                                         final String strategyName,
-		                                                         final RoundingStrategy<IntegralNumbers> strategy)
+		                                                         final RoundingStrategy<IntegralNumber> strategy)
 		{
 			assertDivision(as, dividend, divisor, strategy, expectedQ, 0L);
 		}
@@ -163,9 +163,9 @@ final class EuclideanRoundingStrategyTest
 		@DisplayName("dividend = quotient * divisor + remainder")
 		void dividendEqualsQuotientTimesDivisorPlusRemainder(final String as, final long dividend,
 		                                                     final long divisor, final String strategyName,
-		                                                     final RoundingStrategy<IntegralNumbers> strategy)
+		                                                     final RoundingStrategy<IntegralNumber> strategy)
 		{
-			DivisionResult<IntegralNumbers> result = e(dividend).divide(e(divisor), strategy);
+			DivisionResult<IntegralNumber> result = e(dividend).divide(e(divisor), strategy);
 			assertThat(result.quotient().multiply(e(divisor)).add(result.remainder()))
 					.as("%s — %s: dividend = q*d + r", as, strategyName).isEqualTo(e(dividend));
 		}

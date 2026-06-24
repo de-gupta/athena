@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ring.standard;
 
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
-import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -149,7 +149,7 @@ final class IntegersAsEuclideanDomainTest
 				final String as, final long dividend, final long divisor,
 				final long expectedQuotient, final long expectedRemainder)
 		{
-			DivisionResult<IntegralNumbers> result =
+			DivisionResult<IntegralNumber> result =
 					IntegralNumberFactory.of(dividend).divideWithRemainder(
 							IntegralNumberFactory.of(divisor));
 
@@ -166,7 +166,7 @@ final class IntegersAsEuclideanDomainTest
 			long dividend = -17L;
 			long divisor = 5L;
 
-			DivisionResult<IntegralNumbers> result =
+			DivisionResult<IntegralNumber> result =
 					IntegralNumberFactory.of(dividend).divideWithRemainder(
 							IntegralNumberFactory.of(divisor));
 
@@ -258,7 +258,7 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("zero is additive identity")
 		void zeroIsAdditiveIdentity()
 		{
-			IntegralNumbers a = IntegralNumberFactory.of(42);
+			IntegralNumber a = IntegralNumberFactory.of(42);
 
 			assertThat(a.add(a.zero())).as("a + 0").isEqualTo(a);
 			assertThat(a.zero().add(a)).as("0 + a").isEqualTo(a);
@@ -268,7 +268,7 @@ final class IntegersAsEuclideanDomainTest
 		@DisplayName("one is multiplicative identity")
 		void oneIsMultiplicativeIdentity()
 		{
-			IntegralNumbers a = IntegralNumberFactory.of(42);
+			IntegralNumber a = IntegralNumberFactory.of(42);
 
 			assertThat(a.multiply(a.one())).as("a * 1").isEqualTo(a);
 			assertThat(a.one().multiply(a)).as("1 * a").isEqualTo(a);

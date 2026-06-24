@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ordered;
 
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
-import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("OrderedEuclideanDomain")
 final class OrderedEuclideanDomainTest
 {
-	private static IntegralNumbers integer(final long value)
+	private static IntegralNumber integer(final long value)
 	{
 		return IntegralNumberFactory.of(value);
 	}
@@ -31,11 +31,11 @@ final class OrderedEuclideanDomainTest
 		@DisplayName("converts negative scalars and delegates to the rounding strategy")
 		void convertsNegativeScalarsAndDelegatesToTheRoundingStrategy(final String as, final long dividend,
 		                                                              final long scalar,
-		                                                              final RoundingStrategy<IntegralNumbers> strategy,
+		                                                              final RoundingStrategy<IntegralNumber> strategy,
 		                                                              final long expectedQuotient,
 		                                                              final long expectedRemainder)
 		{
-			DivisionResult<IntegralNumbers> result = integer(dividend).divide(scalar, strategy);
+			DivisionResult<IntegralNumber> result = integer(dividend).divide(scalar, strategy);
 
 			assertThat(result.quotient()).as("%s: quotient", as).isEqualTo(integer(expectedQuotient));
 			assertThat(result.remainder()).as("%s: remainder", as).isEqualTo(integer(expectedRemainder));
@@ -45,7 +45,7 @@ final class OrderedEuclideanDomainTest
 		@MethodSource("throwsForZeroScalarCases")
 		@DisplayName("throws for zero scalar after scalar-to-element conversion")
 		void throwsForZeroScalarAfterScalarToElementConversion(final String as, final long dividend,
-		                                                       final RoundingStrategy<IntegralNumbers> strategy)
+		                                                       final RoundingStrategy<IntegralNumber> strategy)
 		{
 			assertThatThrownBy(() -> integer(dividend).divide(0L, strategy))
 					.as(as)

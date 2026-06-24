@@ -4,37 +4,37 @@ import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.algebra.structure.ring.standard.IntegersEuclideanDomainStructure;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
 
-record IntegersAsEuclideanDomain(long value) implements IntegralNumbers
+record IntegersAsEuclideanDomain(long value) implements IntegralNumber
 {
 	private final static IntegersEuclideanDomainStructure canonicalStructure =
 			IntegersEuclideanDomainStructure.INSTANCE;
 
 	@Override
-	public IntegralNumbers negate()
+	public IntegralNumber negate()
 	{
 		return IntegralNumberFactory.of(canonicalStructure.negate(value));
 	}
 
 	@Override
-	public IntegralNumbers zero()
+	public IntegralNumber zero()
 	{
 		return IntegralNumberFactory.of(canonicalStructure.zero());
 	}
 
 	@Override
-	public IntegralNumbers one()
+	public IntegralNumber one()
 	{
 		return IntegralNumberFactory.of(canonicalStructure.one());
 	}
 
 	@Override
-	public IntegralNumbers multiply(final IntegralNumbers other)
+	public IntegralNumber multiply(final IntegralNumber other)
 	{
 		return IntegralNumberFactory.of(canonicalStructure.multiply(value, other.value()));
 	}
 
 	@Override
-	public IntegralNumbers add(final IntegralNumbers other)
+	public IntegralNumber add(final IntegralNumber other)
 	{
 		return IntegralNumberFactory.of(canonicalStructure.add(value, other.value()));
 	}
@@ -46,7 +46,7 @@ record IntegersAsEuclideanDomain(long value) implements IntegralNumbers
 	}
 
 	@Override
-	public DivisionResult<IntegralNumbers> divideFloor(final IntegralNumbers divisor)
+	public DivisionResult<IntegralNumber> divideFloor(final IntegralNumber divisor)
 	{
 		return canonicalStructure.divideFloor(value, divisor.value()).map(IntegralNumberFactory::of);
 	}
@@ -58,7 +58,7 @@ record IntegersAsEuclideanDomain(long value) implements IntegralNumbers
 	}
 
 	@Override
-	public OrderRelation compare(final IntegralNumbers other)
+	public OrderRelation compare(final IntegralNumber other)
 	{
 		return OrderRelation.from(Long.compare(value, other.value()));
 	}

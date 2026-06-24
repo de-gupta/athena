@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.structure.ring.standard;
 
+import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
-import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumbers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -127,7 +127,7 @@ final class IntegerEuclideanDomainStructureTest
 		@DisplayName("delegates to the element implementation")
 		void delegatesToTheElementImplementation()
 		{
-			DivisionResult<IntegralNumbers> result =
+			DivisionResult<IntegralNumber> result =
 					IntegerEuclideanDomainStructure.INSTANCE.divideWithRemainder(
 							IntegralNumberFactory.of(-17), IntegralNumberFactory.of(5));
 

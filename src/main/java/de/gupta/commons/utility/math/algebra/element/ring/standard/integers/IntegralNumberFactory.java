@@ -2,7 +2,7 @@ package de.gupta.commons.utility.math.algebra.element.ring.standard.integers;
 
 public final class IntegralNumberFactory
 {
-	public static IntegralNumbers of(final long value)
+	public static IntegralNumber of(final long value)
 	{
 		return new IntegersAsEuclideanDomain(value);
 	}
