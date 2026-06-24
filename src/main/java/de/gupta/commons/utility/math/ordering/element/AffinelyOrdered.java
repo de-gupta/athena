@@ -1,9 +1,8 @@
 package de.gupta.commons.utility.math.ordering.element;
 
-public interface AffinelyOrdered<E extends AffinelyOrdered<E, D>, D>
-		extends TotallyOrdered<E>
-{
-	D displacementTo(E other);
+import de.gupta.commons.utility.math.algebra.element.affine.AffineSpace;
 
-	E translate(D displacement);
+public interface AffinelyOrdered<A extends AffineSpace<A, D> & TotallyOrdered<A>, D> extends AffineSpace<A, D>,
+		TotallyOrdered<A>
+{
 }

@@ -1,38 +1,36 @@
 package de.gupta.commons.utility.math.ordering.structure;
 
+import de.gupta.commons.utility.math.algebra.structure.affine.AffineSpaceStructure;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
 
 import java.util.function.BiFunction;
 
-public interface AffineOrderStructure<E, D> extends TotalOrderStructure<E>
+public interface AffineOrderStructure<A, D> extends AffineSpaceStructure<A, D>,
+		TotalOrderStructure<A>
 {
-	static <E, D> AffineOrderStructure<E, D> of(final TotalOrderStructure<E> order,
-	                                            final BiFunction<E, E, D> between,
-	                                            final BiFunction<E, D, E> translate)
+	static <A, D> AffineOrderStructure<A, D> of(final TotalOrderStructure<A> order,
+	                                            final BiFunction<A, A, D> between,
+	                                            final BiFunction<A, D, A> translate)
 	{
 		return new AffineOrderStructure<>()
 		{
 			@Override
-			public OrderRelation compare(final E left, final E right)
+			public OrderRelation compare(final A left, final A right)
 			{
 				return order.compare(left, right);
 			}
 
 			@Override
-			public D displacement(final E from, final E to)
+			public D displacement(final A from, final A to)
 			{
 				return between.apply(from, to);
 			}
 
 			@Override
-			public E translate(final E point, final D displacement)
+			public A translate(final A point, final D displacement)
 			{
 				return translate.apply(point, displacement);
 			}
 		};
 	}
-
-	D displacement(E from, E to);
-
-	E translate(E point, D displacement);
 }
