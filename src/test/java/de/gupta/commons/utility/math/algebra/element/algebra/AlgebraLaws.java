@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.algebra;
 
 import de.gupta.commons.utility.math.algebra.element.ring.Ring;
+import de.gupta.commons.utility.math.algebra.laws.algebra.AlgebraLaw;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
@@ -8,7 +9,7 @@ import net.jqwik.api.Provide;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public interface AlgebraLaws<R extends Ring<R>, A extends Algebra<R, A>>
+public interface AlgebraLaws<R extends Ring<R>, A extends Algebra<R, A>> extends AlgebraLaw<R, A>
 {
 	@Provide
 	Arbitrary<R> scalars();
