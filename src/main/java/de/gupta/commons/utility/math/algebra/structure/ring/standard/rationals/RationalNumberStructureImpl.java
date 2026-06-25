@@ -2,6 +2,7 @@ package de.gupta.commons.utility.math.algebra.structure.ring.standard.rationals;
 
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumberFactory;
+import de.gupta.commons.utility.math.algebra.structure.ring.RingStructure;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
 
 enum RationalNumberStructureImpl implements RationalNumberStructure
@@ -48,5 +49,11 @@ enum RationalNumberStructureImpl implements RationalNumberStructure
 	public OrderRelation compare(final RationalNumber left, final RationalNumber right)
 	{
 		return left.compare(right);
+	}
+
+	@Override
+	public RingStructure<RationalNumber> scalars()
+	{
+		return this;
 	}
 }

@@ -1,12 +1,12 @@
 package de.gupta.commons.utility.math.algebra.element.algebra;
 
-@FunctionalInterface
-public interface ScalarExtension<E, F>
-{
-	F embed(E element);
+import de.gupta.commons.utility.math.algebra.element.module.Module;
+import de.gupta.commons.utility.math.algebra.element.ring.Ring;
 
-	default E project(final F accumulated, final ProjectionPolicy<F, E> policy)
+public interface ScalarExtension<E extends Module<E, R>, R extends Ring<R>, S extends Algebra<R, S>>
+{
+	default E project(final LinearCombination<S, E> accumulation, final ProjectionPolicy<S, E> policy)
 	{
-		return policy.project(accumulated);
+		return policy.project(accumulation);
 	}
 }

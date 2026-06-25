@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.algebra;
 
 @FunctionalInterface
-public interface ProjectionPolicy<F, E>
+public interface ProjectionPolicy<S, E>
 {
-	E project(F accumulated);
+	E project(final LinearCombination<S, E> linearCombination);
 }
