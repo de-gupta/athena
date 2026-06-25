@@ -1,15 +1,23 @@
 package de.gupta.commons.utility.math.algebra.structure.ring;
 
+import de.gupta.commons.utility.math.algebra.structure.algebra.AlgebraStructure;
+
 import java.util.Objects;
 
-public interface FieldStructure<E> extends CommutativeRingStructure<E>
+public interface FieldStructure<E> extends CommutativeRingStructure<E>, AlgebraStructure<E, E>
 {
-	E multiplicativeInverse(E element);
-
 	default E divide(final E left, final E right)
 	{
 		Objects.requireNonNull(left, "left");
 		Objects.requireNonNull(right, "right");
 		return multiply(left, multiplicativeInverse(right));
+	}
+
+	E multiplicativeInverse(E element);
+
+	@Override
+	default E embed(final E scalar)
+	{
+		return scalar;
 	}
 }
