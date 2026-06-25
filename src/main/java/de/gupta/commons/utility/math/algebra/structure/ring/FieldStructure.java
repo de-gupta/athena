@@ -20,10 +20,4 @@ public interface FieldStructure<E> extends CommutativeRingStructure<E>, AlgebraS
 	{
 		return scalar;
 	}
-
-	@Override
-	default E scale(final E scalar, final E vector)
-	{
-		return multiply(scalar, vector);
-	}
 }

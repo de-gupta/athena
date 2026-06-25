@@ -5,5 +5,11 @@ import de.gupta.commons.utility.math.algebra.element.ring.Ring;
 
 public interface Algebra<R extends Ring<R>, A extends Algebra<R, A>> extends Ring<A>, Module<A, R>
 {
+	@Override
+	default A scale(final R scalar)
+	{
+		return multiply(embed(scalar));
+	}
+
 	A embed(R scalar);
 }
