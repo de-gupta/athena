@@ -1,6 +1,7 @@
 package de.gupta.commons.utility.math.algebra.structure.ring.standard;
 
 import de.gupta.commons.utility.math.algebra.structure.ring.FieldStructure;
+import de.gupta.commons.utility.math.algebra.structure.ring.RingStructure;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -43,5 +44,11 @@ public enum BigDecimalFieldStructure implements FieldStructure<BigDecimal>
 	public BigDecimal negate(final BigDecimal element)
 	{
 		return element.negate();
+	}
+
+	@Override
+	public RingStructure<BigDecimal> scalars()
+	{
+		return this;
 	}
 }

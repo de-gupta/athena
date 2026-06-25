@@ -47,6 +47,12 @@ class RingStructureDefaultsTest
 	private static final FieldStructure<Double> RATIONAL_LIKE_FIELD = new FieldStructure<>()
 	{
 		@Override
+		public RingStructure<Double> scalars()
+		{
+			return this;
+		}
+
+		@Override
 		public Double negate(final Double element)
 		{
 			return -element;
