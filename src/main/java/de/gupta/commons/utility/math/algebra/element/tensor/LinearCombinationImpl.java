@@ -38,9 +38,7 @@ final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombina
 	@Override
 	public LinearCombination<S, E> addEntry(final S coefficient, final E element)
 	{
-		// TODO: use Cascade.admit when available
-		return new LinearCombinationImpl<>(Cascade.beckon(
-				Stream.concat(entries.stream(), Stream.of(new Entry<>(coefficient, element))).toList()));
+		return of(entries.admit(Entry.of(coefficient, element)));
 	}
 
 	@Override
@@ -120,7 +118,7 @@ final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombina
 	@Override
 	public LinearCombination<S, E> add(final LinearCombination<S, E> other)
 	{
-		return combine(other);
+		return of(entries.admit(other.terms()));
 	}
 
 	@Override

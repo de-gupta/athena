@@ -78,13 +78,14 @@ final class LinearCombinationTest
 		}
 
 		@Test
-		@DisplayName("addEntry allows duplicate elements with different coefficients")
-		void addEntryAllowsDuplicateElements()
+		@DisplayName("addEntry with same element merges coefficients (left-linearity)")
+		void addEntryWithSameElementMergesCoefficients()
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombinationFactory.of(r(1, 2), i(100))
 			                                                                                     .addEntry(r(1, 2),
 					                                                                                     i(100));
-			assertThat(lc.size()).isEqualTo(2);
+			assertThat(lc.size()).isEqualTo(1);
+			assertThat(lc.terms().getFirst().coefficient()).isEqualTo(r(1, 1));
 		}
 
 		@Test
@@ -194,7 +195,7 @@ final class LinearCombinationTest
 		}
 
 		@Test
-		@DisplayName("EMA accumulation: α·embed(p) + (1-α)·prev via scaleCoefficients and combine")
+		@DisplayName("EMA accumulation: repeated prices merge coefficients (left-linearity)")
 		void emaAccumulationViaScaleCoefficientsAndCombine()
 		{
 			final RationalNumber alpha = r(1, 2);
@@ -206,10 +207,16 @@ final class LinearCombinationTest
 			ema = LinearCombinationFactory.of(alpha, i(100))
 			                              .combine(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
 
-			assertThat(ema.size()).isEqualTo(3);
-			assertThat(ema.terms().get(0)).isEqualTo(new LinearCombinationImpl.Entry<>(r(1, 2), i(100)));
-			assertThat(ema.terms().get(1)).isEqualTo(new LinearCombinationImpl.Entry<>(r(1, 4), i(200)));
-			assertThat(ema.terms().get(2)).isEqualTo(new LinearCombinationImpl.Entry<>(r(1, 4), i(100)));
+			final LinearCombination<RationalNumber, IntegralNumber> finalEma = ema;
+			org.assertj.core.api.SoftAssertions.assertSoftly(softly ->
+			{
+				softly.assertThat(finalEma.size()).as("size: same price merges").isEqualTo(2);
+				softly.assertThat(finalEma.terms().get(0).coefficient()).as("price 100 weight merged")
+				      .isEqualTo(r(3, 4));
+				softly.assertThat(finalEma.terms().get(0).element()).as("price 100").isEqualTo(i(100));
+				softly.assertThat(finalEma.terms().get(1).coefficient()).as("price 200 weight").isEqualTo(r(1, 4));
+				softly.assertThat(finalEma.terms().get(1).element()).as("price 200").isEqualTo(i(200));
+			});
 		}
 	}
 
