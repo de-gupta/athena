@@ -48,12 +48,12 @@ final class LinearCombinationTest
 		}
 
 		@Test
-		@DisplayName("works with any unconstrained types")
-		void worksWithAnyUnconstrainedTypes()
+		@DisplayName("E is unconstrained — any type works as element")
+		void eIsUnconstrainedAnyTypeWorksAsElement()
 		{
-			final LinearCombination<String, Integer> lc = LinearCombinationFactory.of("weight", 42);
-			assertThat(lc.terms().getFirst().coefficient()).isEqualTo("weight");
-			assertThat(lc.terms().getFirst().element()).isEqualTo(42);
+			final LinearCombination<RationalNumber, String> lc = LinearCombinationFactory.of(r(1, 2), "price");
+			assertThat(lc.terms().getFirst().coefficient()).isEqualTo(r(1, 2));
+			assertThat(lc.terms().getFirst().element()).isEqualTo("price");
 		}
 	}
 
@@ -177,7 +177,7 @@ final class LinearCombinationTest
 					                        .addEntry(r(1, 4), i(200));
 
 			final LinearCombination<RationalNumber, IntegralNumber> scaled =
-					lc.scaleCoefficients(c -> c.multiply(r(1, 2)));
+					lc.transformCoefficients(c -> c.multiply(r(1, 2)));
 
 			assertThat(scaled.terms().get(0).coefficient()).isEqualTo(r(1, 4));
 			assertThat(scaled.terms().get(0).element()).isEqualTo(i(100));
@@ -190,7 +190,7 @@ final class LinearCombinationTest
 		void scaleCoefficientsOnEmptyReturnsEmpty()
 		{
 			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty()
-			                                   .scaleCoefficients(c -> c.multiply(r(1, 2))).isEmpty()).isTrue();
+			                                   .transformCoefficients(c -> c.multiply(r(1, 2))).isEmpty()).isTrue();
 		}
 
 		@Test
@@ -202,9 +202,9 @@ final class LinearCombinationTest
 
 			LinearCombination<RationalNumber, IntegralNumber> ema = LinearCombinationFactory.of(r(1, 1), i(100));
 			ema = LinearCombinationFactory.of(alpha, i(200))
-			                              .combine(ema.scaleCoefficients(c -> c.multiply(oneMinusAlpha)));
+			                              .combine(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
 			ema = LinearCombinationFactory.of(alpha, i(100))
-			                              .combine(ema.scaleCoefficients(c -> c.multiply(oneMinusAlpha)));
+			                              .combine(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
 
 			assertThat(ema.size()).isEqualTo(3);
 			assertThat(ema.terms().get(0)).isEqualTo(new LinearCombinationImpl.Entry<>(r(1, 2), i(100)));

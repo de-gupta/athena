@@ -4,11 +4,20 @@ import de.gupta.commons.utility.math.algebra.element.algebra.Algebra;
 import de.gupta.commons.utility.math.algebra.element.module.Module;
 import de.gupta.commons.utility.math.algebra.element.ring.Ring;
 
-public interface ScalarExtension<E extends Module<E, R>, R extends Ring<R>, S extends Algebra<R, S>>
-		extends Module<ScalarExtension<E, R, S>, S>
+import java.util.List;
+
+public sealed interface ScalarExtension<E extends Module<E, R>, R extends Ring<R>, S extends Algebra<R, S>>
+		extends Module<ScalarExtension<E, R, S>, S> permits ScalarExtensionImpl
 {
-	default E project(final LinearCombination<S, E> accumulation, final ProjectionPolicy<S, E> policy)
+	default boolean isEmpty()
 	{
-		return policy.project(accumulation);
+		return terms().isEmpty();
+	}
+
+	List<LinearCombination.Entry<S, E>> terms();
+
+	default E project(final ProjectionPolicy<E, R, S> policy)
+	{
+		return policy.project(this);
 	}
 }

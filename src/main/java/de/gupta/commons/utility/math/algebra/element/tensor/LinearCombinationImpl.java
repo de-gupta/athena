@@ -1,29 +1,44 @@
 package de.gupta.commons.utility.math.algebra.element.tensor;
 
 import de.gupta.aletheia.collection.cascade.Cascade;
+import de.gupta.commons.utility.math.algebra.element.ring.Ring;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-final class LinearCombinationImpl<S, E> implements LinearCombination<S, E>
+final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombination<S, E>
 {
 	private final Cascade<Entry<S, E>> entries;
 
-	static <S, E> LinearCombinationImpl<S, E> empty()
+	static <S extends Ring<S>, E> LinearCombinationImpl<S, E> of(final S coefficient, final E element)
 	{
-		return new LinearCombinationImpl<>(Cascade.abyss());
+		return of(List.of(Entry.of(coefficient, element)));
 	}
 
-	static <S, E> LinearCombinationImpl<S, E> of(final S coefficient, final E element)
+	static <S extends Ring<S>, E> LinearCombinationImpl<S, E> of(final Collection<Entry<S, E>> entries)
 	{
-		return new LinearCombinationImpl<>(Cascade.beckon(List.of(new Entry<>(coefficient, element))));
+		return of(Cascade.beckon(entries));
+	}
+
+	static <S extends Ring<S>, E> LinearCombinationImpl<S, E> of(final Cascade<Entry<S, E>> entries)
+	{
+		return new LinearCombinationImpl<>(normalize(entries));
+	}
+
+	private static <S extends Ring<S>, E> Cascade<Entry<S, E>> normalize(final Cascade<Entry<S, E>> entries)
+	{
+		return entries.amalgamate(Entry::element,
+							  (e, f) -> Entry.of(e.coefficient().add(f.coefficient()), e.element()))
+		              .filter(e -> !e.coefficient().equals(e.coefficient().zero()));
 	}
 
 	@Override
 	public LinearCombination<S, E> addEntry(final S coefficient, final E element)
 	{
+		// TODO: use Cascade.admit when available
 		return new LinearCombinationImpl<>(Cascade.beckon(
 				Stream.concat(entries.stream(), Stream.of(new Entry<>(coefficient, element))).toList()));
 	}
@@ -38,16 +53,18 @@ final class LinearCombinationImpl<S, E> implements LinearCombination<S, E>
 	@Override
 	public LinearCombination<S, E> combine(final LinearCombination<S, E> other)
 	{
+		// TODO: use Cascade.admit when available and normalize
 		final LinearCombinationImpl<S, E> otherImpl = (LinearCombinationImpl<S, E>) other;
-		return new LinearCombinationImpl<>(Cascade.beckon(
-				Stream.concat(entries.stream(), otherImpl.entries.stream()).toList()));
+		return of(Cascade.beckon(Stream.concat(entries.stream(), otherImpl.entries.stream())));
 	}
 
 	@Override
-	public LinearCombination<S, E> scaleCoefficients(final UnaryOperator<S> transform)
+	public LinearCombination<S, E> transformCoefficients(final UnaryOperator<S> transform)
 	{
-		return new LinearCombinationImpl<>(Cascade.beckon(
-				entries.stream().map(t -> new Entry<>(transform.apply(t.coefficient()), t.element())).toList()));
+		return of(
+				entries.transfigure(
+						collection -> collection.stream().map(entry -> entry.transformCoefficients(transform)).toList())
+		);
 	}
 
 	@Override
@@ -86,6 +103,35 @@ final class LinearCombinationImpl<S, E> implements LinearCombination<S, E>
 	public String toString()
 	{
 		return "LinearCombination" + terms();
+	}
+
+	@Override
+	public LinearCombination<S, E> scale(final S scalar)
+	{
+		return transformCoefficients(coefficient -> coefficient.multiply(scalar));
+	}
+
+	@Override
+	public LinearCombination<S, E> negate()
+	{
+		return transformCoefficients(Ring::negate);
+	}
+
+	@Override
+	public LinearCombination<S, E> add(final LinearCombination<S, E> other)
+	{
+		return combine(other);
+	}
+
+	@Override
+	public LinearCombination<S, E> zero()
+	{
+		return empty();
+	}
+
+	static <S extends Ring<S>, E> LinearCombinationImpl<S, E> empty()
+	{
+		return of(List.of());
 	}
 
 	private LinearCombinationImpl(final Cascade<Entry<S, E>> entries)
