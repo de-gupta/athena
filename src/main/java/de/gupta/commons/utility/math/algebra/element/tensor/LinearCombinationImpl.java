@@ -31,8 +31,9 @@ final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombina
 	private static <S extends Ring<S>, E> Cascade<Entry<S, E>> normalize(final Cascade<Entry<S, E>> entries)
 	{
 		return entries.amalgamate(Entry::element,
-							  (e, f) -> Entry.of(e.coefficient().add(f.coefficient()), e.element()))
-		              .filter(e -> !e.coefficient().equals(e.coefficient().zero()));
+							  (e, f) -> Entry.of(e.coefficient().add(f.coefficient()), e.element())
+					  )
+		              .discern(e -> !e.coefficient().equals(e.coefficient().zero()));
 	}
 
 	@Override
@@ -53,7 +54,7 @@ final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombina
 	{
 		// TODO: use Cascade.admit when available and normalize
 		final LinearCombinationImpl<S, E> otherImpl = (LinearCombinationImpl<S, E>) other;
-		return of(Cascade.beckon(Stream.concat(entries.stream(), otherImpl.entries.stream())));
+		return new LinearCombinationImpl<>(Cascade.beckon(Stream.concat(entries.stream(), otherImpl.entries.stream())));
 	}
 
 	@Override

@@ -162,6 +162,39 @@ final class LinearCombinationTest
 			assertThat(lc.combine(LinearCombinationFactory.empty())).isEqualTo(lc);
 			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty().combine(lc)).isEqualTo(lc);
 		}
+
+		@Test
+		@DisplayName("combine preserves duplicate same-element entries — no normalization")
+		void combinePreservesDuplicates()
+		{
+			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 4), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> combined = a.combine(b);
+			assertThat(combined.size()).isEqualTo(2);
+			assertThat(combined.terms().get(0).coefficient()).isEqualTo(r(1, 2));
+			assertThat(combined.terms().get(1).coefficient()).isEqualTo(r(1, 4));
+		}
+
+		@Test
+		@DisplayName("add normalizes same-element entries — merges coefficients")
+		void addNormalizesSameElementEntries()
+		{
+			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 4), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> sum = a.add(b);
+			assertThat(sum.size()).isEqualTo(1);
+			assertThat(sum.terms().getFirst().coefficient()).isEqualTo(r(3, 4));
+		}
+
+		@Test
+		@DisplayName("combine then add: explicit choice between formal and normalized")
+		void combineIsFormalAddIsNormalized()
+		{
+			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 4), i(100));
+			assertThat(a.combine(b).size()).isEqualTo(2);
+			assertThat(a.add(b).size()).isEqualTo(1);
+		}
 	}
 
 	@Nested
