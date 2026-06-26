@@ -31,7 +31,7 @@ final class LinearCombinationTest
 		@DisplayName("empty() produces empty combination")
 		void emptyProducesEmptyCombination()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombination.empty();
+			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombinationFactory.empty();
 			assertThat(lc.isEmpty()).isTrue();
 			assertThat(lc.size()).isEqualTo(0);
 			assertThat(lc.terms()).isEmpty();
@@ -41,7 +41,7 @@ final class LinearCombinationTest
 		@DisplayName("of() produces singleton combination")
 		void ofProducesSingletonCombination()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombination.of(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombinationFactory.of(r(1, 2), i(100));
 			assertThat(lc.size()).isEqualTo(1);
 			assertThat(lc.terms().getFirst().coefficient()).isEqualTo(r(1, 2));
 			assertThat(lc.terms().getFirst().element()).isEqualTo(i(100));
@@ -51,7 +51,7 @@ final class LinearCombinationTest
 		@DisplayName("works with any unconstrained types")
 		void worksWithAnyUnconstrainedTypes()
 		{
-			final LinearCombination<String, Integer> lc = LinearCombination.of("weight", 42);
+			final LinearCombination<String, Integer> lc = LinearCombinationFactory.of("weight", 42);
 			assertThat(lc.terms().getFirst().coefficient()).isEqualTo("weight");
 			assertThat(lc.terms().getFirst().element()).isEqualTo(42);
 		}
@@ -66,10 +66,10 @@ final class LinearCombinationTest
 		void addEntryAppendsAtEndPreservingInsertionOrder()
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> lc =
-					LinearCombination.<RationalNumber, IntegralNumber>empty()
-					                 .addEntry(r(1, 2), i(100))
-					                 .addEntry(r(1, 4), i(200))
-					                 .addEntry(r(1, 4), i(300));
+					LinearCombinationFactory.<RationalNumber, IntegralNumber>empty()
+					                        .addEntry(r(1, 2), i(100))
+					                        .addEntry(r(1, 4), i(200))
+					                        .addEntry(r(1, 4), i(300));
 
 			assertThat(lc.size()).isEqualTo(3);
 			assertThat(lc.terms().get(0).element()).isEqualTo(i(100));
@@ -81,8 +81,9 @@ final class LinearCombinationTest
 		@DisplayName("addEntry allows duplicate elements with different coefficients")
 		void addEntryAllowsDuplicateElements()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombination.of(r(1, 2), i(100))
-			                                                                              .addEntry(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombinationFactory.of(r(1, 2), i(100))
+			                                                                                     .addEntry(r(1, 2),
+					                                                                                     i(100));
 			assertThat(lc.size()).isEqualTo(2);
 		}
 
@@ -90,7 +91,8 @@ final class LinearCombinationTest
 		@DisplayName("addEntry is non-destructive — original unchanged")
 		void addEntryIsNonDestructive()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> original = LinearCombination.of(r(1, 1), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> original =
+					LinearCombinationFactory.of(r(1, 1), i(100));
 			original.addEntry(r(1, 2), i(200));
 			assertThat(original.size()).isEqualTo(1);
 		}
@@ -105,10 +107,10 @@ final class LinearCombinationTest
 		void removeEntriesRemovesAllMatchingTerms()
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> lc =
-					LinearCombination.<RationalNumber, IntegralNumber>empty()
-					                 .addEntry(r(1, 4), i(100))
-					                 .addEntry(r(1, 2), i(100))
-					                 .addEntry(r(1, 4), i(200));
+					LinearCombinationFactory.<RationalNumber, IntegralNumber>empty()
+					                        .addEntry(r(1, 4), i(100))
+					                        .addEntry(r(1, 2), i(100))
+					                        .addEntry(r(1, 4), i(200));
 
 			final LinearCombination<RationalNumber, IntegralNumber> result = lc.removeEntries(i(100));
 			assertThat(result.size()).isEqualTo(1);
@@ -119,7 +121,7 @@ final class LinearCombinationTest
 		@DisplayName("removeEntries on absent element returns same combination")
 		void removeEntriesOnAbsentElementReturnsSameCombination()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombination.of(r(1, 1), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombinationFactory.of(r(1, 1), i(100));
 			assertThat(lc.removeEntries(i(999))).isEqualTo(lc);
 		}
 
@@ -128,7 +130,8 @@ final class LinearCombinationTest
 		void removeEntriesOnEmptyReturnsEmpty()
 		{
 			assertThat(
-					LinearCombination.<RationalNumber, IntegralNumber>empty().removeEntries(i(100)).isEmpty()).isTrue();
+					LinearCombinationFactory.<RationalNumber, IntegralNumber>empty().removeEntries(i(100))
+					                        .isEmpty()).isTrue();
 		}
 	}
 
@@ -140,8 +143,9 @@ final class LinearCombinationTest
 		@DisplayName("combine merges terms in order: left then right")
 		void combineMergesTermsInOrder()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> left = LinearCombination.of(r(1, 2), i(100));
-			final LinearCombination<RationalNumber, IntegralNumber> right = LinearCombination.of(r(1, 2), i(200));
+			final LinearCombination<RationalNumber, IntegralNumber> left = LinearCombinationFactory.of(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> right =
+					LinearCombinationFactory.of(r(1, 2), i(200));
 
 			final LinearCombination<RationalNumber, IntegralNumber> combined = left.combine(right);
 			assertThat(combined.size()).isEqualTo(2);
@@ -153,9 +157,9 @@ final class LinearCombinationTest
 		@DisplayName("combine with empty returns original terms")
 		void combineWithEmptyReturnsOriginalTerms()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombination.of(r(3, 4), i(100));
-			assertThat(lc.combine(LinearCombination.empty())).isEqualTo(lc);
-			assertThat(LinearCombination.<RationalNumber, IntegralNumber>empty().combine(lc)).isEqualTo(lc);
+			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombinationFactory.of(r(3, 4), i(100));
+			assertThat(lc.combine(LinearCombinationFactory.empty())).isEqualTo(lc);
+			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty().combine(lc)).isEqualTo(lc);
 		}
 	}
 
@@ -168,9 +172,9 @@ final class LinearCombinationTest
 		void scaleCoefficientsTransformsAllCoefficients()
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> lc =
-					LinearCombination.<RationalNumber, IntegralNumber>empty()
-					                 .addEntry(r(1, 2), i(100))
-					                 .addEntry(r(1, 4), i(200));
+					LinearCombinationFactory.<RationalNumber, IntegralNumber>empty()
+					                        .addEntry(r(1, 2), i(100))
+					                        .addEntry(r(1, 4), i(200));
 
 			final LinearCombination<RationalNumber, IntegralNumber> scaled =
 					lc.scaleCoefficients(c -> c.multiply(r(1, 2)));
@@ -185,8 +189,8 @@ final class LinearCombinationTest
 		@DisplayName("scaleCoefficients on empty returns empty")
 		void scaleCoefficientsOnEmptyReturnsEmpty()
 		{
-			assertThat(LinearCombination.<RationalNumber, IntegralNumber>empty()
-			                            .scaleCoefficients(c -> c.multiply(r(1, 2))).isEmpty()).isTrue();
+			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty()
+			                                   .scaleCoefficients(c -> c.multiply(r(1, 2))).isEmpty()).isTrue();
 		}
 
 		@Test
@@ -196,14 +200,16 @@ final class LinearCombinationTest
 			final RationalNumber alpha = r(1, 2);
 			final RationalNumber oneMinusAlpha = r(1, 1).subtract(alpha);
 
-			LinearCombination<RationalNumber, IntegralNumber> ema = LinearCombination.of(r(1, 1), i(100));
-			ema = LinearCombination.of(alpha, i(200)).combine(ema.scaleCoefficients(c -> c.multiply(oneMinusAlpha)));
-			ema = LinearCombination.of(alpha, i(100)).combine(ema.scaleCoefficients(c -> c.multiply(oneMinusAlpha)));
+			LinearCombination<RationalNumber, IntegralNumber> ema = LinearCombinationFactory.of(r(1, 1), i(100));
+			ema = LinearCombinationFactory.of(alpha, i(200))
+			                              .combine(ema.scaleCoefficients(c -> c.multiply(oneMinusAlpha)));
+			ema = LinearCombinationFactory.of(alpha, i(100))
+			                              .combine(ema.scaleCoefficients(c -> c.multiply(oneMinusAlpha)));
 
 			assertThat(ema.size()).isEqualTo(3);
-			assertThat(ema.terms().get(0)).isEqualTo(new LinearCombination.Entry<>(r(1, 2), i(100)));
-			assertThat(ema.terms().get(1)).isEqualTo(new LinearCombination.Entry<>(r(1, 4), i(200)));
-			assertThat(ema.terms().get(2)).isEqualTo(new LinearCombination.Entry<>(r(1, 4), i(100)));
+			assertThat(ema.terms().get(0)).isEqualTo(new LinearCombinationImpl.Entry<>(r(1, 2), i(100)));
+			assertThat(ema.terms().get(1)).isEqualTo(new LinearCombinationImpl.Entry<>(r(1, 4), i(200)));
+			assertThat(ema.terms().get(2)).isEqualTo(new LinearCombinationImpl.Entry<>(r(1, 4), i(100)));
 		}
 	}
 
@@ -215,8 +221,8 @@ final class LinearCombinationTest
 		@DisplayName("equal when same terms in same order")
 		void equalWhenSameTermsInSameOrder()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombination.of(r(1, 2), i(100));
-			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombination.of(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 2), i(100));
 			assertThat(a).isEqualTo(b);
 		}
 
@@ -224,10 +230,12 @@ final class LinearCombinationTest
 		@DisplayName("not equal when same terms in different order")
 		void notEqualWhenSameTermsInDifferentOrder()
 		{
-			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombination.of(r(1, 2), i(100))
-			                                                                             .addEntry(r(1, 2), i(200));
-			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombination.of(r(1, 2), i(200))
-			                                                                             .addEntry(r(1, 2), i(100));
+			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100))
+			                                                                                    .addEntry(r(1, 2),
+					                                                                                    i(200));
+			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 2), i(200))
+			                                                                                    .addEntry(r(1, 2),
+					                                                                                    i(100));
 			assertThat(a).isNotEqualTo(b);
 		}
 	}

@@ -5,16 +5,6 @@ import java.util.function.UnaryOperator;
 
 public sealed interface LinearCombination<S, E> permits LinearCombinationImpl
 {
-	static <S, E> LinearCombination<S, E> empty()
-	{
-		return LinearCombinationImpl.empty();
-	}
-
-	static <S, E> LinearCombination<S, E> of(final S coefficient, final E element)
-	{
-		return LinearCombinationImpl.of(coefficient, element);
-	}
-
 	LinearCombination<S, E> addEntry(S coefficient, E element);
 
 	LinearCombination<S, E> removeEntries(E element);
