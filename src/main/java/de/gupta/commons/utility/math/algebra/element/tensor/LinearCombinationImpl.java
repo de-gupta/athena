@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombination<S, E>
 {
@@ -52,9 +51,10 @@ final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombina
 	@Override
 	public LinearCombination<S, E> combine(final LinearCombination<S, E> other)
 	{
-		// TODO: use Cascade.admit when available and normalize
-		final LinearCombinationImpl<S, E> otherImpl = (LinearCombinationImpl<S, E>) other;
-		return new LinearCombinationImpl<>(Cascade.beckon(Stream.concat(entries.stream(), otherImpl.entries.stream())));
+		return switch (other)
+		{
+			case LinearCombinationImpl<S, E> lci -> new LinearCombinationImpl<>(entries.admit(lci.entries));
+		};
 	}
 
 	@Override

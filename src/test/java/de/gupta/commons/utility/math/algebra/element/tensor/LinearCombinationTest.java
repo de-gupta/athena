@@ -243,12 +243,15 @@ final class LinearCombinationTest
 			final LinearCombination<RationalNumber, IntegralNumber> finalEma = ema;
 			org.assertj.core.api.SoftAssertions.assertSoftly(softly ->
 			{
-				softly.assertThat(finalEma.size()).as("size: same price merges").isEqualTo(2);
-				softly.assertThat(finalEma.terms().get(0).coefficient()).as("price 100 weight merged")
-				      .isEqualTo(r(3, 4));
-				softly.assertThat(finalEma.terms().get(0).element()).as("price 100").isEqualTo(i(100));
+				softly.assertThat(finalEma.size()).as("size: combine keeps formal terms").isEqualTo(3);
+				softly.assertThat(finalEma.terms().get(0).coefficient()).as("step-2 price 100 weight")
+				      .isEqualTo(r(1, 2));
+				softly.assertThat(finalEma.terms().get(0).element()).as("step-2 price 100").isEqualTo(i(100));
 				softly.assertThat(finalEma.terms().get(1).coefficient()).as("price 200 weight").isEqualTo(r(1, 4));
 				softly.assertThat(finalEma.terms().get(1).element()).as("price 200").isEqualTo(i(200));
+				softly.assertThat(finalEma.terms().get(2).coefficient()).as("step-1 price 100 weight")
+				      .isEqualTo(r(1, 4));
+				softly.assertThat(finalEma.terms().get(2).element()).as("step-1 price 100").isEqualTo(i(100));
 			});
 		}
 	}
