@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.algebra.element.algebra;
+package de.gupta.commons.utility.math.algebra.element.tensor;
 
 @FunctionalInterface
 public interface ProjectionPolicy<S, E>

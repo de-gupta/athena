@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.algebra.element.algebra;
+package de.gupta.commons.utility.math.algebra.element.tensor;
 
 public final class LinearCombinationFactory
 {

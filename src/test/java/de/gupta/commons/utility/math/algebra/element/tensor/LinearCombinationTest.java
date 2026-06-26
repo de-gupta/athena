@@ -1,4 +1,4 @@
-package de.gupta.commons.utility.math.algebra.element.algebra;
+package de.gupta.commons.utility.math.algebra.element.tensor;
 
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;

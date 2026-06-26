@@ -70,6 +70,8 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
 	exports de.gupta.commons.utility.math.algebra.element.algebra;
 	exports de.gupta.commons.utility.math.algebra.structure.algebra;
+	exports de.gupta.commons.utility.math.algebra.element.tensor;
+	exports de.gupta.commons.utility.math.algebra.structure.tensor;
 
 	requires de.gupta.aletheia;
 }
