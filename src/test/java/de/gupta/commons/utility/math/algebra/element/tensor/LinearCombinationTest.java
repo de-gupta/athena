@@ -137,42 +137,30 @@ final class LinearCombinationTest
 	}
 
 	@Nested
-	@DisplayName("when combining")
-	final class WhenCombining
+	@DisplayName("when adding")
+	final class WhenAdding
 	{
 		@Test
-		@DisplayName("combine merges terms in order: left then right")
-		void combineMergesTermsInOrder()
+		@DisplayName("add merges distinct-element terms in order: left then right")
+		void addMergesDistinctTermsInOrder()
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> left = LinearCombinationFactory.of(r(1, 2), i(100));
 			final LinearCombination<RationalNumber, IntegralNumber> right =
 					LinearCombinationFactory.of(r(1, 2), i(200));
 
-			final LinearCombination<RationalNumber, IntegralNumber> combined = left.concat(right);
-			assertThat(combined.size()).isEqualTo(2);
-			assertThat(combined.terms().get(0).element()).isEqualTo(i(100));
-			assertThat(combined.terms().get(1).element()).isEqualTo(i(200));
+			final LinearCombination<RationalNumber, IntegralNumber> sum = left.add(right);
+			assertThat(sum.size()).isEqualTo(2);
+			assertThat(sum.terms().get(0).element()).isEqualTo(i(100));
+			assertThat(sum.terms().get(1).element()).isEqualTo(i(200));
 		}
 
 		@Test
-		@DisplayName("combine with empty returns original terms")
-		void combineWithEmptyReturnsOriginalTerms()
+		@DisplayName("add with empty is identity")
+		void addWithEmptyIsIdentity()
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombinationFactory.of(r(3, 4), i(100));
-			assertThat(lc.concat(LinearCombinationFactory.empty())).isEqualTo(lc);
-			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty().concat(lc)).isEqualTo(lc);
-		}
-
-		@Test
-		@DisplayName("combine preserves duplicate same-element entries — no normalization")
-		void combinePreservesDuplicates()
-		{
-			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100));
-			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 4), i(100));
-			final LinearCombination<RationalNumber, IntegralNumber> combined = a.concat(b);
-			assertThat(combined.size()).isEqualTo(2);
-			assertThat(combined.terms().get(0).coefficient()).isEqualTo(r(1, 2));
-			assertThat(combined.terms().get(1).coefficient()).isEqualTo(r(1, 4));
+			assertThat(lc.add(LinearCombinationFactory.empty())).isEqualTo(lc);
+			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty().add(lc)).isEqualTo(lc);
 		}
 
 		@Test
@@ -184,16 +172,6 @@ final class LinearCombinationTest
 			final LinearCombination<RationalNumber, IntegralNumber> sum = a.add(b);
 			assertThat(sum.size()).isEqualTo(1);
 			assertThat(sum.terms().getFirst().coefficient()).isEqualTo(r(3, 4));
-		}
-
-		@Test
-		@DisplayName("combine then add: explicit choice between formal and normalized")
-		void combineIsFormalAddIsNormalized()
-		{
-			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100));
-			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 4), i(100));
-			assertThat(a.concat(b).size()).isEqualTo(2);
-			assertThat(a.add(b).size()).isEqualTo(1);
 		}
 	}
 
@@ -225,34 +203,6 @@ final class LinearCombinationTest
 		{
 			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty()
 			                                   .transformCoefficients(c -> c.multiply(r(1, 2))).isEmpty()).isTrue();
-		}
-
-		@Test
-		@DisplayName("EMA accumulation: repeated prices merge coefficients (left-linearity)")
-		void emaAccumulationViaScaleCoefficientsAndCombine()
-		{
-			final RationalNumber alpha = r(1, 2);
-			final RationalNumber oneMinusAlpha = r(1, 1).subtract(alpha);
-
-			LinearCombination<RationalNumber, IntegralNumber> ema = LinearCombinationFactory.of(r(1, 1), i(100));
-			ema = LinearCombinationFactory.of(alpha, i(200))
-			                              .concat(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
-			ema = LinearCombinationFactory.of(alpha, i(100))
-			                              .concat(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
-
-			final LinearCombination<RationalNumber, IntegralNumber> finalEma = ema;
-			org.assertj.core.api.SoftAssertions.assertSoftly(softly ->
-			{
-				softly.assertThat(finalEma.size()).as("size: combine keeps formal terms").isEqualTo(3);
-				softly.assertThat(finalEma.terms().get(0).coefficient()).as("step-2 price 100 weight")
-				      .isEqualTo(r(1, 2));
-				softly.assertThat(finalEma.terms().get(0).element()).as("step-2 price 100").isEqualTo(i(100));
-				softly.assertThat(finalEma.terms().get(1).coefficient()).as("price 200 weight").isEqualTo(r(1, 4));
-				softly.assertThat(finalEma.terms().get(1).element()).as("price 200").isEqualTo(i(200));
-				softly.assertThat(finalEma.terms().get(2).coefficient()).as("step-1 price 100 weight")
-				      .isEqualTo(r(1, 4));
-				softly.assertThat(finalEma.terms().get(2).element()).as("step-1 price 100").isEqualTo(i(100));
-			});
 		}
 	}
 

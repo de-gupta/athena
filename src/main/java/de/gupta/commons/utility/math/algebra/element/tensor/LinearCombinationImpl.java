@@ -44,17 +44,7 @@ final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombina
 	@Override
 	public LinearCombination<S, E> removeEntries(final E element)
 	{
-		return new LinearCombinationImpl<>(Cascade.beckon(
-				entries.stream().filter(t -> !Objects.equals(t.element(), element)).toList()));
-	}
-
-	@Override
-	public LinearCombination<S, E> concat(final LinearCombination<S, E> other)
-	{
-		return switch (other)
-		{
-			case LinearCombinationImpl<S, E> lci -> new LinearCombinationImpl<>(entries.admit(lci.entries));
-		};
+		return of(entries.discern(e -> !Objects.equals(e.element(), element)));
 	}
 
 	@Override

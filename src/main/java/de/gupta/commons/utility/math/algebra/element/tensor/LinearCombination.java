@@ -13,8 +13,6 @@ public sealed interface LinearCombination<S extends Ring<S>, E> extends Module<L
 
 	LinearCombination<S, E> removeEntries(final E element);
 
-	LinearCombination<S, E> concat(final LinearCombination<S, E> other);
-
 	LinearCombination<S, E> transformCoefficients(final UnaryOperator<S> transform);
 
 	List<Entry<S, E>> terms();
