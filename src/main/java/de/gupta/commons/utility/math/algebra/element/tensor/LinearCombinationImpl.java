@@ -107,7 +107,7 @@ final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombina
 	@Override
 	public LinearCombination<S, E> scale(final S scalar)
 	{
-		return transformCoefficients(coefficient -> coefficient.multiply(scalar));
+		return transformCoefficients(scalar::multiply);
 	}
 
 	@Override

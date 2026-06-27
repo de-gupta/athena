@@ -1,5 +1,6 @@
 package de.gupta.commons.utility.math.algebra.element.tensor;
 
+import de.gupta.commons.utility.math.algebra.element.ring.Semiring;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumberFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -24,28 +25,36 @@ final class ScalarExtensionTest
 		return RationalNumberFactory.of(num, denom);
 	}
 
+	private static RationalNumber evaluate(final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext)
+	{
+		return ext.fold(RationalNumberFactory.zero(),
+				Semiring::multiply,
+				RationalNumber::add);
+	}
+
 	@Nested
 	@DisplayName("when constructing")
 	final class WhenConstructing
 	{
 		@Test
-		@DisplayName("of() produces single-term extension backed by LC")
-		void ofProducesSingleTermExtension()
+		@DisplayName("of() produces non-empty extension")
+		void ofProducesNonEmptyExtension()
 		{
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext = se(1, 2, 3, 4);
-			assertThat(ext.terms()).hasSize(1);
-			assertThat(ext.terms().getFirst().coefficient()).isEqualTo(r(1, 2));
-			assertThat(ext.terms().getFirst().element()).isEqualTo(r(3, 4));
+			assertThat(se(1, 2, 3, 4).isEmpty()).isFalse();
 		}
 
 		@Test
 		@DisplayName("empty() produces zero extension")
 		void emptyProducesZeroExtension()
 		{
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext =
-					ScalarExtensionFactory.empty();
-			assertThat(ext.isEmpty()).isTrue();
-			assertThat(ext.terms()).isEmpty();
+			assertThat(ScalarExtensionFactory.empty().isEmpty()).isTrue();
+		}
+
+		@Test
+		@DisplayName("fold evaluates a single-term extension correctly")
+		void foldEvaluatesSingleTerm()
+		{
+			assertThat(evaluate(se(1, 2, 3, 4))).isEqualTo(r(3, 8));
 		}
 	}
 
@@ -54,32 +63,26 @@ final class ScalarExtensionTest
 	final class WhenScaling
 	{
 		@Test
-		@DisplayName("scale multiplies all S-coefficients")
-		void scaleMultipliesAllCoefficients()
-		{
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext =
-					se(1, 2, 3, 4).add(se(1, 4, 5, 6));
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> scaled = ext.scale(r(2, 1));
-			assertThat(scaled.terms()).hasSize(2);
-			assertThat(scaled.terms().get(0).coefficient()).isEqualTo(r(1, 1));
-			assertThat(scaled.terms().get(1).coefficient()).isEqualTo(r(1, 2));
-		}
-
-		@Test
-		@DisplayName("scale by zero gives zero coefficients (normalized to empty)")
-		void scaleByZeroGivesEmpty()
-		{
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> scaled =
-					se(1, 2, 3, 4).scale(r(0, 1));
-			assertThat(scaled.isEmpty()).isTrue();
-		}
-
-		@Test
 		@DisplayName("scale by one is identity")
 		void scaleByOneIsIdentity()
 		{
 			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext = se(1, 2, 3, 4);
 			assertThat(ext.scale(r(1, 1))).isEqualTo(ext);
+		}
+
+		@Test
+		@DisplayName("scale multiplies the evaluation result")
+		void scaleMultipliesEvaluationResult()
+		{
+			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext = se(1, 2, 3, 1);
+			assertThat(evaluate(ext.scale(r(2, 1)))).isEqualTo(evaluate(ext).multiply(r(2, 1)));
+		}
+
+		@Test
+		@DisplayName("scale by zero produces empty extension")
+		void scaleByZeroProducesEmpty()
+		{
+			assertThat(se(1, 2, 3, 4).scale(r(0, 1)).isEmpty()).isTrue();
 		}
 	}
 
@@ -88,32 +91,29 @@ final class ScalarExtensionTest
 	final class WhenAdding
 	{
 		@Test
-		@DisplayName("add combines terms from both extensions")
-		void addCombinesTerms()
+		@DisplayName("add produces extension whose evaluation is the sum of evaluations")
+		void addProducesCorrectEvaluation()
 		{
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> a = se(1, 2, 3, 4);
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> b = se(1, 4, 7, 8);
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> sum = a.add(b);
-			assertThat(sum.terms()).hasSize(2);
+			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> a = se(1, 2, 3, 1);
+			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> b = se(1, 4, 5, 1);
+			assertThat(evaluate(a.add(b))).isEqualTo(evaluate(a).add(evaluate(b)));
 		}
 
 		@Test
-		@DisplayName("add normalizes same-element terms by summing coefficients")
-		void addNormalizesSameElementTerms()
-		{
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> a = se(1, 4, 3, 4);
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> b = se(1, 4, 3, 4);
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> sum = a.add(b);
-			assertThat(sum.terms()).hasSize(1);
-			assertThat(sum.terms().getFirst().coefficient()).isEqualTo(r(1, 2));
-		}
-
-		@Test
-		@DisplayName("adding zero is identity")
-		void addingZeroIsIdentity()
+		@DisplayName("add with zero is identity")
+		void addWithZeroIsIdentity()
 		{
 			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext = se(1, 2, 3, 4);
 			assertThat(ext.add(ext.zero())).isEqualTo(ext);
+		}
+
+		@Test
+		@DisplayName("add normalizes same-element terms: evaluation is exact sum")
+		void addNormalizesSameElementTerms()
+		{
+			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> a = se(1, 4, 7, 1);
+			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> b = se(1, 4, 7, 1);
+			assertThat(evaluate(a.add(b))).isEqualTo(r(7, 2));
 		}
 	}
 
@@ -122,18 +122,16 @@ final class ScalarExtensionTest
 	final class WhenNegating
 	{
 		@Test
-		@DisplayName("negate flips all S-coefficients")
-		void negateFlipsCoefficients()
+		@DisplayName("evaluation of negated extension is negated evaluation")
+		void evaluationOfNegatedIsNegated()
 		{
 			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext = se(1, 2, 3, 4);
-			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> negated = ext.negate();
-			assertThat(negated.terms().getFirst().coefficient()).isEqualTo(r(-1, 2));
-			assertThat(negated.terms().getFirst().element()).isEqualTo(r(3, 4));
+			assertThat(evaluate(ext.negate())).isEqualTo(evaluate(ext).negate());
 		}
 
 		@Test
-		@DisplayName("add with negate gives zero")
-		void addWithNegateGivesZero()
+		@DisplayName("add with negate produces empty extension")
+		void addWithNegateIsEmpty()
 		{
 			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext = se(1, 2, 3, 4);
 			assertThat(ext.add(ext.negate()).isEmpty()).isTrue();
@@ -141,27 +139,34 @@ final class ScalarExtensionTest
 	}
 
 	@Nested
-	@DisplayName("when projecting")
+	@DisplayName("when projecting via fold")
 	final class WhenProjecting
 	{
 		@Test
-		@DisplayName("project applies policy to terms and returns E")
-		void projectAppliesPolicyToTerms()
+		@DisplayName("fold collapses weighted sum correctly")
+		void foldCollapsesWeightedSum()
 		{
 			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext =
 					se(1, 2, 3, 1).add(se(1, 2, 5, 1));
-
-			final ProjectionPolicy<RationalNumber, RationalNumber, RationalNumber> policy =
-					accumulation -> accumulation.terms().stream()
-					                            .map(t -> t.coefficient().multiply(t.element()))
-					                            .reduce(RationalNumberFactory.zero(), RationalNumber::add);
-
-			assertThat(ext.project(policy)).isEqualTo(r(4, 1));
+			assertThat(evaluate(ext)).isEqualTo(r(4, 1));
 		}
 
 		@Test
-		@DisplayName("EMA-style accumulation: α·x + (1-α)·prev then project")
-		void emaStyleAccumulationThenProject()
+		@DisplayName("project delegates to policy via fold")
+		void projectDelegatesToPolicy()
+		{
+			final ScalarExtension<RationalNumber, RationalNumber, RationalNumber> ext =
+					se(1, 2, 3, 1).add(se(1, 4, 7, 1));
+			final ProjectionPolicy<RationalNumber, RationalNumber, RationalNumber> policy =
+					acc -> acc.fold(RationalNumberFactory.zero(),
+							Semiring::multiply,
+							RationalNumber::add);
+			assertThat(ext.project(policy)).isEqualTo(r(13, 4));
+		}
+
+		@Test
+		@DisplayName("EMA-style: accumulate exactly, project once at boundary")
+		void emaStyleAccumulateThenProjectOnce()
 		{
 			final RationalNumber alpha = r(1, 2);
 			final RationalNumber oneMinusAlpha = r(1, 1).subtract(alpha);
@@ -171,12 +176,12 @@ final class ScalarExtensionTest
 			ema = ScalarExtensionFactory.of(alpha, r(200, 1)).add(ema.scale(oneMinusAlpha));
 			ema = ScalarExtensionFactory.of(alpha, r(100, 1)).add(ema.scale(oneMinusAlpha));
 
-			final ProjectionPolicy<RationalNumber, RationalNumber, RationalNumber> sumPolicy =
-					acc -> acc.terms().stream()
-					          .map(t -> t.coefficient().multiply(t.element()))
-					          .reduce(RationalNumberFactory.zero(), RationalNumber::add);
+			final ProjectionPolicy<RationalNumber, RationalNumber, RationalNumber> policy =
+					acc -> acc.fold(RationalNumberFactory.zero(),
+							Semiring::multiply,
+							RationalNumber::add);
 
-			assertThat(ema.project(sumPolicy)).isEqualTo(r(125, 1));
+			assertThat(ema.project(policy)).isEqualTo(r(125, 1));
 		}
 	}
 }

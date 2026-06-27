@@ -4,8 +4,9 @@ import de.gupta.commons.utility.math.algebra.element.algebra.Algebra;
 import de.gupta.commons.utility.math.algebra.element.module.Module;
 import de.gupta.commons.utility.math.algebra.element.ring.Ring;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 final class ScalarExtensionImpl<E extends Module<E, R>, R extends Ring<R>, S extends Algebra<R, S>>
 		implements ScalarExtension<E, R, S>
@@ -19,21 +20,17 @@ final class ScalarExtensionImpl<E extends Module<E, R>, R extends Ring<R>, S ext
 	}
 
 	@Override
-	public List<LinearCombination.Entry<S, E>> terms()
+	public <T> T fold(final T identity, final BiFunction<S, E, T> mapper, final BinaryOperator<T> combiner)
 	{
-		return combination.terms();
+		return combination.terms().stream()
+		                  .map(t -> mapper.apply(t.coefficient(), t.element()))
+		                  .reduce(identity, combiner);
 	}
 
 	@Override
 	public ScalarExtension<E, R, S> add(final ScalarExtension<E, R, S> other)
 	{
-		return new ScalarExtensionImpl<>(combination.add(unwrap(other)));
-	}
-
-	private static <E extends Module<E, R>, R extends Ring<R>, S extends Algebra<R, S>>
-	LinearCombination<S, E> unwrap(final ScalarExtension<E, R, S> ext)
-	{
-		return ((ScalarExtensionImpl<E, R, S>) ext).combination;
+		return new ScalarExtensionImpl<>(combination.add(((ScalarExtensionImpl<E, R, S>) other).combination));
 	}
 
 	@Override
