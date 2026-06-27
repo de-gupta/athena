@@ -15,7 +15,7 @@ public sealed interface ScalarExtension<E extends Module<E, R>, R extends Ring<R
 		return fold(Boolean.TRUE, (s, e) -> Boolean.FALSE, (a, b) -> a && b);
 	}
 
-	<T> T fold(T identity, BiFunction<S, E, T> mapper, BinaryOperator<T> combiner);
+	<T> T fold(final T identity, final BiFunction<S, E, T> mapper, final BinaryOperator<T> combiner);
 
 	default E project(final ProjectionPolicy<E, R, S> policy)
 	{
