@@ -12,7 +12,7 @@ public sealed interface ScalarExtension<E extends Module<E, R>, R extends Ring<R
 {
 	default boolean isEmpty()
 	{
-		return fold(Boolean.TRUE, (s, e) -> Boolean.FALSE, (a, b) -> a && b);
+		return fold(Boolean.TRUE, (_, _) -> Boolean.FALSE, (a, b) -> a && b);
 	}
 
 	<T> T fold(final T identity, final BiFunction<S, E, T> mapper, final BinaryOperator<T> combiner);
