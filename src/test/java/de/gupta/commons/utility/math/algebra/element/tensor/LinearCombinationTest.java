@@ -148,7 +148,7 @@ final class LinearCombinationTest
 			final LinearCombination<RationalNumber, IntegralNumber> right =
 					LinearCombinationFactory.of(r(1, 2), i(200));
 
-			final LinearCombination<RationalNumber, IntegralNumber> combined = left.combine(right);
+			final LinearCombination<RationalNumber, IntegralNumber> combined = left.concat(right);
 			assertThat(combined.size()).isEqualTo(2);
 			assertThat(combined.terms().get(0).element()).isEqualTo(i(100));
 			assertThat(combined.terms().get(1).element()).isEqualTo(i(200));
@@ -159,8 +159,8 @@ final class LinearCombinationTest
 		void combineWithEmptyReturnsOriginalTerms()
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> lc = LinearCombinationFactory.of(r(3, 4), i(100));
-			assertThat(lc.combine(LinearCombinationFactory.empty())).isEqualTo(lc);
-			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty().combine(lc)).isEqualTo(lc);
+			assertThat(lc.concat(LinearCombinationFactory.empty())).isEqualTo(lc);
+			assertThat(LinearCombinationFactory.<RationalNumber, IntegralNumber>empty().concat(lc)).isEqualTo(lc);
 		}
 
 		@Test
@@ -169,7 +169,7 @@ final class LinearCombinationTest
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100));
 			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 4), i(100));
-			final LinearCombination<RationalNumber, IntegralNumber> combined = a.combine(b);
+			final LinearCombination<RationalNumber, IntegralNumber> combined = a.concat(b);
 			assertThat(combined.size()).isEqualTo(2);
 			assertThat(combined.terms().get(0).coefficient()).isEqualTo(r(1, 2));
 			assertThat(combined.terms().get(1).coefficient()).isEqualTo(r(1, 4));
@@ -192,7 +192,7 @@ final class LinearCombinationTest
 		{
 			final LinearCombination<RationalNumber, IntegralNumber> a = LinearCombinationFactory.of(r(1, 2), i(100));
 			final LinearCombination<RationalNumber, IntegralNumber> b = LinearCombinationFactory.of(r(1, 4), i(100));
-			assertThat(a.combine(b).size()).isEqualTo(2);
+			assertThat(a.concat(b).size()).isEqualTo(2);
 			assertThat(a.add(b).size()).isEqualTo(1);
 		}
 	}
@@ -236,9 +236,9 @@ final class LinearCombinationTest
 
 			LinearCombination<RationalNumber, IntegralNumber> ema = LinearCombinationFactory.of(r(1, 1), i(100));
 			ema = LinearCombinationFactory.of(alpha, i(200))
-			                              .combine(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
+			                              .concat(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
 			ema = LinearCombinationFactory.of(alpha, i(100))
-			                              .combine(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
+			                              .concat(ema.transformCoefficients(c -> c.multiply(oneMinusAlpha)));
 
 			final LinearCombination<RationalNumber, IntegralNumber> finalEma = ema;
 			org.assertj.core.api.SoftAssertions.assertSoftly(softly ->

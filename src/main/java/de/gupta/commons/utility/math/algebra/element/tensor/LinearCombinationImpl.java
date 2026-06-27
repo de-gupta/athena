@@ -49,7 +49,7 @@ final class LinearCombinationImpl<S extends Ring<S>, E> implements LinearCombina
 	}
 
 	@Override
-	public LinearCombination<S, E> combine(final LinearCombination<S, E> other)
+	public LinearCombination<S, E> concat(final LinearCombination<S, E> other)
 	{
 		return switch (other)
 		{
