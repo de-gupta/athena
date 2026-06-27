@@ -10,10 +10,7 @@ import java.util.function.BinaryOperator;
 public sealed interface ScalarExtension<E extends Module<E, R>, R extends Ring<R>, S extends Algebra<R, S>>
 		extends Module<ScalarExtension<E, R, S>, S> permits ScalarExtensionImpl
 {
-	default boolean isEmpty()
-	{
-		return fold(Boolean.TRUE, (_, _) -> Boolean.FALSE, (a, b) -> a && b);
-	}
+	boolean isEmpty();
 
 	<T> T fold(final T identity, final BiFunction<S, E, T> mapper, final BinaryOperator<T> combiner);
 

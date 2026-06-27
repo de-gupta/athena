@@ -20,6 +20,12 @@ final class ScalarExtensionImpl<E extends Module<E, R>, R extends Ring<R>, S ext
 	}
 
 	@Override
+	public boolean isEmpty()
+	{
+		return combination.isEmpty();
+	}
+
+	@Override
 	public <T> T fold(final T identity, final BiFunction<S, E, T> mapper, final BinaryOperator<T> combiner)
 	{
 		return combination.terms().stream()

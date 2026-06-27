@@ -25,6 +25,12 @@ final class ScalarExtensionLawsTest
 		return nonZeroRationals();
 	}
 
+	@Override
+	public RationalNumber one()
+	{
+		return RationalNumberFactory.one();
+	}
+
 	private static Arbitrary<RationalNumber> nonZeroRationals()
 	{
 		return Combinators.combine(

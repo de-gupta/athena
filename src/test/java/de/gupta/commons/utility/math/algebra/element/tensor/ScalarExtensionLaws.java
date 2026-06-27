@@ -21,13 +21,14 @@ public interface ScalarExtensionLaws<E extends Module<E, R>, R extends Ring<R>, 
 	Arbitrary<S> scalars();
 
 	@Property
-	default void scaleByOneIsIdentity(@ForAll("elements") final ScalarExtension<E, R, S> x,
-	                                  @ForAll("scalars") final S s)
+	default void scaleByOneIsIdentity(@ForAll("elements") final ScalarExtension<E, R, S> x)
 	{
-		assertThat(x.scale(s.one()))
+		assertThat(x.scale(one()))
 				.as("x.scale(1) == x")
 				.isEqualTo(x);
 	}
+
+	S one();
 
 	@Property
 	default void scaleDistributesOverModuleAddition(@ForAll("elements") final ScalarExtension<E, R, S> x,
@@ -55,7 +56,7 @@ public interface ScalarExtensionLaws<E extends Module<E, R>, R extends Ring<R>, 
 	                                                       @ForAll("scalars") final S s2)
 	{
 		assertThat(x.scale(s1.multiply(s2)))
-				.as("x.scale(s1 * s2) == x.scale(s2).scale(s1)  [left module: (s1*s2)*x = s1*(s2*x)]")
+				.as("x.scale(s1*s2) == x.scale(s2).scale(s1)  [left: (s1·s2)·x = s1·(s2·x)]")
 				.isEqualTo(x.scale(s2).scale(s1));
 	}
 
