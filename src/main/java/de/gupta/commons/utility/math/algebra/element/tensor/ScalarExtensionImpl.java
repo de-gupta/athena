@@ -30,7 +30,10 @@ final class ScalarExtensionImpl<E extends Module<E, R>, R extends Ring<R>, S ext
 	@Override
 	public ScalarExtension<E, R, S> add(final ScalarExtension<E, R, S> other)
 	{
-		return new ScalarExtensionImpl<>(combination.add(((ScalarExtensionImpl<E, R, S>) other).combination));
+		return switch (other)
+		{
+			case ScalarExtensionImpl<E, R, S> impl -> new ScalarExtensionImpl<>(combination.add(impl.combination));
+		};
 	}
 
 	@Override
