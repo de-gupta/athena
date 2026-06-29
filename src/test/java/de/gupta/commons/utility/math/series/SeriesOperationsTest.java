@@ -506,6 +506,98 @@ final class SeriesOperationsTest
 	}
 
 	@Nested
+	@DisplayName("when computing variance")
+	final class WhenComputingVariance
+	{
+		@Test
+		@DisplayName("variance of empty series returns empty")
+		void varianceOfEmptySeriesReturnsEmpty()
+		{
+			assertThat(SeriesOperations.variance(EMPTY, RoundingStrategies.floor())).isEmpty();
+		}
+
+		@Test
+		@DisplayName("variance of single element returns zero")
+		void varianceOfSingleElementReturnsZero()
+		{
+			assertThat(SeriesOperations.variance(SeriesFactory.of(Map.of(i(1), i(42))), RoundingStrategies.floor()))
+					.isEqualTo(Optional.of(i(0)));
+		}
+
+		@Test
+		@DisplayName("variance of flat series returns zero")
+		void varianceOfFlatSeriesReturnsZero()
+		{
+			final Series<IntegralNumber, IntegralNumber> flat =
+					SeriesFactory.of(Map.of(i(1), i(5), i(2), i(5), i(3), i(5)));
+			assertThat(SeriesOperations.variance(flat, RoundingStrategies.floor()))
+					.isEqualTo(Optional.of(i(0)));
+		}
+
+		@Test
+		@DisplayName("variance returns population variance for textbook example")
+		void varianceReturnsPopulationVariance()
+		{
+			// {2,4,4,4,5,5,7,9}: mean=5, sum of squared deviations=32, variance=32/8=4
+			final Series<IntegralNumber, IntegralNumber> series = SeriesFactory.of(Map.of(
+					i(1), i(2), i(2), i(4), i(3), i(4), i(4), i(4),
+					i(5), i(5), i(6), i(5), i(7), i(7), i(8), i(9)));
+			assertThat(SeriesOperations.variance(series, RoundingStrategies.floor()))
+					.isEqualTo(Optional.of(i(4)));
+		}
+
+		@Test
+		@DisplayName("variance for uniformly spaced series with exact division")
+		void varianceForUniformlySpacedSeriesWithExactDivision()
+		{
+			// SERIES {1:10,3:30,5:50,7:70,9:90}: mean=50, sum of squared deviations=4000, variance=800
+			assertThat(SeriesOperations.variance(SERIES, RoundingStrategies.floor()))
+					.isEqualTo(Optional.of(i(800)));
+		}
+
+		@Test
+		@DisplayName("floor rounding applies on non-exact final division")
+		void floorRoundingAppliesOnNonExactFinalDivision()
+		{
+			// {1,3,5}: mean=3, squared deviations={4,0,4}, sum=8, 8/3 floor=2
+			final Series<IntegralNumber, IntegralNumber> series =
+					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(3), i(3), i(5)));
+			assertThat(SeriesOperations.variance(series, RoundingStrategies.floor()))
+					.isEqualTo(Optional.of(i(2)));
+		}
+
+		@Test
+		@DisplayName("ceiling rounding applies on non-exact final division")
+		void ceilingRoundingAppliesOnNonExactFinalDivision()
+		{
+			// {1,3,5}: mean=3, squared deviations={4,0,4}, sum=8, 8/3 ceiling=3
+			final Series<IntegralNumber, IntegralNumber> series =
+					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(3), i(3), i(5)));
+			assertThat(SeriesOperations.variance(series, RoundingStrategies.ceiling()))
+					.isEqualTo(Optional.of(i(3)));
+		}
+
+		@Test
+		@DisplayName("variance of two-element series")
+		void varianceOfTwoElementSeries()
+		{
+			// {1,3}: mean=2, deviations={-1,1}, squared={1,1}, sum=2, 2/2=1
+			assertThat(SeriesOperations.variance(
+					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(3))), RoundingStrategies.floor()))
+					.isEqualTo(Optional.of(i(1)));
+		}
+
+		@Test
+		@DisplayName("variance respects sub-series slice")
+		void varianceRespectsSubSeriesSlice()
+		{
+			// between(3,8)={3:30,5:50,7:70}: mean=50, squared deviations={400,0,400}, sum=800, 800/3 floor=266
+			assertThat(SeriesOperations.variance(SERIES.between(i(3), i(8)), RoundingStrategies.floor()))
+					.isEqualTo(Optional.of(i(266)));
+		}
+	}
+
+	@Nested
 	@DisplayName("when computing indexed changes")
 	final class WhenComputingIndexedChanges
 	{

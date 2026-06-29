@@ -24,6 +24,19 @@ public final class SeriesOperations
 		return sum(series).map(s -> s.divide(series.size(), rounding).quotient());
 	}
 
+	public static <I, E extends Ring<E> & ScalarDivisible<E, Long>> Optional<E> variance(
+			final Series<I, E> series, final RoundingStrategy<E> rounding)
+	{
+		if (series.isEmpty()) return Optional.empty();
+		final E mean = average(series, rounding).orElseThrow();
+		final Series<I, E> squaredDeviations = series.map(v ->
+		{
+			final E deviation = v.subtract(mean);
+			return deviation.multiply(deviation);
+		});
+		return sum(squaredDeviations).map(s -> s.divide(series.size(), rounding).quotient());
+	}
+
 	public static <I, E extends AdditiveSemigroup<E>> Optional<E> sum(final Series<I, E> series)
 	{
 		return series.values().reduce(E::add).optional();
