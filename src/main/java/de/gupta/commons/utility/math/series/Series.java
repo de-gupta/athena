@@ -1,8 +1,8 @@
 package de.gupta.commons.utility.math.series;
 
+import de.gupta.aletheia.collection.cascade.Cascade;
 import de.gupta.commons.utility.math.ordering.interval.Interval;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Optional;
@@ -26,7 +26,7 @@ public sealed interface Series<T, E> permits SeriesImpl
 
 	NavigableSet<T> indices();
 
-	Collection<E> values();
+	Cascade<E> values();
 
 	<R> Series<T, R> map(Function<E, R> transform);
 }

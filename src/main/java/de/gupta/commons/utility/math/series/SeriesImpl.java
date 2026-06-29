@@ -1,5 +1,6 @@
 package de.gupta.commons.utility.math.series;
 
+import de.gupta.aletheia.collection.cascade.Cascade;
 import de.gupta.commons.utility.math.ordering.bound.Bound;
 import de.gupta.commons.utility.math.ordering.interval.Interval;
 
@@ -83,9 +84,9 @@ final class SeriesImpl<T, E> implements Series<T, E>
 	}
 
 	@Override
-	public Collection<E> values()
+	public Cascade<E> values()
 	{
-		return Collections.unmodifiableCollection(data.values());
+		return Cascade.beckon(data.values());
 	}
 
 	@Override

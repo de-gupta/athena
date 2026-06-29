@@ -26,7 +26,7 @@ public final class SeriesOperations
 
 	public static <I, E extends AdditiveSemigroup<E>> Optional<E> sum(final Series<I, E> series)
 	{
-		return series.values().stream().reduce(E::add);
+		return series.values().reduce(E::add).optional();
 	}
 
 	public static <I, E extends AdditiveGroup<E>> Series<I, E> changes(final Series<I, E> series)
