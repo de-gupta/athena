@@ -72,5 +72,7 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.structure.algebra;
 	exports de.gupta.commons.utility.math.algebra.element.tensor;
 
+	exports de.gupta.commons.utility.math.algebra.element.radical;
+
 	requires de.gupta.aletheia;
 }

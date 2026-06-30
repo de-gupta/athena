@@ -2,6 +2,7 @@ package de.gupta.commons.utility.math.series;
 
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
+import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategies;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumber;
@@ -502,6 +503,80 @@ final class SeriesOperationsTest
 					Arguments.of("-100% impossible: divides to -1 is fine", r(2, 1), r(1, 1), r(-1, 2)),
 					Arguments.of("unchanged: same value", r(5, 7), r(5, 7), r(0, 1))
 			);
+		}
+	}
+
+	@Nested
+	@DisplayName("when computing standard deviation")
+	final class WhenComputingStandardDeviation
+	{
+		@Test
+		@DisplayName("standard deviation of empty series returns empty")
+		void standardDeviationOfEmptySeriesReturnsEmpty()
+		{
+			assertThat(SeriesOperations.standardDeviation(EMPTY, RoundingStrategies.floor(),
+					ApproximationStrategies.byEquality())).isEmpty();
+		}
+
+		@Test
+		@DisplayName("standard deviation of flat series returns zero")
+		void standardDeviationOfFlatSeriesReturnsZero()
+		{
+			final Series<IntegralNumber, IntegralNumber> flat =
+					SeriesFactory.of(Map.of(i(1), i(5), i(2), i(5), i(3), i(5)));
+			assertThat(SeriesOperations.standardDeviation(flat, RoundingStrategies.floor(),
+					ApproximationStrategies.byEquality())).isEqualTo(Optional.of(i(0)));
+		}
+
+		@Test
+		@DisplayName("standard deviation of single element returns zero")
+		void standardDeviationOfSingleElementReturnsZero()
+		{
+			assertThat(SeriesOperations.standardDeviation(SeriesFactory.of(Map.of(i(1), i(42))),
+					RoundingStrategies.floor(), ApproximationStrategies.byEquality()))
+					.isEqualTo(Optional.of(i(0)));
+		}
+
+		@Test
+		@DisplayName("standard deviation returns floor sqrt of variance for perfect square")
+		void standardDeviationReturnsSqrtOfVarianceForPerfectSquare()
+		{
+			// {1:1, 2:5}: mean=3, deviations={-2,2}, squares={4,4}, variance=4, sd=2
+			final Series<IntegralNumber, IntegralNumber> series =
+					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(5)));
+			assertThat(SeriesOperations.standardDeviation(series, RoundingStrategies.floor(),
+					ApproximationStrategies.byEquality())).isEqualTo(Optional.of(i(2)));
+		}
+
+		@Test
+		@DisplayName("standard deviation for textbook example {2,4,4,4,5,5,7,9} is 2")
+		void standardDeviationForTextbookExample()
+		{
+			// variance=4, sd=2
+			final Series<IntegralNumber, IntegralNumber> series = SeriesFactory.of(Map.of(
+					i(1), i(2), i(2), i(4), i(3), i(4), i(4), i(4),
+					i(5), i(5), i(6), i(5), i(7), i(7), i(8), i(9)));
+			assertThat(SeriesOperations.standardDeviation(series, RoundingStrategies.floor(),
+					ApproximationStrategies.byEquality())).isEqualTo(Optional.of(i(2)));
+		}
+
+		@Test
+		@DisplayName("standard deviation floors when variance is not a perfect square")
+		void standardDeviationFloorsWhenVarianceIsNotPerfectSquare()
+		{
+			// SERIES variance=800, floor(sqrt(800))=28 since 28^2=784 <= 800 < 841=29^2
+			assertThat(SeriesOperations.standardDeviation(SERIES, RoundingStrategies.floor(),
+					ApproximationStrategies.byEquality())).isEqualTo(Optional.of(i(28)));
+		}
+
+		@Test
+		@DisplayName("standard deviation respects sub-series slice")
+		void standardDeviationRespectsSubSeriesSlice()
+		{
+			// between(3,8) variance=266 floor, floor(sqrt(266))=16 since 16^2=256 <= 266 < 289=17^2
+			assertThat(SeriesOperations.standardDeviation(SERIES.between(i(3), i(8)),
+					RoundingStrategies.floor(), ApproximationStrategies.byEquality()))
+					.isEqualTo(Optional.of(i(16)));
 		}
 	}
 

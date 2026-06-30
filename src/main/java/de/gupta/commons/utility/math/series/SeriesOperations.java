@@ -5,6 +5,8 @@ import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.Ad
 import de.gupta.commons.utility.math.algebra.element.module.ScalarDivisible;
 import de.gupta.commons.utility.math.algebra.element.module.ScalarQuotientable;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
+import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
+import de.gupta.commons.utility.math.algebra.element.radical.Radical;
 import de.gupta.commons.utility.math.algebra.element.ring.Field;
 import de.gupta.commons.utility.math.algebra.element.ring.Normed;
 import de.gupta.commons.utility.math.algebra.element.ring.Ring;
@@ -22,6 +24,12 @@ public final class SeriesOperations
 	{
 		if (series.isEmpty()) return Optional.empty();
 		return sum(series).map(s -> s.divide(series.size(), rounding).quotient());
+	}
+
+	public static <I, E extends Ring<E> & ScalarDivisible<E, Long> & Radical<E>> Optional<E> standardDeviation(
+			final Series<I, E> series, final RoundingStrategy<E> rounding, final ApproximationStrategy<E> approximation)
+	{
+		return variance(series, rounding).map(v -> v.squareRoot(approximation, rounding));
 	}
 
 	public static <I, E extends Ring<E> & ScalarDivisible<E, Long>> Optional<E> variance(

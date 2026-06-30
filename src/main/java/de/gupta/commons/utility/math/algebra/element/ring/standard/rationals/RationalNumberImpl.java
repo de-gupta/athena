@@ -4,11 +4,14 @@ import de.gupta.aletheia.collection.Dyad;
 import de.gupta.aletheia.functional.Unfolding;
 import de.gupta.commons.utility.exception.ExceptionHelper;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
+import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
 import de.gupta.commons.utility.math.algebra.element.ring.IntegralDomain;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
+
+import java.util.Collections;
 
 record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) implements RationalNumber
 {
@@ -74,12 +77,6 @@ record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) 
 	}
 
 	@Override
-	public RationalNumber zero()
-	{
-		return of(IntegralNumberFactory.of(0), IntegralNumberFactory.of(1));
-	}
-
-	@Override
 	public RationalNumber ratio(final RationalNumber denominator)
 	{
 		return divide(denominator);
@@ -89,5 +86,30 @@ record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) 
 	public DivisionResult<RationalNumber> divide(final Long scalar, final RoundingStrategy<RationalNumber> strategy)
 	{
 		return DivisionResult.of(divide(RationalNumberFactory.of(scalar, 1)), zero());
+	}
+
+	@Override
+	public RationalNumber zero()
+	{
+		return of(IntegralNumberFactory.of(0), IntegralNumberFactory.of(1));
+	}
+
+	@Override
+	public RationalNumber root(final int n, final ApproximationStrategy<RationalNumber> convergence,
+	                           final RoundingStrategy<RationalNumber> rounding)
+	{
+		if (n < 2) throw new IllegalArgumentException("Root degree must be at least 2, got: " + n);
+		if (equals(zero())) return zero();
+		if (equals(one())) return one();
+		RationalNumber current = this;
+		while (true)
+		{
+			final RationalNumber xPow = current.multiplyAll(Collections.nCopies(n - 2, current));
+			final RationalNumber next = current.power(n - 1)
+			                                   .add(divide(xPow))
+			                                   .divide((long) n, rounding).quotient();
+			if (convergence.converged(this, current, next)) return next;
+			current = next;
+		}
 	}
 }
