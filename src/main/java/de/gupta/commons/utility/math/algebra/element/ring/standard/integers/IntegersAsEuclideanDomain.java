@@ -1,11 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ring.standard.integers;
 
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
-import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
-
-import java.util.Collections;
 
 record IntegersAsEuclideanDomain(long value) implements IntegralNumber
 {
@@ -34,22 +30,9 @@ record IntegersAsEuclideanDomain(long value) implements IntegralNumber
 	}
 
 	@Override
-	public IntegralNumber root(final int n, final ApproximationStrategy<IntegralNumber> convergence,
-	                           final RoundingStrategy<IntegralNumber> rounding)
+	public IntegralNumber elementQuotient(final IntegralNumber divisor)
 	{
-		if (n < 2) throw new IllegalArgumentException("Root degree must be at least 2, got: " + n);
-		if (isZero()) return zero();
-		if (equals(one())) return one();
-		IntegralNumber current = this;
-		while (true)
-		{
-			final IntegralNumber xPow = current.multiplyAll(Collections.nCopies(n - 2, current));
-			final IntegralNumber next = current.power(n - 1)
-			                                   .add(divideFloor(xPow).quotient())
-			                                   .divide((long) n, rounding).quotient();
-			if (convergence.converged(this, current, next)) return next;
-			current = next;
-		}
+		return divideFloor(divisor).quotient();
 	}
 
 	@Override
