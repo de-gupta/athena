@@ -4,7 +4,7 @@ public final class IntegralNumberFactory
 {
 	public static IntegralNumber of(final long value)
 	{
-		return new IntegersAsEuclideanDomain(value);
+		return new IntegralNumberImpl(value);
 	}
 
 	private IntegralNumberFactory()

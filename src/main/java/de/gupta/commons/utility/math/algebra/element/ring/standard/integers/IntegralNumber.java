@@ -5,7 +5,7 @@ import de.gupta.commons.utility.math.algebra.element.radical.Estimator;
 import de.gupta.commons.utility.math.algebra.element.radical.Radical;
 
 public sealed interface IntegralNumber extends OrderedEuclideanDomain<IntegralNumber>, Radical<IntegralNumber>
-		permits IntegersAsEuclideanDomain
+		permits IntegralNumberImpl
 {
 	long value();
 

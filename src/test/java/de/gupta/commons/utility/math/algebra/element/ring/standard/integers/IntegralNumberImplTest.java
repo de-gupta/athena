@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("IntegersAsEuclideanDomain")
-final class IntegersAsEuclideanDomainTest
+@DisplayName("IntegralNumberImpl")
+final class IntegralNumberImplTest
 {
 	@Nested
 	@DisplayName("when adding")

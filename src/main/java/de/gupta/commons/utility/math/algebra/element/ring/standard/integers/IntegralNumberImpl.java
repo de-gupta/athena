@@ -3,7 +3,7 @@ package de.gupta.commons.utility.math.algebra.element.ring.standard.integers;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.ordering.OrderRelation;
 
-record IntegersAsEuclideanDomain(long value) implements IntegralNumber
+record IntegralNumberImpl(long value) implements IntegralNumber
 {
 	@Override
 	public IntegralNumber negate()
