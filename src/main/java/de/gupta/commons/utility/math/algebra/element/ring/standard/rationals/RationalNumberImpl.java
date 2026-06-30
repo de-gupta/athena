@@ -90,10 +90,4 @@ record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) 
 	{
 		return of(IntegralNumberFactory.of(0), IntegralNumberFactory.of(1));
 	}
-
-	@Override
-	public RationalNumber elementQuotient(final RationalNumber divisor)
-	{
-		return divide(divisor);
-	}
 }

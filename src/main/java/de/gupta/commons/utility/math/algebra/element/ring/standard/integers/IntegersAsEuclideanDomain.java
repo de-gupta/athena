@@ -30,12 +30,6 @@ record IntegersAsEuclideanDomain(long value) implements IntegralNumber
 	}
 
 	@Override
-	public IntegralNumber elementQuotient(final IntegralNumber divisor)
-	{
-		return divideFloor(divisor).quotient();
-	}
-
-	@Override
 	public boolean isZero()
 	{
 		return value == 0L;

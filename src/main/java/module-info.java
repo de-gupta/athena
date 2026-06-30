@@ -75,4 +75,5 @@ module de.gupta.athena
 	exports de.gupta.commons.utility.math.algebra.element.radical;
 
 	requires de.gupta.aletheia;
+	requires jdk.xml.dom;
 }

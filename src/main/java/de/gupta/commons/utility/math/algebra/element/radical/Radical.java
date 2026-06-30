@@ -45,10 +45,5 @@ public interface Radical<E extends Ring<E> & ScalarDivisible<E, Long> & Radical<
 		}
 	}
 
-	default Estimator<E> estimator()
-	{
-		return NewtonEstimator.instance();
-	}
-
-	E elementQuotient(final E divisor);
+	Estimator<E> estimator();
 }

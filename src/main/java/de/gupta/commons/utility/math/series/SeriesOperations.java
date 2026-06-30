@@ -19,13 +19,6 @@ import java.util.function.BiFunction;
 
 public final class SeriesOperations
 {
-	public static <I, E extends AdditiveSemigroup<E> & ScalarDivisible<E, Long>> Optional<E> average(
-			final Series<I, E> series, final RoundingStrategy<E> rounding)
-	{
-		if (series.isEmpty()) return Optional.empty();
-		return sum(series).map(s -> s.divide(series.size(), rounding).quotient());
-	}
-
 	public static <I, E extends Ring<E> & ScalarDivisible<E, Long> & Radical<E>> Optional<E> standardDeviation(
 			final Series<I, E> series, final RoundingStrategy<E> rounding, final ApproximationStrategy<E> whenToStop)
 	{
@@ -43,6 +36,13 @@ public final class SeriesOperations
 			return deviation.multiply(deviation);
 		});
 		return sum(squaredDeviations).map(s -> s.divide(series.size(), rounding).quotient());
+	}
+
+	public static <I, E extends AdditiveSemigroup<E> & ScalarDivisible<E, Long>> Optional<E> average(
+			final Series<I, E> series, final RoundingStrategy<E> rounding)
+	{
+		if (series.isEmpty()) return Optional.empty();
+		return sum(series).map(s -> s.divide(series.size(), rounding).quotient());
 	}
 
 	public static <I, E extends AdditiveSemigroup<E>> Optional<E> sum(final Series<I, E> series)

@@ -3,6 +3,7 @@ package de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
 import de.gupta.commons.utility.math.algebra.element.module.ScalarDivisible;
 import de.gupta.commons.utility.math.algebra.element.module.ScalarQuotientable;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedField;
+import de.gupta.commons.utility.math.algebra.element.radical.Estimator;
 import de.gupta.commons.utility.math.algebra.element.radical.Radical;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 
@@ -14,4 +15,10 @@ public sealed interface RationalNumber
 	IntegralNumber numerator();
 
 	IntegralNumber denominator();
+
+	@Override
+	default Estimator<RationalNumber> estimator()
+	{
+		return Estimator.newton();
+	}
 }
