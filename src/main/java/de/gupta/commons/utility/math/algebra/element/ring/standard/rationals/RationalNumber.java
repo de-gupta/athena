@@ -5,6 +5,7 @@ import de.gupta.commons.utility.math.algebra.element.module.ScalarQuotientable;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedField;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
+import de.gupta.commons.utility.math.algebra.element.radical.Estimator;
 import de.gupta.commons.utility.math.algebra.element.radical.EstimatorBasedRoot;
 import de.gupta.commons.utility.math.algebra.element.radical.Radical;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
@@ -22,6 +23,7 @@ public sealed interface RationalNumber
 	default RationalNumber root(final int degree, final ApproximationStrategy<RationalNumber> whenToStop,
 	                            final RoundingStrategy<RationalNumber> rounding)
 	{
-		return EstimatorBasedRoot.compute(this, degree, RationalNumberEstimators.newton(), whenToStop, rounding);
+		return EstimatorBasedRoot.compute(this, degree, RationalNumberEstimators.initialEstimate(this, degree),
+				Estimator.newton(), whenToStop, rounding);
 	}
 }
