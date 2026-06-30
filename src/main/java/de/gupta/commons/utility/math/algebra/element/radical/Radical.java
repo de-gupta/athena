@@ -6,27 +6,14 @@ import de.gupta.commons.utility.math.algebra.element.ring.Ring;
 
 public interface Radical<E extends Ring<E> & ScalarDivisible<E, Long> & Radical<E>>
 {
-	default E squareRoot(final ApproximationStrategy<E> convergence, final RoundingStrategy<E> rounding)
+	default E squareRoot(final ApproximationStrategy<E> whenToStop, final RoundingStrategy<E> rounding)
 	{
-		return root(2, convergence, rounding);
+		return root(2, whenToStop, rounding);
 	}
 
-	default E root(final int n, final ApproximationStrategy<E> convergence, final RoundingStrategy<E> rounding)
+	default E root(final int degree, final ApproximationStrategy<E> whenToStop, final RoundingStrategy<E> rounding)
 	{
-		return NewtonsMethod.root(self(), n, convergence, rounding);
-//		if (n < 2) throw new IllegalArgumentException("Root degree must be at least 2, got: " + n);
-//		if (self().equals(self().zero())) return self().zero();
-//		if (self().equals(self().one())) return self().one();
-//		E current = self();
-//		while (true)
-//		{
-//			final E xPow = current.multiplyAll(Collections.nCopies(n - 2, current));
-//			final E next = current.power(n - 1)
-//			                      .add(self().elementQuotient(xPow))
-//			                      .divide((long) n, rounding).quotient();
-//			if (convergence.converged(self(), current, next)) return next;
-//			current = next;
-//		}
+		return NewtonsMethod.root(self(), degree, whenToStop, rounding);
 	}
 
 	@SuppressWarnings("unchecked")

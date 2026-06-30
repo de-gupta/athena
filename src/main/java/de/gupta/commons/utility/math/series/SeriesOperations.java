@@ -27,9 +27,9 @@ public final class SeriesOperations
 	}
 
 	public static <I, E extends Ring<E> & ScalarDivisible<E, Long> & Radical<E>> Optional<E> standardDeviation(
-			final Series<I, E> series, final RoundingStrategy<E> rounding, final ApproximationStrategy<E> approximation)
+			final Series<I, E> series, final RoundingStrategy<E> rounding, final ApproximationStrategy<E> whenToStop)
 	{
-		return variance(series, rounding).map(v -> v.squareRoot(approximation, rounding));
+		return variance(series, rounding).map(v -> v.squareRoot(whenToStop, rounding));
 	}
 
 	public static <I, E extends Ring<E> & ScalarDivisible<E, Long>> Optional<E> variance(
