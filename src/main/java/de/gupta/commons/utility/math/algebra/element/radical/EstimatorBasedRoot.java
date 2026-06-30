@@ -29,7 +29,8 @@ public final class EstimatorBasedRoot
 		                .cleave()
 		                .when(e -> e.equals(zero), zero)
 		                .when(e -> e.equals(one), one)
-		                .infuse(e -> iterate(e, estimator.estimate(e, degree, rounding), whenToStop));
+		                .infuse(e -> iterate(estimator.initialEstimate(e, degree),
+								estimator.estimate(e, degree, rounding), whenToStop));
 	}
 
 	private static <E> E iterate(final E start, final UnaryOperator<E> step,

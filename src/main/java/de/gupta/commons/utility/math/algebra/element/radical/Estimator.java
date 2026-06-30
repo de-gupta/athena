@@ -20,4 +20,9 @@ public interface Estimator<E>
 	}
 
 	UnaryOperator<E> estimate(final E radicand, final int degree, final RoundingStrategy<E> rounding);
+
+	default E initialEstimate(final E radicand, final int degree)
+	{
+		return radicand;
+	}
 }
