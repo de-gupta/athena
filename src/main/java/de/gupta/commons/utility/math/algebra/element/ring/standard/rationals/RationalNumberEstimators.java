@@ -1,8 +1,11 @@
 package de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
 
+import de.gupta.aletheia.trials.Fallible;
+import de.gupta.aletheia.trials.Portent;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.Estimator;
 
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 public final class RationalNumberEstimators
@@ -27,18 +30,12 @@ public final class RationalNumberEstimators
 			final UnaryOperator<RationalNumber> step = estimator.estimate(radicand, degree, rounding);
 			final double radicandD = toDouble(radicand);
 			return current ->
-			{
-				try
-				{
-					return step.apply(current);
-				}
-				catch (final ArithmeticException ignored)
-				{
-					final double curr = toDouble(current);
-					final double next = (curr * (degree - 1) + radicandD / Math.pow(curr, degree - 1)) / degree;
-					return RationalNumberFactory.of(Math.round(next * SCALE), SCALE);
-				}
-			};
+					Fallible.beckon(current)
+					        .metamorphose(
+									step::apply,
+									List.of(Portent.on(ArithmeticException.class,
+											_ -> doubleStep(radicandD, degree, current))))
+					        .summon();
 		};
 	}
 
@@ -47,19 +44,33 @@ public final class RationalNumberEstimators
 		return (double) r.numerator().value() / r.denominator().value();
 	}
 
+	private static RationalNumber doubleStep(final double radicandD, final int degree,
+	                                         final RationalNumber current)
+	{
+		final double curr = toDouble(current);
+		final double next = (curr * (degree - 1) + radicandD / Math.pow(curr, degree - 1)) / degree;
+		return RationalNumberFactory.of(Math.round(next * SCALE), SCALE);
+	}
+
 	public static ApproximationStrategy<RationalNumber> adapt(final ApproximationStrategy<RationalNumber> strategy)
 	{
 		return (original, prev, curr) ->
-		{
-			try
-			{
-				return strategy.converged(original, prev, curr);
-			}
-			catch (final ArithmeticException ignored)
-			{
-				return true;
-			}
-		};
+				Fallible.beckon(strategy)
+				        .metamorphose(
+								s -> s.converged(original, prev, curr),
+								List.of(Portent.on(ArithmeticException.class,
+										_ -> Fallible.beckon(strategy)
+								                     .metamorphose(
+															 s -> s.converged(scaled(original), scaled(prev),
+																	 scaled(curr)),
+															 List.of(Portent.on(ArithmeticException.class, _ -> false)))
+								                     .summon())))
+				        .summon();
+	}
+
+	private static RationalNumber scaled(final RationalNumber r)
+	{
+		return RationalNumberFactory.of(Math.round(toDouble(r) * SCALE), SCALE);
 	}
 
 	private RationalNumberEstimators()

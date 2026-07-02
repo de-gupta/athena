@@ -26,6 +26,8 @@ final class RadicalTest
 			ApproximationStrategies.byEquality();
 	private static final ApproximationStrategy<RationalNumber> WITHIN_THOUSANDTH =
 			ApproximationStrategies.withinTolerance(r(1, 1000));
+	private static final ApproximationStrategy<RationalNumber> WITHIN_MILLIONTH =
+			ApproximationStrategies.withinTolerance(r(1, 1_000_000));
 	// RationalNumber is a field — division is always exact, rounding strategy is irrelevant
 	private static final RoundingStrategy<RationalNumber> RATIONAL_ROUNDING =
 			(dividend, divisor) -> DivisionResult.of(dividend.divide(divisor), RationalNumberFactory.zero());
@@ -38,6 +40,11 @@ final class RadicalTest
 	private static RationalNumber r(final long n, final long d)
 	{
 		return RationalNumberFactory.of(n, d);
+	}
+
+	private static double toDouble(final RationalNumber r)
+	{
+		return (double) r.numerator().value() / r.denominator().value();
 	}
 
 	private static void assertWithinTolerance(final String as, final RationalNumber actual,
@@ -195,22 +202,35 @@ final class RadicalTest
 			assertWithinTolerance(as, result, expected, r(1, 1000));
 		}
 
-		@Test
-		@DisplayName("approximates irrational square root: result squared is close to radicand")
-		void approximatesIrrationalSquareRoot()
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("irrationalSquareCases")
+		@DisplayName("irrational square root: result squared is within tolerance of radicand")
+		void irrationalSquareRootSquaredIsClose(final String as, final RationalNumber radicand)
 		{
-			// √2 is irrational — verify result² ≈ 2 within tolerance
-			final RationalNumber result = r(2, 1).squareRoot(WITHIN_THOUSANDTH, RATIONAL_ROUNDING);
-			assertWithinTolerance("result² ≈ 2", result.multiply(result), r(2, 1), r(1, 100));
+			final RationalNumber result = radicand.squareRoot(WITHIN_THOUSANDTH, RATIONAL_ROUNDING);
+			final double resultD = toDouble(result);
+			final double radicandD = toDouble(radicand);
+			assertThat(Math.abs(resultD * resultD - radicandD)).as(as).isLessThanOrEqualTo(1.0 / 50);
 		}
 
-		@Test
-		@DisplayName("approximates cube root of perfect rational cube within tolerance")
-		void approximatesPerfectRationalCubeWithinTolerance()
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("highPrecisionCases")
+		@DisplayName("converges to within 1/1_000_000 for high-precision requests")
+		void convergesToHighPrecision(final String as, final RationalNumber radicand,
+		                              final RationalNumber expected)
 		{
-			// ∛(8/1) = 2 — bit-estimate starts from 2/1 (exact root), converges immediately
-			final RationalNumber result = r(8, 1).root(3, WITHIN_THOUSANDTH, RATIONAL_ROUNDING);
-			assertWithinTolerance("∛8 ≈ 2", result, r(2, 1), r(1, 1000));
+			final RationalNumber result = radicand.squareRoot(WITHIN_MILLIONTH, RATIONAL_ROUNDING);
+			assertWithinTolerance(as, result, expected, r(1, 1_000_000));
+		}
+
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("cubeRootCases")
+		@DisplayName("approximates cube root of perfect rational cube within tolerance")
+		void approximatesPerfectRationalCube(final String as, final RationalNumber radicand,
+		                                     final RationalNumber expected)
+		{
+			final RationalNumber result = radicand.root(3, WITHIN_THOUSANDTH, RATIONAL_ROUNDING);
+			assertWithinTolerance(as, result, expected, r(1, 1000));
 		}
 
 		@Test
@@ -227,15 +247,61 @@ final class RadicalTest
 			return Stream.of(
 					Arguments.of("√(4/1) ≈ 2", r(4, 1), r(2, 1)),
 					Arguments.of("√(1/4) ≈ 1/2", r(1, 4), r(1, 2)),
+					Arguments.of("√(1/9) ≈ 1/3", r(1, 9), r(1, 3)),
 					Arguments.of("√(4/9) ≈ 2/3", r(4, 9), r(2, 3)),
+					Arguments.of("√(9/25) ≈ 3/5", r(9, 25), r(3, 5)),
 					Arguments.of("√(9/4) ≈ 3/2", r(9, 4), r(3, 2)),
+					Arguments.of("√(25/4) ≈ 5/2", r(25, 4), r(5, 2)),
+					Arguments.of("√(625/49) ≈ 25/7", r(625, 49), r(25, 7)),
+					Arguments.of("√(49/169) ≈ 7/13", r(49, 169), r(7, 13)),
+					Arguments.of("√(169/49) ≈ 13/7", r(169, 49), r(13, 7)),
 					Arguments.of("√(25/1) ≈ 5", r(25, 1), r(5, 1)),
 					Arguments.of("√(64/1) ≈ 8", r(64, 1), r(8, 1)),
 					Arguments.of("√(100/1) ≈ 10", r(100, 1), r(10, 1)),
 					Arguments.of("√(361/1) ≈ 19", r(361, 1), r(19, 1)),
+					Arguments.of("√(2500/1) ≈ 50", r(2500, 1), r(50, 1)),
 					Arguments.of("√(10000/1) ≈ 100", r(10_000, 1), r(100, 1)),
+					Arguments.of("√(1000000/1) ≈ 1000", r(1_000_000, 1), r(1000, 1)),
 					Arguments.of("√(1/100) ≈ 1/10", r(1, 100), r(1, 10)),
-					Arguments.of("√(49/169) ≈ 7/13", r(49, 169), r(7, 13))
+					Arguments.of("√(1/1000000) ≈ 1/1000", r(1, 1_000_000), r(1, 1000))
+			);
+		}
+
+		private static Stream<Arguments> irrationalSquareCases()
+		{
+			return Stream.of(
+					Arguments.of("√2", r(2, 1)),
+					Arguments.of("√3", r(3, 1)),
+					Arguments.of("√5", r(5, 1)),
+					Arguments.of("√7", r(7, 1)),
+					Arguments.of("√(1/2)", r(1, 2)),
+					Arguments.of("√(2/3)", r(2, 3)),
+					Arguments.of("√(7/3)", r(7, 3)),
+					Arguments.of("√(22/7)", r(22, 7))
+			);
+		}
+
+		private static Stream<Arguments> highPrecisionCases()
+		{
+			return Stream.of(
+					Arguments.of("√(4/1) to 10⁻⁶", r(4, 1), r(2, 1)),
+					Arguments.of("√(9/1) to 10⁻⁶", r(9, 1), r(3, 1)),
+					Arguments.of("√(100/1) to 10⁻⁶", r(100, 1), r(10, 1)),
+					Arguments.of("√(10000/1) to 10⁻⁶", r(10_000, 1), r(100, 1)),
+					Arguments.of("√(49/169) to 10⁻⁶", r(49, 169), r(7, 13)),
+					Arguments.of("√(1/100) to 10⁻⁶", r(1, 100), r(1, 10))
+			);
+		}
+
+		private static Stream<Arguments> cubeRootCases()
+		{
+			return Stream.of(
+					Arguments.of("∛(8/1) = 2", r(8, 1), r(2, 1)),
+					Arguments.of("∛(27/1) = 3", r(27, 1), r(3, 1)),
+					Arguments.of("∛(125/1) = 5", r(125, 1), r(5, 1)),
+					Arguments.of("∛(27/8) = 3/2", r(27, 8), r(3, 2)),
+					Arguments.of("∛(1/27) = 1/3", r(1, 27), r(1, 3)),
+					Arguments.of("∛(8/125) = 2/5", r(8, 125), r(2, 5))
 			);
 		}
 	}
