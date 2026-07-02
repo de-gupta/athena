@@ -24,10 +24,21 @@ final class RadicalTest
 {
 	private static final ApproximationStrategy<IntegralNumber> BY_EQUALITY =
 			ApproximationStrategies.byEquality();
+	private static final ApproximationStrategy<RationalNumber> WITHIN_TENTH =
+			ApproximationStrategies.withinTolerance(r(1, 10));
+	private static final ApproximationStrategy<RationalNumber> WITHIN_HUNDREDTH =
+			ApproximationStrategies.withinTolerance(r(1, 100));
 	private static final ApproximationStrategy<RationalNumber> WITHIN_THOUSANDTH =
 			ApproximationStrategies.withinTolerance(r(1, 1000));
 	private static final ApproximationStrategy<RationalNumber> WITHIN_MILLIONTH =
 			ApproximationStrategies.withinTolerance(r(1, 1_000_000));
+	private static final ApproximationStrategy<RationalNumber> WITHIN_BILLIONTH =
+			ApproximationStrategies.withinTolerance(r(1, 1_000_000_000L));
+	// Trillionth only achievable where Newton terminates exactly in one step
+	// (bit-based initial estimate equals the exact root — no overflow possible)
+	private static final ApproximationStrategy<RationalNumber> WITHIN_TRILLIONTH =
+			ApproximationStrategies.withinTolerance(r(1, 1_000_000_000_000L));
+
 	// RationalNumber is a field — division is always exact, rounding strategy is irrelevant
 	private static final RoundingStrategy<RationalNumber> RATIONAL_ROUNDING =
 			(dividend, divisor) -> DivisionResult.of(dividend.divide(divisor), RationalNumberFactory.zero());
@@ -233,6 +244,19 @@ final class RadicalTest
 			assertWithinTolerance(as, result, expected, r(1, 1000));
 		}
 
+		@ParameterizedTest(name = "{0}")
+		@MethodSource("precisionCases")
+		@DisplayName("result is within the requested tolerance for various precisions")
+		void resultIsWithinRequestedTolerance(final String as,
+		                                      final RationalNumber radicand,
+		                                      final int degree,
+		                                      final ApproximationStrategy<RationalNumber> strategy,
+		                                      final RationalNumber expected,
+		                                      final RationalNumber tolerance)
+		{
+			assertWithinTolerance(as, radicand.root(degree, strategy, RATIONAL_ROUNDING), expected, tolerance);
+		}
+
 		@Test
 		@DisplayName("squareRoot is equivalent to root with degree 2")
 		void squareRootIsEquivalentToRootWithDegreeTwo()
@@ -240,6 +264,60 @@ final class RadicalTest
 			final RationalNumber radicand = r(4, 1);
 			assertThat(radicand.squareRoot(WITHIN_THOUSANDTH, RATIONAL_ROUNDING))
 					.isEqualTo(radicand.root(2, WITHIN_THOUSANDTH, RATIONAL_ROUNDING));
+		}
+
+		private static Stream<Arguments> precisionCases()
+		{
+			return Stream.of(
+					// square roots at 1/10
+					Arguments.of("√(4/1) ±1/10", r(4, 1), 2, WITHIN_TENTH, r(2, 1), r(1, 10)),
+					Arguments.of("√(100/1) ±1/10", r(100, 1), 2, WITHIN_TENTH, r(10, 1), r(1, 10)),
+					Arguments.of("√(1/4) ±1/10", r(1, 4), 2, WITHIN_TENTH, r(1, 2), r(1, 10)),
+					// square roots at 1/100
+					Arguments.of("√(4/1) ±1/100", r(4, 1), 2, WITHIN_HUNDREDTH, r(2, 1), r(1, 100)),
+					Arguments.of("√(9/1) ±1/100", r(9, 1), 2, WITHIN_HUNDREDTH, r(3, 1), r(1, 100)),
+					Arguments.of("√(25/1) ±1/100", r(25, 1), 2, WITHIN_HUNDREDTH, r(5, 1), r(1, 100)),
+					Arguments.of("√(4/9) ±1/100", r(4, 9), 2, WITHIN_HUNDREDTH, r(2, 3), r(1, 100)),
+					// square roots at 1/1000
+					Arguments.of("√(4/1) ±1/1000", r(4, 1), 2, WITHIN_THOUSANDTH, r(2, 1), r(1, 1000)),
+					Arguments.of("√(361/1) ±1/1000", r(361, 1), 2, WITHIN_THOUSANDTH, r(19, 1), r(1, 1000)),
+					Arguments.of("√(10000/1) ±1/1000", r(10_000, 1), 2, WITHIN_THOUSANDTH, r(100, 1), r(1, 1000)),
+					Arguments.of("√(1000000/1) ±1/1000", r(1_000_000, 1), 2, WITHIN_THOUSANDTH, r(1000, 1), r(1, 1000)),
+					Arguments.of("√(49/169) ±1/1000", r(49, 169), 2, WITHIN_THOUSANDTH, r(7, 13), r(1, 1000)),
+					Arguments.of("√(1/1000000) ±1/1000", r(1, 1_000_000), 2, WITHIN_THOUSANDTH, r(1, 1000), r(1, 1000)),
+					// square roots at 1/1000000
+					Arguments.of("√(4/1) ±1/10⁶", r(4, 1), 2, WITHIN_MILLIONTH, r(2, 1), r(1, 1_000_000)),
+					Arguments.of("√(100/1) ±1/10⁶", r(100, 1), 2, WITHIN_MILLIONTH, r(10, 1), r(1, 1_000_000)),
+					Arguments.of("√(10000/1) ±1/10⁶", r(10_000, 1), 2, WITHIN_MILLIONTH, r(100, 1), r(1, 1_000_000)),
+					Arguments.of("√(1/100) ±1/10⁶", r(1, 100), 2, WITHIN_MILLIONTH, r(1, 10), r(1, 1_000_000)),
+					Arguments.of("√(49/169) ±1/10⁶", r(49, 169), 2, WITHIN_MILLIONTH, r(7, 13), r(1, 1_000_000)),
+					// cube roots at 1/1000
+					Arguments.of("∛(8/1) ±1/1000", r(8, 1), 3, WITHIN_THOUSANDTH, r(2, 1), r(1, 1000)),
+					Arguments.of("∛(27/1) ±1/1000", r(27, 1), 3, WITHIN_THOUSANDTH, r(3, 1), r(1, 1000)),
+					Arguments.of("∛(125/1) ±1/1000", r(125, 1), 3, WITHIN_THOUSANDTH, r(5, 1), r(1, 1000)),
+					Arguments.of("∛(27/8) ±1/1000", r(27, 8), 3, WITHIN_THOUSANDTH, r(3, 2), r(1, 1000)),
+					Arguments.of("∛(8/125) ±1/1000", r(8, 125), 3, WITHIN_THOUSANDTH, r(2, 5), r(1, 1000)),
+					// cube roots at 1/1000000
+					Arguments.of("∛(8/1) ±1/10⁶", r(8, 1), 3, WITHIN_MILLIONTH, r(2, 1), r(1, 1_000_000)),
+					Arguments.of("∛(125/1) ±1/10⁶", r(125, 1), 3, WITHIN_MILLIONTH, r(5, 1), r(1, 1_000_000)),
+					Arguments.of("∛(1/27) ±1/10⁶", r(1, 27), 3, WITHIN_MILLIONTH, r(1, 3), r(1, 1_000_000)),
+					// billionth (1/10⁹) — double fallback caps precision here, all achievable
+					Arguments.of("√(4/1) ±1/10⁹", r(4, 1), 2, WITHIN_BILLIONTH, r(2, 1), r(1, 1_000_000_000L)),
+					Arguments.of("√(16/1) ±1/10⁹", r(16, 1), 2, WITHIN_BILLIONTH, r(4, 1), r(1, 1_000_000_000L)),
+					Arguments.of("√(100/1) ±1/10⁹", r(100, 1), 2, WITHIN_BILLIONTH, r(10, 1), r(1, 1_000_000_000L)),
+					Arguments.of("√(1/4) ±1/10⁹", r(1, 4), 2, WITHIN_BILLIONTH, r(1, 2), r(1, 1_000_000_000L)),
+					Arguments.of("√(49/169) ±1/10⁹", r(49, 169), 2, WITHIN_BILLIONTH, r(7, 13), r(1, 1_000_000_000L)),
+					Arguments.of("√(1/100) ±1/10⁹", r(1, 100), 2, WITHIN_BILLIONTH, r(1, 10), r(1, 1_000_000_000L)),
+					Arguments.of("∛(8/1) ±1/10⁹", r(8, 1), 3, WITHIN_BILLIONTH, r(2, 1), r(1, 1_000_000_000L)),
+					Arguments.of("∛(27/8) ±1/10⁹", r(27, 8), 3, WITHIN_BILLIONTH, r(3, 2), r(1, 1_000_000_000L)),
+					// trillionth (1/10¹²) — only where bit-estimate = exact root (1-step Newton, no overflow)
+					Arguments.of("√(4/1) ±1/10¹²", r(4, 1), 2, WITHIN_TRILLIONTH, r(2, 1), r(1, 1_000_000_000_000L)),
+					Arguments.of("√(16/1) ±1/10¹²", r(16, 1), 2, WITHIN_TRILLIONTH, r(4, 1), r(1, 1_000_000_000_000L)),
+					Arguments.of("√(64/1) ±1/10¹²", r(64, 1), 2, WITHIN_TRILLIONTH, r(8, 1), r(1, 1_000_000_000_000L)),
+					Arguments.of("√(1/4) ±1/10¹²", r(1, 4), 2, WITHIN_TRILLIONTH, r(1, 2), r(1, 1_000_000_000_000L)),
+					Arguments.of("∛(8/1) ±1/10¹²", r(8, 1), 3, WITHIN_TRILLIONTH, r(2, 1), r(1, 1_000_000_000_000L)),
+					Arguments.of("∛(1/8) ±1/10¹²", r(1, 8), 3, WITHIN_TRILLIONTH, r(1, 2), r(1, 1_000_000_000_000L))
+			);
 		}
 
 		private static Stream<Arguments> rationalPerfectSquareCases()
