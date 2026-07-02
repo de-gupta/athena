@@ -31,10 +31,8 @@ public final class RationalNumberEstimators
 			final double radicandD = toDouble(radicand);
 			return current ->
 					Fallible.beckon(current)
-					        .metamorphose(
-									step::apply,
-									List.of(Portent.on(ArithmeticException.class,
-											_ -> doubleStep(radicandD, degree, current))))
+					        .metamorphose(step::apply, List.of(Portent.on(ArithmeticException.class,
+							        _ -> doubleStep(radicandD, degree, current))))
 					        .summon();
 		};
 	}
@@ -56,13 +54,13 @@ public final class RationalNumberEstimators
 	{
 		return (original, prev, curr) ->
 				Fallible.beckon(strategy)
-				        .metamorphose(
-								s -> s.converged(original, prev, curr),
-								List.of(Portent.on(ArithmeticException.class,
-										_ -> Fallible.beckon(strategy)
-								                     .metamorphose(
-															 s -> s.converged(scaled(original), scaled(prev),
-																	 scaled(curr)),
+				        .metamorphose(s -> s.converged(original, prev, curr),
+								List.of(Portent.on(ArithmeticException.class, _ -> Fallible.beckon(strategy)
+						                                                                   .metamorphose(
+								                                                                   s -> s.converged(
+										                                                                   scaled(original),
+										                                                                   scaled(prev),
+										                                                                   scaled(curr)),
 															 List.of(Portent.on(ArithmeticException.class, _ -> false)))
 								                     .summon())))
 				        .summon();
