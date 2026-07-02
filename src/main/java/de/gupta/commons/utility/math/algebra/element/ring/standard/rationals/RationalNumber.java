@@ -24,6 +24,7 @@ public sealed interface RationalNumber
 	                            final RoundingStrategy<RationalNumber> rounding)
 	{
 		return EstimatorBasedRoot.compute(this, degree, RationalNumberEstimators.initialEstimate(this, degree),
-				Estimator.newton(), whenToStop, rounding);
+				RationalNumberEstimators.adaptEstimator(Estimator.newton()),
+				RationalNumberEstimators.adapt(whenToStop), rounding);
 	}
 }

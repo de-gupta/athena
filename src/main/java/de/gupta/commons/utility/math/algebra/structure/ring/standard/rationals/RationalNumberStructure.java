@@ -17,6 +17,7 @@ public interface RationalNumberStructure extends OrderedFieldStructure<RationalN
 	                            final RoundingStrategy<RationalNumber> rounding)
 	{
 		return EstimatorBasedRoot.compute(element, degree, RationalNumberEstimators.initialEstimate(element, degree),
-				Estimator.newton(), whenToStop, rounding);
+				RationalNumberEstimators.adaptEstimator(Estimator.newton()),
+				RationalNumberEstimators.adapt(whenToStop), rounding);
 	}
 }

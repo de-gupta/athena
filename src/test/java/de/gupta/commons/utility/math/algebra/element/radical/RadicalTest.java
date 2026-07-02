@@ -228,7 +228,14 @@ final class RadicalTest
 					Arguments.of("√(4/1) ≈ 2", r(4, 1), r(2, 1)),
 					Arguments.of("√(1/4) ≈ 1/2", r(1, 4), r(1, 2)),
 					Arguments.of("√(4/9) ≈ 2/3", r(4, 9), r(2, 3)),
-					Arguments.of("√(9/4) ≈ 3/2", r(9, 4), r(3, 2))
+					Arguments.of("√(9/4) ≈ 3/2", r(9, 4), r(3, 2)),
+					Arguments.of("√(25/1) ≈ 5", r(25, 1), r(5, 1)),
+					Arguments.of("√(64/1) ≈ 8", r(64, 1), r(8, 1)),
+					Arguments.of("√(100/1) ≈ 10", r(100, 1), r(10, 1)),
+					Arguments.of("√(361/1) ≈ 19", r(361, 1), r(19, 1)),
+					Arguments.of("√(10000/1) ≈ 100", r(10_000, 1), r(100, 1)),
+					Arguments.of("√(1/100) ≈ 1/10", r(1, 100), r(1, 10)),
+					Arguments.of("√(49/169) ≈ 7/13", r(49, 169), r(7, 13))
 			);
 		}
 	}
