@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("RoundingStrategies")
-final class RoundingStrategiesTest
+@DisplayName("DivisionConventions")
+final class DivisionConventionsTest
 {
 	private static void assertDivision(final String as, final long dividend, final long divisor,
 	                                   final DivisionConvention<IntegralNumber> strategy,
@@ -51,14 +51,15 @@ final class RoundingStrategiesTest
 		private static Stream<Arguments> structureFactoryCases()
 		{
 			return Stream.of(
-					Arguments.of("floor(structure)", RoundingStrategies.floor(IntegerEuclideanDomainStructure.INSTANCE),
-							RoundingStrategies.floor(), -7L, 3L),
+					Arguments.of("floor(structure)",
+							DivisionConventions.floor(IntegerEuclideanDomainStructure.INSTANCE),
+							DivisionConventions.floor(), -7L, 3L),
 					Arguments.of("ceiling(structure)",
-							RoundingStrategies.ceiling(IntegerEuclideanDomainStructure.INSTANCE),
-							RoundingStrategies.ceiling(), 7L, 3L),
+							DivisionConventions.ceiling(IntegerEuclideanDomainStructure.INSTANCE),
+							DivisionConventions.ceiling(), 7L, 3L),
 					Arguments.of("truncate(structure)",
-							RoundingStrategies.truncate(IntegerEuclideanDomainStructure.INSTANCE),
-							RoundingStrategies.truncate(), -7L, 3L)
+							DivisionConventions.truncate(IntegerEuclideanDomainStructure.INSTANCE),
+							DivisionConventions.truncate(), -7L, 3L)
 			);
 		}
 	}
@@ -79,7 +80,7 @@ final class RoundingStrategiesTest
 
 		private static DivisionConvention<IntegralNumber> customCeiling()
 		{
-			return RoundingStrategies.ceiling(RoundingStrategies.floor(), IntegralNumber::isZero,
+			return DivisionConventions.ceiling(DivisionConventions.floor(), IntegralNumber::isZero,
 					integer(1), IntegralNumber::add, IntegralNumber::subtract);
 		}
 
@@ -96,7 +97,7 @@ final class RoundingStrategiesTest
 
 		private static DivisionConvention<IntegralNumber> customTruncate()
 		{
-			return RoundingStrategies.truncate(RoundingStrategies.floor(), IntegralNumber::isZero,
+			return DivisionConventions.truncate(DivisionConventions.floor(), IntegralNumber::isZero,
 					IntegralNumber::isNegative, integer(1), IntegralNumber::add,
 					IntegralNumber::subtract);
 		}

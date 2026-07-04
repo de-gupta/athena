@@ -14,8 +14,8 @@ public sealed interface IntegralNumber extends OrderedEuclideanDomain<IntegralNu
 
 	@Override
 	default IntegralNumber root(final int degree, final ApproximationStrategy<IntegralNumber> whenToStop,
-	                            final DivisionConvention<IntegralNumber> rounding)
+	                            final DivisionConvention<IntegralNumber> convention)
 	{
-		return EstimatorBasedRoot.compute(this, degree, Estimator.newton(), whenToStop, rounding);
+		return EstimatorBasedRoot.compute(this, degree, Estimator.newton(), whenToStop, convention);
 	}
 }

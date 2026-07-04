@@ -6,7 +6,7 @@ import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 
-public final class RoundingStrategies
+public final class DivisionConventions
 {
 	public static <E extends OrderedEuclideanDomain<E>> DivisionConvention<E> floor()
 	{
@@ -85,7 +85,7 @@ public final class RoundingStrategies
 		};
 	}
 
-	private RoundingStrategies()
+	private DivisionConventions()
 	{
 	}
 }

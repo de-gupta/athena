@@ -21,10 +21,10 @@ public sealed interface RationalNumber
 
 	@Override
 	default RationalNumber root(final int degree, final ApproximationStrategy<RationalNumber> whenToStop,
-	                            final DivisionConvention<RationalNumber> rounding)
+	                            final DivisionConvention<RationalNumber> convention)
 	{
 		return EstimatorBasedRoot.compute(this, degree, RationalNumberEstimators.initialEstimate(this, degree),
 				RationalNumberEstimators.adaptEstimator(Estimator.newton()),
-				RationalNumberEstimators.adapt(whenToStop), rounding);
+				RationalNumberEstimators.adapt(whenToStop), convention);
 	}
 }

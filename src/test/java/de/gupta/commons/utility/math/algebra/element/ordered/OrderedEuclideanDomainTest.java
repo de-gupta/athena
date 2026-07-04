@@ -29,7 +29,7 @@ final class OrderedEuclideanDomainTest
 		@ParameterizedTest(name = "{0}")
 		@MethodSource("dividesByNegativeScalarCases")
 		@DisplayName("converts negative scalars and delegates to the rounding strategy")
-		void convertsNegativeScalarsAndDelegatesToTheRoundingStrategy(final String as, final long dividend,
+		void convertsNegativeScalarsAndDelegatesToTheDivisionConvention(final String as, final long dividend,
 		                                                              final long scalar,
 		                                                              final DivisionConvention<IntegralNumber> strategy,
 		                                                              final long expectedQuotient,
@@ -55,19 +55,19 @@ final class OrderedEuclideanDomainTest
 		private static Stream<Arguments> dividesByNegativeScalarCases()
 		{
 			return Stream.of(
-					Arguments.of("floor with negative scalar", 7L, -3L, RoundingStrategies.floor(), -3L, -2L),
-					Arguments.of("ceiling with negative scalar", 7L, -3L, RoundingStrategies.ceiling(), -2L, 1L),
-					Arguments.of("truncate with negative scalar", 7L, -3L, RoundingStrategies.truncate(), -2L, 1L),
-					Arguments.of("exact division with negative scalar", 60L, -3L, RoundingStrategies.floor(), -20L, 0L)
+					Arguments.of("floor with negative scalar", 7L, -3L, DivisionConventions.floor(), -3L, -2L),
+					Arguments.of("ceiling with negative scalar", 7L, -3L, DivisionConventions.ceiling(), -2L, 1L),
+					Arguments.of("truncate with negative scalar", 7L, -3L, DivisionConventions.truncate(), -2L, 1L),
+					Arguments.of("exact division with negative scalar", 60L, -3L, DivisionConventions.floor(), -20L, 0L)
 			);
 		}
 
 		private static Stream<Arguments> throwsForZeroScalarCases()
 		{
 			return Stream.of(
-					Arguments.of("floor with zero scalar", 7L, RoundingStrategies.floor()),
-					Arguments.of("ceiling with zero scalar", 7L, RoundingStrategies.ceiling()),
-					Arguments.of("truncate with zero scalar", 7L, RoundingStrategies.truncate())
+					Arguments.of("floor with zero scalar", 7L, DivisionConventions.floor()),
+					Arguments.of("ceiling with zero scalar", 7L, DivisionConventions.ceiling()),
+					Arguments.of("truncate with zero scalar", 7L, DivisionConventions.truncate())
 			);
 		}
 	}

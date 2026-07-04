@@ -20,29 +20,30 @@ import java.util.function.BiFunction;
 public final class SeriesOperations
 {
 	public static <I, E extends Ring<E> & ScalarDivisible<E, Long> & Radical<E>> Optional<E> standardDeviation(
-			final Series<I, E> series, final DivisionConvention<E> rounding, final ApproximationStrategy<E> whenToStop)
+			final Series<I, E> series, final DivisionConvention<E> convention,
+			final ApproximationStrategy<E> whenToStop)
 	{
-		return variance(series, rounding).map(v -> v.squareRoot(whenToStop, rounding));
+		return variance(series, convention).map(v -> v.squareRoot(whenToStop, convention));
 	}
 
 	public static <I, E extends Ring<E> & ScalarDivisible<E, Long>> Optional<E> variance(
-			final Series<I, E> series, final DivisionConvention<E> rounding)
+			final Series<I, E> series, final DivisionConvention<E> convention)
 	{
 		if (series.isEmpty()) return Optional.empty();
-		final E mean = average(series, rounding).orElseThrow();
+		final E mean = average(series, convention).orElseThrow();
 		final Series<I, E> squaredDeviations = series.map(v ->
 		{
 			final E deviation = v.subtract(mean);
 			return deviation.multiply(deviation);
 		});
-		return sum(squaredDeviations).map(s -> s.divide(series.size(), rounding).quotient());
+		return sum(squaredDeviations).map(s -> s.divide(series.size(), convention).quotient());
 	}
 
 	public static <I, E extends AdditiveSemigroup<E> & ScalarDivisible<E, Long>> Optional<E> average(
-			final Series<I, E> series, final DivisionConvention<E> rounding)
+			final Series<I, E> series, final DivisionConvention<E> convention)
 	{
 		if (series.isEmpty()) return Optional.empty();
-		return sum(series).map(s -> s.divide(series.size(), rounding).quotient());
+		return sum(series).map(s -> s.divide(series.size(), convention).quotient());
 	}
 
 	public static <I, E extends AdditiveSemigroup<E>> Optional<E> sum(final Series<I, E> series)
@@ -84,35 +85,35 @@ public final class SeriesOperations
 
 	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
 			E extends AdditiveGroup<E> & ScalarDivisible<E, N>> Series<I, E> indexWeightedChanges(
-			final Series<I, E> series, final DivisionConvention<E> rounding)
+			final Series<I, E> series, final DivisionConvention<E> convention)
 	{
 		return consecutiveEntryPairs(series, (previous, current) ->
 		{
 			final N norm = previous.getKey().displacementTo(current.getKey()).norm();
-			return current.getValue().subtract(previous.getValue()).divide(norm, rounding).quotient();
+			return current.getValue().subtract(previous.getValue()).divide(norm, convention).quotient();
 		});
 	}
 
 	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
 			S extends ScalarDivisible<S, N> & Ring<S>, E extends ScalarQuotientable<E, S>> Series<I, S> indexWeightedPercentChanges(
-			final Series<I, E> series, final DivisionConvention<S> rounding)
+			final Series<I, E> series, final DivisionConvention<S> convention)
 	{
 		return consecutiveEntryPairs(series, (previous, current) ->
 		{
 			final N norm = previous.getKey().displacementTo(current.getKey()).norm();
 			final S ratio = current.getValue().ratio(previous.getValue());
-			return ratio.subtract(ratio.one()).divide(norm, rounding).quotient();
+			return ratio.subtract(ratio.one()).divide(norm, convention).quotient();
 		});
 	}
 
 	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
 			S extends ScalarDivisible<S, N>, E extends ScalarQuotientable<E, S>> Series<I, S> indexWeightedRatios(
-			final Series<I, E> series, final DivisionConvention<S> rounding)
+			final Series<I, E> series, final DivisionConvention<S> convention)
 	{
 		return consecutiveEntryPairs(series, (previous, current) ->
 		{
 			final N norm = previous.getKey().displacementTo(current.getKey()).norm();
-			return current.getValue().ratio(previous.getValue()).divide(norm, rounding).quotient();
+			return current.getValue().ratio(previous.getValue()).divide(norm, convention).quotient();
 		});
 	}
 

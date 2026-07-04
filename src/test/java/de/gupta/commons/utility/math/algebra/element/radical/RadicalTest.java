@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.radical;
 
 import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConventions;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumber;
@@ -74,14 +74,14 @@ final class RadicalTest
 		@DisplayName("zero returns zero")
 		void zeroReturnsZero()
 		{
-			assertThat(i(0).squareRoot(BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(0));
+			assertThat(i(0).squareRoot(BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(0));
 		}
 
 		@Test
 		@DisplayName("one returns one")
 		void oneReturnsOne()
 		{
-			assertThat(i(1).squareRoot(BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(1));
+			assertThat(i(1).squareRoot(BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(1));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -89,7 +89,7 @@ final class RadicalTest
 		@DisplayName("perfect square returns exact root")
 		void perfectSquareReturnsExactRoot(final String as, final long radicand, final long expected)
 		{
-			assertThat(i(radicand).squareRoot(BY_EQUALITY, RoundingStrategies.floor()))
+			assertThat(i(radicand).squareRoot(BY_EQUALITY, DivisionConventions.floor()))
 					.as(as).isEqualTo(i(expected));
 		}
 
@@ -98,7 +98,7 @@ final class RadicalTest
 		@DisplayName("non-perfect square converges to stable estimate with ceiling rounding")
 		void nonPerfectSquareConvergesToStableEstimate(final String as, final long radicand, final long expected)
 		{
-			assertThat(i(radicand).squareRoot(BY_EQUALITY, RoundingStrategies.ceiling()))
+			assertThat(i(radicand).squareRoot(BY_EQUALITY, DivisionConventions.ceiling()))
 					.as(as).isEqualTo(i(expected));
 		}
 
@@ -106,8 +106,8 @@ final class RadicalTest
 		@DisplayName("squareRoot is equivalent to root with degree 2")
 		void squareRootIsEquivalentToRootWithDegreeTwo()
 		{
-			assertThat(i(25).squareRoot(BY_EQUALITY, RoundingStrategies.floor()))
-					.isEqualTo(i(25).root(2, BY_EQUALITY, RoundingStrategies.floor()));
+			assertThat(i(25).squareRoot(BY_EQUALITY, DivisionConventions.floor()))
+					.isEqualTo(i(25).root(2, BY_EQUALITY, DivisionConventions.floor()));
 		}
 
 		private static Stream<Arguments> perfectSquareCases()
@@ -139,14 +139,14 @@ final class RadicalTest
 		@DisplayName("zero returns zero")
 		void zeroReturnsZero()
 		{
-			assertThat(i(0).root(3, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(0));
+			assertThat(i(0).root(3, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(0));
 		}
 
 		@Test
 		@DisplayName("one returns one")
 		void oneReturnsOne()
 		{
-			assertThat(i(1).root(3, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(1));
+			assertThat(i(1).root(3, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(1));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -154,7 +154,7 @@ final class RadicalTest
 		@DisplayName("perfect cube returns exact root")
 		void perfectCubeReturnsExactRoot(final String as, final long radicand, final long expected)
 		{
-			assertThat(i(radicand).root(3, BY_EQUALITY, RoundingStrategies.floor()))
+			assertThat(i(radicand).root(3, BY_EQUALITY, DivisionConventions.floor()))
 					.as(as).isEqualTo(i(expected));
 		}
 
@@ -163,7 +163,7 @@ final class RadicalTest
 		void nonPerfectCubeFloor()
 		{
 			// ∛10 ≈ 2.154 — Newton with floor converges to 2
-			assertThat(i(10).root(3, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(2));
+			assertThat(i(10).root(3, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(2));
 		}
 
 		@Test
@@ -171,7 +171,7 @@ final class RadicalTest
 		void nonPerfectCubeCeiling()
 		{
 			// ∛10 ≈ 2.154 — Newton with ceiling converges to 3
-			assertThat(i(10).root(3, BY_EQUALITY, RoundingStrategies.ceiling())).isEqualTo(i(3));
+			assertThat(i(10).root(3, BY_EQUALITY, DivisionConventions.ceiling())).isEqualTo(i(3));
 		}
 
 		private static Stream<Arguments> perfectCubeCases()
@@ -393,7 +393,7 @@ final class RadicalTest
 		@DisplayName("throws IllegalArgumentException")
 		void throwsIllegalArgumentException(final String as, final int degree)
 		{
-			assertThatThrownBy(() -> i(4).root(degree, BY_EQUALITY, RoundingStrategies.floor()))
+			assertThatThrownBy(() -> i(4).root(degree, BY_EQUALITY, DivisionConventions.floor()))
 					.as(as)
 					.isInstanceOf(IllegalArgumentException.class)
 					.hasMessageContaining(String.valueOf(degree));

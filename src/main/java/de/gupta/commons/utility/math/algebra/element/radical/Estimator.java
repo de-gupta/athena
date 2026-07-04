@@ -13,11 +13,11 @@ public interface Estimator<E>
 {
 	static <E extends Ring<E> & Quotientable<E> & ScalarDivisible<E, Long> & Radical<E>> Estimator<E> newton()
 	{
-		return (radicand, degree, rounding) -> estimate ->
+		return (radicand, degree, convention) -> estimate ->
 				estimate.power(degree - 1)
 				        .add(radicand.quotient(estimate.multiplyAll(Collections.nCopies(degree - 2, estimate))))
-				        .divide((long) degree, rounding).quotient();
+				        .divide((long) degree, convention).quotient();
 	}
 
-	UnaryOperator<E> estimate(final E radicand, final int degree, final DivisionConvention<E> rounding);
+	UnaryOperator<E> estimate(final E radicand, final int degree, final DivisionConvention<E> convention);
 }

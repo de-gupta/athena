@@ -1,6 +1,6 @@
 package de.gupta.commons.utility.math.algebra.structure.radical;
 
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConventions;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategies;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.Estimator;
@@ -41,14 +41,14 @@ final class RadicalStructureFactoryTest
 		@DisplayName("zero returns zero")
 		void zeroReturnsZero()
 		{
-			assertThat(radical.root(i(0), 2, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(0));
+			assertThat(radical.root(i(0), 2, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(0));
 		}
 
 		@Test
 		@DisplayName("one returns one")
 		void oneReturnsOne()
 		{
-			assertThat(radical.root(i(1), 2, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(1));
+			assertThat(radical.root(i(1), 2, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(1));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -56,7 +56,7 @@ final class RadicalStructureFactoryTest
 		@DisplayName("computes root correctly")
 		void computesRootCorrectly(final String as, final long radicand, final int degree, final long expected)
 		{
-			assertThat(radical.root(i(radicand), degree, BY_EQUALITY, RoundingStrategies.floor()))
+			assertThat(radical.root(i(radicand), degree, BY_EQUALITY, DivisionConventions.floor()))
 					.as(as).isEqualTo(i(expected));
 		}
 
@@ -64,23 +64,23 @@ final class RadicalStructureFactoryTest
 		@DisplayName("squareRoot convenience method delegates to root with degree 2")
 		void squareRootDelegatesToRootWithDegreeTwo()
 		{
-			assertThat(radical.squareRoot(i(9), BY_EQUALITY, RoundingStrategies.floor()))
-					.isEqualTo(i(9).root(2, BY_EQUALITY, RoundingStrategies.floor()));
+			assertThat(radical.squareRoot(i(9), BY_EQUALITY, DivisionConventions.floor()))
+					.isEqualTo(i(9).root(2, BY_EQUALITY, DivisionConventions.floor()));
 		}
 
 		@Test
 		@DisplayName("result matches element-level root method")
 		void resultMatchesElementLevelRootMethod()
 		{
-			assertThat(radical.root(i(25), 2, BY_EQUALITY, RoundingStrategies.floor()))
-					.isEqualTo(i(25).root(2, BY_EQUALITY, RoundingStrategies.floor()));
+			assertThat(radical.root(i(25), 2, BY_EQUALITY, DivisionConventions.floor()))
+					.isEqualTo(i(25).root(2, BY_EQUALITY, DivisionConventions.floor()));
 		}
 
 		@Test
 		@DisplayName("throws IllegalArgumentException for degree less than 2")
 		void throwsForDegreelessThanTwo()
 		{
-			assertThatThrownBy(() -> radical.root(i(4), 1, BY_EQUALITY, RoundingStrategies.floor()))
+			assertThatThrownBy(() -> radical.root(i(4), 1, BY_EQUALITY, DivisionConventions.floor()))
 					.isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -88,9 +88,9 @@ final class RadicalStructureFactoryTest
 		@DisplayName("structure is reusable across different elements")
 		void structureIsReusableAcrossDifferentElements()
 		{
-			assertThat(radical.root(i(4), 2, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(2));
-			assertThat(radical.root(i(9), 2, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(3));
-			assertThat(radical.root(i(8), 3, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(2));
+			assertThat(radical.root(i(4), 2, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(2));
+			assertThat(radical.root(i(9), 2, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(3));
+			assertThat(radical.root(i(8), 3, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(2));
 		}
 
 		private static Stream<Arguments> rootCases()
@@ -116,14 +116,14 @@ final class RadicalStructureFactoryTest
 		@DisplayName("zero returns zero using ring structure identity")
 		void zeroReturnsZeroUsingRingStructureIdentity()
 		{
-			assertThat(radical.root(i(0), 2, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(0));
+			assertThat(radical.root(i(0), 2, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(0));
 		}
 
 		@Test
 		@DisplayName("one returns one using ring structure identity")
 		void oneReturnsOneUsingRingStructureIdentity()
 		{
-			assertThat(radical.root(i(1), 2, BY_EQUALITY, RoundingStrategies.floor())).isEqualTo(i(1));
+			assertThat(radical.root(i(1), 2, BY_EQUALITY, DivisionConventions.floor())).isEqualTo(i(1));
 		}
 
 		@Test
@@ -132,8 +132,8 @@ final class RadicalStructureFactoryTest
 		{
 			final RadicalStructure<IntegralNumber> ringVariant =
 					RadicalStructureFactory.<IntegralNumber>using(Estimator.newton());
-			assertThat(radical.root(i(16), 2, BY_EQUALITY, RoundingStrategies.floor()))
-					.isEqualTo(ringVariant.root(i(16), 2, BY_EQUALITY, RoundingStrategies.floor()));
+			assertThat(radical.root(i(16), 2, BY_EQUALITY, DivisionConventions.floor()))
+					.isEqualTo(ringVariant.root(i(16), 2, BY_EQUALITY, DivisionConventions.floor()));
 		}
 
 		@ParameterizedTest(name = "{0}")
@@ -142,7 +142,7 @@ final class RadicalStructureFactoryTest
 		void computesRootCorrectlyViaExplicitRingStructure(final String as, final long radicand,
 		                                                   final int degree, final long expected)
 		{
-			assertThat(radical.root(i(radicand), degree, BY_EQUALITY, RoundingStrategies.floor()))
+			assertThat(radical.root(i(radicand), degree, BY_EQUALITY, DivisionConventions.floor()))
 					.as(as).isEqualTo(i(expected));
 		}
 

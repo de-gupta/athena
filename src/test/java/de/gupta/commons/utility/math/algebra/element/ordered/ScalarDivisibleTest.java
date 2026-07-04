@@ -21,9 +21,9 @@ final class ScalarDivisibleTest
 	private static Stream<StrategyArg> strategyArgs()
 	{
 		return Stream.of(
-				new StrategyArg("FLOOR", RoundingStrategies.floor()),
-				new StrategyArg("CEILING", RoundingStrategies.ceiling()),
-				new StrategyArg("TRUNCATE", RoundingStrategies.truncate())
+				new StrategyArg("FLOOR", DivisionConventions.floor()),
+				new StrategyArg("CEILING", DivisionConventions.ceiling()),
+				new StrategyArg("TRUNCATE", DivisionConventions.truncate())
 		);
 	}
 
@@ -60,7 +60,7 @@ final class ScalarDivisibleTest
 		void producesFloorQuotientAndRemainder(final String as, final long dividend, final long scalar,
 		                                       final long expectedQ, final long expectedR)
 		{
-			assertBothSides(dividend, scalar, RoundingStrategies.floor(), expectedQ, expectedR);
+			assertBothSides(dividend, scalar, DivisionConventions.floor(), expectedQ, expectedR);
 		}
 
 		private static Stream<Arguments> producesFloorQuotientAndRemainderCases()
@@ -88,7 +88,7 @@ final class ScalarDivisibleTest
 		void producesCeilingQuotientAndRemainder(final String as, final long dividend, final long scalar,
 		                                         final long expectedQ, final long expectedR)
 		{
-			assertBothSides(dividend, scalar, RoundingStrategies.ceiling(), expectedQ, expectedR);
+			assertBothSides(dividend, scalar, DivisionConventions.ceiling(), expectedQ, expectedR);
 		}
 
 		private static Stream<Arguments> producesCeilingQuotientAndRemainderCases()
@@ -113,7 +113,7 @@ final class ScalarDivisibleTest
 		void producesTruncatedQuotientAndRemainder(final String as, final long dividend, final long scalar,
 		                                           final long expectedQ, final long expectedR)
 		{
-			assertBothSides(dividend, scalar, RoundingStrategies.truncate(), expectedQ, expectedR);
+			assertBothSides(dividend, scalar, DivisionConventions.truncate(), expectedQ, expectedR);
 		}
 
 		private static Stream<Arguments> producesTruncatedQuotientAndRemainderCases()

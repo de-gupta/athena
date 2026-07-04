@@ -7,10 +7,10 @@ import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrate
 public interface RadicalStructure<E>
 {
 	default E squareRoot(final E element, final ApproximationStrategy<E> whenToStop,
-	                     final DivisionConvention<E> rounding)
+	                     final DivisionConvention<E> convention)
 	{
-		return root(element, 2, whenToStop, rounding);
+		return root(element, 2, whenToStop, convention);
 	}
 
-	E root(E element, int degree, ApproximationStrategy<E> whenToStop, DivisionConvention<E> rounding);
+	E root(E element, int degree, ApproximationStrategy<E> whenToStop, DivisionConvention<E> convention);
 }

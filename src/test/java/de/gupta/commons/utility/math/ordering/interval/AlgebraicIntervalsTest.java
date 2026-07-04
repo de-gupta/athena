@@ -1,6 +1,6 @@
 package de.gupta.commons.utility.math.ordering.interval;
 
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConventions;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -115,19 +115,19 @@ final class AlgebraicIntervalsTest
 		@DisplayName("returns exact midpoint when sum is even")
 		void returnsExactMidpointWhenSumIsEven()
 		{
-			assertThat(AlgebraicIntervals.midpoint(closed(2, 8), RoundingStrategies.floor()))
+			assertThat(AlgebraicIntervals.midpoint(closed(2, 8), DivisionConventions.floor()))
 					.as("[2,8] midpoint").isEqualTo(n(5));
-			assertThat(AlgebraicIntervals.midpoint(closed(0, 10), RoundingStrategies.floor()))
+			assertThat(AlgebraicIntervals.midpoint(closed(0, 10), DivisionConventions.floor()))
 					.as("[0,10] midpoint").isEqualTo(n(5));
 		}
 
 		@Test
 		@DisplayName("applies rounding strategy when sum is odd")
-		void appliesRoundingStrategyWhenSumIsOdd()
+		void appliesDivisionConventionWhenSumIsOdd()
 		{
-			assertThat(AlgebraicIntervals.midpoint(closed(1, 6), RoundingStrategies.floor()))
+			assertThat(AlgebraicIntervals.midpoint(closed(1, 6), DivisionConventions.floor()))
 					.as("[1,6] floor midpoint").isEqualTo(n(3));
-			assertThat(AlgebraicIntervals.midpoint(closed(1, 6), RoundingStrategies.ceiling()))
+			assertThat(AlgebraicIntervals.midpoint(closed(1, 6), DivisionConventions.ceiling()))
 					.as("[1,6] ceiling midpoint").isEqualTo(n(4));
 		}
 	}

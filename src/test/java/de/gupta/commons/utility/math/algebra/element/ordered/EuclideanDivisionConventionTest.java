@@ -20,9 +20,9 @@ final class EuclideanDivisionConventionTest
 	private static Stream<StrategyArg> strategyArgs()
 	{
 		return Stream.of(
-				new StrategyArg("FLOOR", RoundingStrategies.floor()),
-				new StrategyArg("CEILING", RoundingStrategies.ceiling()),
-				new StrategyArg("TRUNCATE", RoundingStrategies.truncate())
+				new StrategyArg("FLOOR", DivisionConventions.floor()),
+				new StrategyArg("CEILING", DivisionConventions.ceiling()),
+				new StrategyArg("TRUNCATE", DivisionConventions.truncate())
 		);
 	}
 
@@ -59,7 +59,7 @@ final class EuclideanDivisionConventionTest
 		void producesFloorQuotientAndRemainder(final String as, final long dividend, final long divisor,
 		                                       final long expectedQ, final long expectedR)
 		{
-			assertDivision(as, dividend, divisor, RoundingStrategies.floor(), expectedQ, expectedR);
+			assertDivision(as, dividend, divisor, DivisionConventions.floor(), expectedQ, expectedR);
 		}
 
 		private static Stream<Arguments> floorDivisionCases()
@@ -84,7 +84,7 @@ final class EuclideanDivisionConventionTest
 		void producesCeilingQuotientAndRemainder(final String as, final long dividend, final long divisor,
 		                                         final long expectedQ, final long expectedR)
 		{
-			assertDivision(as, dividend, divisor, RoundingStrategies.ceiling(), expectedQ, expectedR);
+			assertDivision(as, dividend, divisor, DivisionConventions.ceiling(), expectedQ, expectedR);
 		}
 
 		private static Stream<Arguments> ceilingDivisionCases()
@@ -109,7 +109,7 @@ final class EuclideanDivisionConventionTest
 		void producesTruncatedQuotientAndRemainder(final String as, final long dividend, final long divisor,
 		                                           final long expectedQ, final long expectedR)
 		{
-			assertDivision(as, dividend, divisor, RoundingStrategies.truncate(), expectedQ, expectedR);
+			assertDivision(as, dividend, divisor, DivisionConventions.truncate(), expectedQ, expectedR);
 		}
 
 		private static Stream<Arguments> truncateDivisionCases()

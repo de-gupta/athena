@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.series;
 
 import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConventions;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategies;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
@@ -101,7 +101,7 @@ final class SeriesOperationsTest
 		@DisplayName("average returns sum divided by count (floor)")
 		void averageReturnsSumDividedByCountFloor()
 		{
-			assertThat(SeriesOperations.average(SERIES, RoundingStrategies.floor()))
+			assertThat(SeriesOperations.average(SERIES, DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(50)));
 		}
 
@@ -111,7 +111,7 @@ final class SeriesOperationsTest
 		{
 			final Series<IntegralNumber, IntegralNumber> uneven =
 					SeriesFactory.of(Map.of(i(1), i(10), i(2), i(20), i(3), i(31)));
-			assertThat(SeriesOperations.average(uneven, RoundingStrategies.floor()))
+			assertThat(SeriesOperations.average(uneven, DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(20)));
 		}
 
@@ -119,14 +119,14 @@ final class SeriesOperationsTest
 		@DisplayName("average of empty series returns empty")
 		void averageOfEmptySeriesReturnsEmpty()
 		{
-			assertThat(SeriesOperations.average(EMPTY, RoundingStrategies.floor())).isEmpty();
+			assertThat(SeriesOperations.average(EMPTY, DivisionConventions.floor())).isEmpty();
 		}
 
 		@Test
 		@DisplayName("average of single element returns that element")
 		void averageOfSingleElementReturnsThatElement()
 		{
-			assertThat(SeriesOperations.average(SeriesFactory.of(Map.of(i(1), i(42))), RoundingStrategies.floor()))
+			assertThat(SeriesOperations.average(SeriesFactory.of(Map.of(i(1), i(42))), DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(42)));
 		}
 
@@ -136,7 +136,7 @@ final class SeriesOperationsTest
 		{
 			final Series<IntegralNumber, IntegralNumber> two =
 					SeriesFactory.of(Map.of(i(1), i(10), i(2), i(20)));
-			assertThat(SeriesOperations.average(two, RoundingStrategies.floor()))
+			assertThat(SeriesOperations.average(two, DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(15)));
 		}
 
@@ -146,7 +146,7 @@ final class SeriesOperationsTest
 		{
 			final Series<IntegralNumber, IntegralNumber> uneven =
 					SeriesFactory.of(Map.of(i(1), i(10), i(2), i(20), i(3), i(31)));
-			assertThat(SeriesOperations.average(uneven, RoundingStrategies.ceiling()))
+			assertThat(SeriesOperations.average(uneven, DivisionConventions.ceiling()))
 					.isEqualTo(Optional.of(i(21)));
 		}
 
@@ -154,7 +154,7 @@ final class SeriesOperationsTest
 		@DisplayName("average respects sub-series slice")
 		void averageRespectsSubSeriesSlice()
 		{
-			assertThat(SeriesOperations.average(SERIES.between(i(3), i(8)), RoundingStrategies.floor()))
+			assertThat(SeriesOperations.average(SERIES.between(i(3), i(8)), DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(50)));
 		}
 	}
@@ -514,7 +514,7 @@ final class SeriesOperationsTest
 		@DisplayName("standard deviation of empty series returns empty")
 		void standardDeviationOfEmptySeriesReturnsEmpty()
 		{
-			assertThat(SeriesOperations.standardDeviation(EMPTY, RoundingStrategies.floor(),
+			assertThat(SeriesOperations.standardDeviation(EMPTY, DivisionConventions.floor(),
 					ApproximationStrategies.byEquality())).isEmpty();
 		}
 
@@ -524,7 +524,7 @@ final class SeriesOperationsTest
 		{
 			final Series<IntegralNumber, IntegralNumber> flat =
 					SeriesFactory.of(Map.of(i(1), i(5), i(2), i(5), i(3), i(5)));
-			assertThat(SeriesOperations.standardDeviation(flat, RoundingStrategies.floor(),
+			assertThat(SeriesOperations.standardDeviation(flat, DivisionConventions.floor(),
 					ApproximationStrategies.byEquality())).isEqualTo(Optional.of(i(0)));
 		}
 
@@ -533,7 +533,7 @@ final class SeriesOperationsTest
 		void standardDeviationOfSingleElementReturnsZero()
 		{
 			assertThat(SeriesOperations.standardDeviation(SeriesFactory.of(Map.of(i(1), i(42))),
-					RoundingStrategies.floor(), ApproximationStrategies.byEquality()))
+					DivisionConventions.floor(), ApproximationStrategies.byEquality()))
 					.isEqualTo(Optional.of(i(0)));
 		}
 
@@ -544,7 +544,7 @@ final class SeriesOperationsTest
 			// {1:1, 2:5}: mean=3, deviations={-2,2}, squares={4,4}, variance=4, sd=2
 			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(5)));
-			assertThat(SeriesOperations.standardDeviation(series, RoundingStrategies.floor(),
+			assertThat(SeriesOperations.standardDeviation(series, DivisionConventions.floor(),
 					ApproximationStrategies.byEquality())).isEqualTo(Optional.of(i(2)));
 		}
 
@@ -556,7 +556,7 @@ final class SeriesOperationsTest
 			final Series<IntegralNumber, IntegralNumber> series = SeriesFactory.of(Map.of(
 					i(1), i(2), i(2), i(4), i(3), i(4), i(4), i(4),
 					i(5), i(5), i(6), i(5), i(7), i(7), i(8), i(9)));
-			assertThat(SeriesOperations.standardDeviation(series, RoundingStrategies.floor(),
+			assertThat(SeriesOperations.standardDeviation(series, DivisionConventions.floor(),
 					ApproximationStrategies.byEquality())).isEqualTo(Optional.of(i(2)));
 		}
 
@@ -565,7 +565,7 @@ final class SeriesOperationsTest
 		void standardDeviationFloorsWhenVarianceIsNotPerfectSquare()
 		{
 			// SERIES variance=800, floor(sqrt(800))=28 since 28^2=784 <= 800 < 841=29^2
-			assertThat(SeriesOperations.standardDeviation(SERIES, RoundingStrategies.floor(),
+			assertThat(SeriesOperations.standardDeviation(SERIES, DivisionConventions.floor(),
 					ApproximationStrategies.byEquality())).isEqualTo(Optional.of(i(28)));
 		}
 
@@ -575,7 +575,7 @@ final class SeriesOperationsTest
 		{
 			// between(3,8) variance=266 floor, floor(sqrt(266))=16 since 16^2=256 <= 266 < 289=17^2
 			assertThat(SeriesOperations.standardDeviation(SERIES.between(i(3), i(8)),
-					RoundingStrategies.floor(), ApproximationStrategies.byEquality()))
+					DivisionConventions.floor(), ApproximationStrategies.byEquality()))
 					.isEqualTo(Optional.of(i(16)));
 		}
 	}
@@ -588,14 +588,14 @@ final class SeriesOperationsTest
 		@DisplayName("variance of empty series returns empty")
 		void varianceOfEmptySeriesReturnsEmpty()
 		{
-			assertThat(SeriesOperations.variance(EMPTY, RoundingStrategies.floor())).isEmpty();
+			assertThat(SeriesOperations.variance(EMPTY, DivisionConventions.floor())).isEmpty();
 		}
 
 		@Test
 		@DisplayName("variance of single element returns zero")
 		void varianceOfSingleElementReturnsZero()
 		{
-			assertThat(SeriesOperations.variance(SeriesFactory.of(Map.of(i(1), i(42))), RoundingStrategies.floor()))
+			assertThat(SeriesOperations.variance(SeriesFactory.of(Map.of(i(1), i(42))), DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(0)));
 		}
 
@@ -605,7 +605,7 @@ final class SeriesOperationsTest
 		{
 			final Series<IntegralNumber, IntegralNumber> flat =
 					SeriesFactory.of(Map.of(i(1), i(5), i(2), i(5), i(3), i(5)));
-			assertThat(SeriesOperations.variance(flat, RoundingStrategies.floor()))
+			assertThat(SeriesOperations.variance(flat, DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(0)));
 		}
 
@@ -617,7 +617,7 @@ final class SeriesOperationsTest
 			final Series<IntegralNumber, IntegralNumber> series = SeriesFactory.of(Map.of(
 					i(1), i(2), i(2), i(4), i(3), i(4), i(4), i(4),
 					i(5), i(5), i(6), i(5), i(7), i(7), i(8), i(9)));
-			assertThat(SeriesOperations.variance(series, RoundingStrategies.floor()))
+			assertThat(SeriesOperations.variance(series, DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(4)));
 		}
 
@@ -626,7 +626,7 @@ final class SeriesOperationsTest
 		void varianceForUniformlySpacedSeriesWithExactDivision()
 		{
 			// SERIES {1:10,3:30,5:50,7:70,9:90}: mean=50, sum of squared deviations=4000, variance=800
-			assertThat(SeriesOperations.variance(SERIES, RoundingStrategies.floor()))
+			assertThat(SeriesOperations.variance(SERIES, DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(800)));
 		}
 
@@ -637,7 +637,7 @@ final class SeriesOperationsTest
 			// {1,3,5}: mean=3, squared deviations={4,0,4}, sum=8, 8/3 floor=2
 			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(3), i(3), i(5)));
-			assertThat(SeriesOperations.variance(series, RoundingStrategies.floor()))
+			assertThat(SeriesOperations.variance(series, DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(2)));
 		}
 
@@ -648,7 +648,7 @@ final class SeriesOperationsTest
 			// {1,3,5}: mean=3, squared deviations={4,0,4}, sum=8, 8/3 ceiling=3
 			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(3), i(3), i(5)));
-			assertThat(SeriesOperations.variance(series, RoundingStrategies.ceiling()))
+			assertThat(SeriesOperations.variance(series, DivisionConventions.ceiling()))
 					.isEqualTo(Optional.of(i(3)));
 		}
 
@@ -658,7 +658,7 @@ final class SeriesOperationsTest
 		{
 			// {1,3}: mean=2, deviations={-1,1}, squared={1,1}, sum=2, 2/2=1
 			assertThat(SeriesOperations.variance(
-					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(3))), RoundingStrategies.floor()))
+					SeriesFactory.of(Map.of(i(1), i(1), i(2), i(3))), DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(1)));
 		}
 
@@ -667,7 +667,7 @@ final class SeriesOperationsTest
 		void varianceRespectsSubSeriesSlice()
 		{
 			// between(3,8)={3:30,5:50,7:70}: mean=50, squared deviations={400,0,400}, sum=800, 800/3 floor=266
-			assertThat(SeriesOperations.variance(SERIES.between(i(3), i(8)), RoundingStrategies.floor()))
+			assertThat(SeriesOperations.variance(SERIES.between(i(3), i(8)), DivisionConventions.floor()))
 					.isEqualTo(Optional.of(i(266)));
 		}
 	}
@@ -683,7 +683,7 @@ final class SeriesOperationsTest
 			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(0), i(0), i(2), i(10), i(6), i(30)));
 			final Series<IntegralNumber, IntegralNumber> result =
-					SeriesOperations.indexWeightedChanges(series, RoundingStrategies.floor());
+					SeriesOperations.indexWeightedChanges(series, DivisionConventions.floor());
 			assertThat(result.size()).isEqualTo(2);
 			assertThat(result.at(i(2))).isEqualTo(Optional.of(i(5)));
 			assertThat(result.at(i(6))).isEqualTo(Optional.of(i(5)));
@@ -696,7 +696,7 @@ final class SeriesOperationsTest
 			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(0), i(0), i(1), i(10), i(3), i(10)));
 			final Series<IntegralNumber, IntegralNumber> result =
-					SeriesOperations.indexWeightedChanges(series, RoundingStrategies.floor());
+					SeriesOperations.indexWeightedChanges(series, DivisionConventions.floor());
 			assertThat(result.at(i(1))).isEqualTo(Optional.of(i(10)));
 			assertThat(result.at(i(3))).isEqualTo(Optional.of(i(0)));
 		}
@@ -707,7 +707,7 @@ final class SeriesOperationsTest
 		{
 			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(1), i(10), i(2), i(30), i(3), i(60)));
-			assertThat(SeriesOperations.indexWeightedChanges(series, RoundingStrategies.floor()))
+			assertThat(SeriesOperations.indexWeightedChanges(series, DivisionConventions.floor()))
 					.isEqualTo(SeriesOperations.changes(series));
 		}
 
@@ -717,7 +717,7 @@ final class SeriesOperationsTest
 		{
 			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(0), i(0), i(3), i(10)));
-			assertThat(SeriesOperations.indexWeightedChanges(series, RoundingStrategies.floor()).at(i(3)))
+			assertThat(SeriesOperations.indexWeightedChanges(series, DivisionConventions.floor()).at(i(3)))
 					.isEqualTo(Optional.of(i(3)));
 		}
 
@@ -727,7 +727,7 @@ final class SeriesOperationsTest
 		{
 			final Series<IntegralNumber, IntegralNumber> series =
 					SeriesFactory.of(Map.of(i(0), i(0), i(3), i(10)));
-			assertThat(SeriesOperations.indexWeightedChanges(series, RoundingStrategies.ceiling()).at(i(3)))
+			assertThat(SeriesOperations.indexWeightedChanges(series, DivisionConventions.ceiling()).at(i(3)))
 					.isEqualTo(Optional.of(i(4)));
 		}
 
@@ -735,7 +735,7 @@ final class SeriesOperationsTest
 		@DisplayName("empty series returns empty")
 		void emptySeriesReturnsEmpty()
 		{
-			assertThat(SeriesOperations.indexWeightedChanges(EMPTY, RoundingStrategies.floor()).isEmpty()).isTrue();
+			assertThat(SeriesOperations.indexWeightedChanges(EMPTY, DivisionConventions.floor()).isEmpty()).isTrue();
 		}
 
 		@Test
@@ -743,7 +743,7 @@ final class SeriesOperationsTest
 		void singleElementReturnsEmpty()
 		{
 			assertThat(SeriesOperations.indexWeightedChanges(
-					SeriesFactory.of(Map.of(i(1), i(99))), RoundingStrategies.floor()).isEmpty()).isTrue();
+					SeriesFactory.of(Map.of(i(1), i(99))), DivisionConventions.floor()).isEmpty()).isTrue();
 		}
 	}
 

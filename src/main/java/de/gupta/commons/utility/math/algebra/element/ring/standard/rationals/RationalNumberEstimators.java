@@ -25,9 +25,9 @@ public final class RationalNumberEstimators
 
 	public static Estimator<RationalNumber> adaptEstimator(final Estimator<RationalNumber> estimator)
 	{
-		return (radicand, degree, rounding) ->
+		return (radicand, degree, convention) ->
 		{
-			final UnaryOperator<RationalNumber> step = estimator.estimate(radicand, degree, rounding);
+			final UnaryOperator<RationalNumber> step = estimator.estimate(radicand, degree, convention);
 			final double radicandD = toDouble(radicand);
 			return current ->
 					Fallible.beckon(current)

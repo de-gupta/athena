@@ -14,10 +14,10 @@ public interface RationalNumberStructure extends OrderedFieldStructure<RationalN
 	@Override
 	default RationalNumber root(final RationalNumber element, final int degree,
 	                            final ApproximationStrategy<RationalNumber> whenToStop,
-	                            final DivisionConvention<RationalNumber> rounding)
+	                            final DivisionConvention<RationalNumber> convention)
 	{
 		return EstimatorBasedRoot.compute(element, degree, RationalNumberEstimators.initialEstimate(element, degree),
 				RationalNumberEstimators.adaptEstimator(Estimator.newton()),
-				RationalNumberEstimators.adapt(whenToStop), rounding);
+				RationalNumberEstimators.adapt(whenToStop), convention);
 	}
 }
