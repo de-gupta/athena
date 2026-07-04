@@ -1,6 +1,6 @@
 package de.gupta.commons.utility.math.algebra.structure.ordered;
 
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.structure.module.ScalarDivisibleStructure;
 import de.gupta.commons.utility.math.algebra.structure.ring.DivisionResult;
 import de.gupta.commons.utility.math.algebra.structure.ring.EuclideanDomainStructure;
@@ -17,12 +17,12 @@ public interface OrderedEuclideanDomainStructure<E>
 	DivisionResult<E> divideFloor(E dividend, E divisor);
 
 	@Override
-	default DivisionResult<E> shrink(final E element, final Long scalar, final RoundingStrategy<E> strategy)
+	default DivisionResult<E> shrink(final E element, final Long scalar, final DivisionConvention<E> strategy)
 	{
 		return divide(element, elementFromLong(scalar), strategy);
 	}
 
-	default DivisionResult<E> divide(final E dividend, final E divisor, final RoundingStrategy<E> strategy)
+	default DivisionResult<E> divide(final E dividend, final E divisor, final DivisionConvention<E> strategy)
 	{
 		return strategy.divide(dividend, divisor);
 	}

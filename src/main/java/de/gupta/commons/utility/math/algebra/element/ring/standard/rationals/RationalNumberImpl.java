@@ -3,7 +3,7 @@ package de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
 import de.gupta.aletheia.collection.Dyad;
 import de.gupta.aletheia.functional.Unfolding;
 import de.gupta.commons.utility.exception.ExceptionHelper;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.element.ring.IntegralDomain;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
@@ -80,7 +80,7 @@ record RationalNumberImpl(IntegralNumber numerator, IntegralNumber denominator) 
 	}
 
 	@Override
-	public DivisionResult<RationalNumber> divide(final Long scalar, final RoundingStrategy<RationalNumber> strategy)
+	public DivisionResult<RationalNumber> divide(final Long scalar, final DivisionConvention<RationalNumber> strategy)
 	{
 		return DivisionResult.of(divide(RationalNumberFactory.of(scalar, 1)), zero());
 	}

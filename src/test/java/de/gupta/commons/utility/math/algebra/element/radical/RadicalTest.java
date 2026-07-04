@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.radical;
 
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.rationals.RationalNumber;
@@ -40,7 +40,7 @@ final class RadicalTest
 			ApproximationStrategies.withinTolerance(r(1, 1_000_000_000_000L));
 
 	// RationalNumber is a field — division is always exact, rounding strategy is irrelevant
-	private static final RoundingStrategy<RationalNumber> RATIONAL_ROUNDING =
+	private static final DivisionConvention<RationalNumber> RATIONAL_ROUNDING =
 			(dividend, divisor) -> DivisionResult.of(dividend.divide(divisor), RationalNumberFactory.zero());
 
 	private static IntegralNumber i(final long v)

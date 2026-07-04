@@ -8,17 +8,17 @@ import java.util.function.Predicate;
 
 public final class RoundingStrategies
 {
-	public static <E extends OrderedEuclideanDomain<E>> RoundingStrategy<E> floor()
+	public static <E extends OrderedEuclideanDomain<E>> DivisionConvention<E> floor()
 	{
 		return OrderedEuclideanDomain::divideFloor;
 	}
 
-	public static <E> RoundingStrategy<E> floor(final OrderedEuclideanDomainStructure<E> structure)
+	public static <E> DivisionConvention<E> floor(final OrderedEuclideanDomainStructure<E> structure)
 	{
 		return structure::divideFloor;
 	}
 
-	public static <E extends OrderedEuclideanDomain<E>> RoundingStrategy<E> ceiling()
+	public static <E extends OrderedEuclideanDomain<E>> DivisionConvention<E> ceiling()
 	{
 		return (dividend, divisor) ->
 		{
@@ -30,14 +30,15 @@ public final class RoundingStrategies
 		};
 	}
 
-	public static <E> RoundingStrategy<E> ceiling(final OrderedEuclideanDomainStructure<E> structure)
+	public static <E> DivisionConvention<E> ceiling(final OrderedEuclideanDomainStructure<E> structure)
 	{
 		return ceiling(structure::divideFloor, structure::isZero, structure.one(), structure::add, structure::subtract);
 	}
 
-	public static <E> RoundingStrategy<E> ceiling(final RoundingStrategy<E> floorStrategy, final Predicate<E> isZero,
-	                                              final E one, final BinaryOperator<E> add,
-	                                              final BinaryOperator<E> subtract)
+	public static <E> DivisionConvention<E> ceiling(final DivisionConvention<E> floorStrategy,
+	                                                final Predicate<E> isZero,
+	                                                final E one, final BinaryOperator<E> add,
+	                                                final BinaryOperator<E> subtract)
 	{
 		return (dividend, divisor) ->
 		{
@@ -47,7 +48,7 @@ public final class RoundingStrategies
 		};
 	}
 
-	public static <E extends OrderedEuclideanDomain<E>> RoundingStrategy<E> truncate()
+	public static <E extends OrderedEuclideanDomain<E>> DivisionConvention<E> truncate()
 	{
 		return (dividend, divisor) ->
 		{
@@ -60,17 +61,18 @@ public final class RoundingStrategies
 		};
 	}
 
-	public static <E> RoundingStrategy<E> truncate(final OrderedEuclideanDomainStructure<E> structure)
+	public static <E> DivisionConvention<E> truncate(final OrderedEuclideanDomainStructure<E> structure)
 	{
 		return truncate(structure::divideFloor, structure::isZero, structure::isNegative, structure.one(),
 				structure::add,
 				structure::subtract);
 	}
 
-	public static <E> RoundingStrategy<E> truncate(final RoundingStrategy<E> floorStrategy, final Predicate<E> isZero,
-	                                               final Predicate<E> isNegative, final E one,
-	                                               final BinaryOperator<E> add,
-	                                               final BinaryOperator<E> subtract)
+	public static <E> DivisionConvention<E> truncate(final DivisionConvention<E> floorStrategy,
+	                                                 final Predicate<E> isZero,
+	                                                 final Predicate<E> isNegative, final E one,
+	                                                 final BinaryOperator<E> add,
+	                                                 final BinaryOperator<E> subtract)
 	{
 		return (dividend, divisor) ->
 		{

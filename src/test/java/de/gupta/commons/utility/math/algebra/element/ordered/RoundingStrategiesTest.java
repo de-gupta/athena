@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 final class RoundingStrategiesTest
 {
 	private static void assertDivision(final String as, final long dividend, final long divisor,
-	                                   final RoundingStrategy<IntegralNumber> strategy,
+	                                   final DivisionConvention<IntegralNumber> strategy,
 	                                   final long expectedQuotient, final long expectedRemainder)
 	{
 		DivisionResult<IntegralNumber> result = strategy.divide(integer(dividend), integer(divisor));
@@ -39,8 +39,8 @@ final class RoundingStrategiesTest
 		@MethodSource("structureFactoryCases")
 		@DisplayName("produce the same results as the element-side strategies")
 		void produceTheSameResultsAsTheElementSideStrategies(final String as,
-		                                                     final RoundingStrategy<IntegralNumber> actual,
-		                                                     final RoundingStrategy<IntegralNumber> expected,
+		                                                     final DivisionConvention<IntegralNumber> actual,
+		                                                     final DivisionConvention<IntegralNumber> expected,
 		                                                     final long dividend, final long divisor)
 		{
 			assertThat(actual.divide(integer(dividend), integer(divisor))).as("%s: structure strategy result", as)
@@ -77,7 +77,7 @@ final class RoundingStrategiesTest
 			assertDivision(as, dividend, divisor, customCeiling(), expectedQuotient, expectedRemainder);
 		}
 
-		private static RoundingStrategy<IntegralNumber> customCeiling()
+		private static DivisionConvention<IntegralNumber> customCeiling()
 		{
 			return RoundingStrategies.ceiling(RoundingStrategies.floor(), IntegralNumber::isZero,
 					integer(1), IntegralNumber::add, IntegralNumber::subtract);
@@ -94,7 +94,7 @@ final class RoundingStrategiesTest
 			assertDivision(as, dividend, divisor, customTruncate(), expectedQuotient, expectedRemainder);
 		}
 
-		private static RoundingStrategy<IntegralNumber> customTruncate()
+		private static DivisionConvention<IntegralNumber> customTruncate()
 		{
 			return RoundingStrategies.truncate(RoundingStrategies.floor(), IntegralNumber::isZero,
 					IntegralNumber::isNegative, integer(1), IntegralNumber::add,

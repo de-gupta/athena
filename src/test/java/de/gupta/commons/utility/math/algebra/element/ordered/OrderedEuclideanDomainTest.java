@@ -31,7 +31,7 @@ final class OrderedEuclideanDomainTest
 		@DisplayName("converts negative scalars and delegates to the rounding strategy")
 		void convertsNegativeScalarsAndDelegatesToTheRoundingStrategy(final String as, final long dividend,
 		                                                              final long scalar,
-		                                                              final RoundingStrategy<IntegralNumber> strategy,
+		                                                              final DivisionConvention<IntegralNumber> strategy,
 		                                                              final long expectedQuotient,
 		                                                              final long expectedRemainder)
 		{
@@ -45,7 +45,7 @@ final class OrderedEuclideanDomainTest
 		@MethodSource("throwsForZeroScalarCases")
 		@DisplayName("throws for zero scalar after scalar-to-element conversion")
 		void throwsForZeroScalarAfterScalarToElementConversion(final String as, final long dividend,
-		                                                       final RoundingStrategy<IntegralNumber> strategy)
+		                                                       final DivisionConvention<IntegralNumber> strategy)
 		{
 			assertThatThrownBy(() -> integer(dividend).divide(0L, strategy))
 					.as(as)

@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.ring.standard.integers;
 
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedEuclideanDomain;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.Estimator;
 import de.gupta.commons.utility.math.algebra.element.radical.EstimatorBasedRoot;
@@ -14,7 +14,7 @@ public sealed interface IntegralNumber extends OrderedEuclideanDomain<IntegralNu
 
 	@Override
 	default IntegralNumber root(final int degree, final ApproximationStrategy<IntegralNumber> whenToStop,
-	                            final RoundingStrategy<IntegralNumber> rounding)
+	                            final DivisionConvention<IntegralNumber> rounding)
 	{
 		return EstimatorBasedRoot.compute(this, degree, Estimator.newton(), whenToStop, rounding);
 	}

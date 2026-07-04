@@ -2,8 +2,8 @@ package de.gupta.commons.utility.math.algebra.element.ring.standard.rationals;
 
 import de.gupta.commons.utility.math.algebra.element.module.ScalarDivisible;
 import de.gupta.commons.utility.math.algebra.element.module.ScalarQuotientable;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedField;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.Estimator;
 import de.gupta.commons.utility.math.algebra.element.radical.EstimatorBasedRoot;
@@ -21,7 +21,7 @@ public sealed interface RationalNumber
 
 	@Override
 	default RationalNumber root(final int degree, final ApproximationStrategy<RationalNumber> whenToStop,
-	                            final RoundingStrategy<RationalNumber> rounding)
+	                            final DivisionConvention<RationalNumber> rounding)
 	{
 		return EstimatorBasedRoot.compute(this, degree, RationalNumberEstimators.initialEstimate(this, degree),
 				RationalNumberEstimators.adaptEstimator(Estimator.newton()),

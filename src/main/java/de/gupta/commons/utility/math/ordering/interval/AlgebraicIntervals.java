@@ -1,8 +1,8 @@
 package de.gupta.commons.utility.math.ordering.interval;
 
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedAdditiveGroup;
 import de.gupta.commons.utility.math.algebra.element.ordered.OrderedEuclideanDomain;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.ordering.bound.Bound;
 import de.gupta.commons.utility.math.ordering.element.AffinelyOrdered;
 
@@ -52,7 +52,7 @@ public final class AlgebraicIntervals
 	}
 
 	public static <E extends OrderedEuclideanDomain<E>> E midpoint(final BoundedInterval<E> interval,
-	                                                               final RoundingStrategy<E> strategy)
+	                                                               final DivisionConvention<E> strategy)
 	{
 		return interval.lower().value().add(interval.upper().value()).divide(2L, strategy).quotient();
 	}

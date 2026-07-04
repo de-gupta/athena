@@ -4,7 +4,7 @@ import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.Ad
 import de.gupta.commons.utility.math.algebra.element.binary.notation.additive.AdditiveSemigroup;
 import de.gupta.commons.utility.math.algebra.element.module.ScalarDivisible;
 import de.gupta.commons.utility.math.algebra.element.module.ScalarQuotientable;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.Radical;
 import de.gupta.commons.utility.math.algebra.element.ring.Field;
@@ -20,13 +20,13 @@ import java.util.function.BiFunction;
 public final class SeriesOperations
 {
 	public static <I, E extends Ring<E> & ScalarDivisible<E, Long> & Radical<E>> Optional<E> standardDeviation(
-			final Series<I, E> series, final RoundingStrategy<E> rounding, final ApproximationStrategy<E> whenToStop)
+			final Series<I, E> series, final DivisionConvention<E> rounding, final ApproximationStrategy<E> whenToStop)
 	{
 		return variance(series, rounding).map(v -> v.squareRoot(whenToStop, rounding));
 	}
 
 	public static <I, E extends Ring<E> & ScalarDivisible<E, Long>> Optional<E> variance(
-			final Series<I, E> series, final RoundingStrategy<E> rounding)
+			final Series<I, E> series, final DivisionConvention<E> rounding)
 	{
 		if (series.isEmpty()) return Optional.empty();
 		final E mean = average(series, rounding).orElseThrow();
@@ -39,7 +39,7 @@ public final class SeriesOperations
 	}
 
 	public static <I, E extends AdditiveSemigroup<E> & ScalarDivisible<E, Long>> Optional<E> average(
-			final Series<I, E> series, final RoundingStrategy<E> rounding)
+			final Series<I, E> series, final DivisionConvention<E> rounding)
 	{
 		if (series.isEmpty()) return Optional.empty();
 		return sum(series).map(s -> s.divide(series.size(), rounding).quotient());
@@ -84,7 +84,7 @@ public final class SeriesOperations
 
 	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
 			E extends AdditiveGroup<E> & ScalarDivisible<E, N>> Series<I, E> indexWeightedChanges(
-			final Series<I, E> series, final RoundingStrategy<E> rounding)
+			final Series<I, E> series, final DivisionConvention<E> rounding)
 	{
 		return consecutiveEntryPairs(series, (previous, current) ->
 		{
@@ -95,7 +95,7 @@ public final class SeriesOperations
 
 	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
 			S extends ScalarDivisible<S, N> & Ring<S>, E extends ScalarQuotientable<E, S>> Series<I, S> indexWeightedPercentChanges(
-			final Series<I, E> series, final RoundingStrategy<S> rounding)
+			final Series<I, E> series, final DivisionConvention<S> rounding)
 	{
 		return consecutiveEntryPairs(series, (previous, current) ->
 		{
@@ -107,7 +107,7 @@ public final class SeriesOperations
 
 	public static <I extends AffinelyOrdered<I, D>, D extends Normed<N>, N,
 			S extends ScalarDivisible<S, N>, E extends ScalarQuotientable<E, S>> Series<I, S> indexWeightedRatios(
-			final Series<I, E> series, final RoundingStrategy<S> rounding)
+			final Series<I, E> series, final DivisionConvention<S> rounding)
 	{
 		return consecutiveEntryPairs(series, (previous, current) ->
 		{

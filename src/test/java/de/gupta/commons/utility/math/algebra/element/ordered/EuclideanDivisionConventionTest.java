@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("RoundingStrategy")
-final class EuclideanRoundingStrategyTest
+@DisplayName("DivisionConvention")
+final class EuclideanDivisionConventionTest
 {
 	private static Stream<StrategyArg> strategyArgs()
 	{
@@ -27,7 +27,7 @@ final class EuclideanRoundingStrategyTest
 	}
 
 	private void assertDivision(final String as, final long dividend, final long divisor,
-	                            final RoundingStrategy<IntegralNumber> strategy,
+	                            final DivisionConvention<IntegralNumber> strategy,
 	                            final long expectedQuotient, final long expectedRemainder)
 	{
 		DivisionResult<IntegralNumber> element = e(dividend).divide(e(divisor), strategy);
@@ -45,7 +45,7 @@ final class EuclideanRoundingStrategyTest
 		return IntegralNumberFactory.of(value);
 	}
 
-	private record StrategyArg(String name, RoundingStrategy<IntegralNumber> strategy)
+	private record StrategyArg(String name, DivisionConvention<IntegralNumber> strategy)
 	{
 	}
 
@@ -134,7 +134,7 @@ final class EuclideanRoundingStrategyTest
 		void allStrategiesProduceZeroRemainderAndTheSameQuotient(final String as, final long dividend,
 		                                                         final long divisor, final long expectedQ,
 		                                                         final String strategyName,
-		                                                         final RoundingStrategy<IntegralNumber> strategy)
+		                                                         final DivisionConvention<IntegralNumber> strategy)
 		{
 			assertDivision(as, dividend, divisor, strategy, expectedQ, 0L);
 		}
@@ -163,7 +163,7 @@ final class EuclideanRoundingStrategyTest
 		@DisplayName("dividend = quotient * divisor + remainder")
 		void dividendEqualsQuotientTimesDivisorPlusRemainder(final String as, final long dividend,
 		                                                     final long divisor, final String strategyName,
-		                                                     final RoundingStrategy<IntegralNumber> strategy)
+		                                                     final DivisionConvention<IntegralNumber> strategy)
 		{
 			DivisionResult<IntegralNumber> result = e(dividend).divide(e(divisor), strategy);
 			assertThat(result.quotient().multiply(e(divisor)).add(result.remainder()))

@@ -28,7 +28,7 @@ final class ScalarDivisibleTest
 	}
 
 	private void assertBothSides(final long dividend, final long scalar,
-	                             final RoundingStrategy<IntegralNumber> strategy,
+	                             final DivisionConvention<IntegralNumber> strategy,
 	                             final long expectedQ, final long expectedR)
 	{
 		DivisionResult<IntegralNumber> element = e(dividend).divide(scalar, strategy);
@@ -46,7 +46,7 @@ final class ScalarDivisibleTest
 		return IntegralNumberFactory.of(value);
 	}
 
-	private record StrategyArg(String name, RoundingStrategy<IntegralNumber> strategy)
+	private record StrategyArg(String name, DivisionConvention<IntegralNumber> strategy)
 	{
 	}
 
@@ -138,7 +138,7 @@ final class ScalarDivisibleTest
 		void allStrategiesProduceZeroRemainderAndTheSameQuotient(final String as, final long dividend,
 		                                                         final long scalar, final long expectedQ,
 		                                                         final String strategyName,
-		                                                         final RoundingStrategy<IntegralNumber> strategy)
+		                                                         final DivisionConvention<IntegralNumber> strategy)
 		{
 			assertBothSides(dividend, scalar, strategy, expectedQ, 0L);
 		}
@@ -167,7 +167,7 @@ final class ScalarDivisibleTest
 		@DisplayName("dividend = quotient * scalar + remainder")
 		void dividendEqualsQuotientTimesScalarPlusRemainderForAllStrategiesAndSignCombinations(
 				final long dividend, final long scalar, final String strategyName,
-				final RoundingStrategy<IntegralNumber> strategy)
+				final DivisionConvention<IntegralNumber> strategy)
 		{
 			DivisionResult<IntegralNumber> result = e(dividend).divide(scalar, strategy);
 			assertThat(result.quotient().multiply(e(scalar)).add(result.remainder()))

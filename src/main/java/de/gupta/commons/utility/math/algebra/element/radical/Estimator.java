@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.algebra.element.radical;
 
 import de.gupta.commons.utility.math.algebra.element.module.ScalarDivisible;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.element.ring.Quotientable;
 import de.gupta.commons.utility.math.algebra.element.ring.Ring;
 
@@ -19,5 +19,5 @@ public interface Estimator<E>
 				        .divide((long) degree, rounding).quotient();
 	}
 
-	UnaryOperator<E> estimate(final E radicand, final int degree, final RoundingStrategy<E> rounding);
+	UnaryOperator<E> estimate(final E radicand, final int degree, final DivisionConvention<E> rounding);
 }

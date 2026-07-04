@@ -1,7 +1,7 @@
 package de.gupta.commons.utility.math.series;
 
+import de.gupta.commons.utility.math.algebra.element.ordered.DivisionConvention;
 import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategies;
-import de.gupta.commons.utility.math.algebra.element.ordered.RoundingStrategy;
 import de.gupta.commons.utility.math.algebra.element.radical.ApproximationStrategies;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumber;
 import de.gupta.commons.utility.math.algebra.element.ring.standard.integers.IntegralNumberFactory;
@@ -751,7 +751,7 @@ final class SeriesOperationsTest
 	@DisplayName("when computing indexed ratios")
 	final class WhenComputingIndexedRatios
 	{
-		private static final RoundingStrategy<RationalNumber> EXACT =
+		private static final DivisionConvention<RationalNumber> EXACT =
 				(dividend, divisor) -> DivisionResult.of(dividend.divide(divisor), RationalNumberFactory.zero());
 
 		@Test
@@ -823,7 +823,7 @@ final class SeriesOperationsTest
 	@DisplayName("when computing index-weighted percentage changes")
 	final class WhenComputingIndexWeightedPercentChanges
 	{
-		private static final RoundingStrategy<RationalNumber> EXACT =
+		private static final DivisionConvention<RationalNumber> EXACT =
 				(dividend, divisor) -> DivisionResult.of(dividend.divide(divisor), RationalNumberFactory.zero());
 
 		@ParameterizedTest(name = "{0}")

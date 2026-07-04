@@ -16,12 +16,12 @@ public interface OrderedEuclideanDomain<E extends OrderedEuclideanDomain<E>>
 	DivisionResult<E> divideFloor(E divisor);
 
 	@Override
-	default DivisionResult<E> divide(final Long scalar, final RoundingStrategy<E> strategy)
+	default DivisionResult<E> divide(final Long scalar, final DivisionConvention<E> strategy)
 	{
 		return divide(elementFromLong(scalar), strategy);
 	}
 
-	default DivisionResult<E> divide(final E divisor, final RoundingStrategy<E> strategy)
+	default DivisionResult<E> divide(final E divisor, final DivisionConvention<E> strategy)
 	{
 		return strategy.divide(self(), divisor);
 	}
